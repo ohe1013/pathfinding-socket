@@ -3,6 +3,7 @@ import { create } from "zustand";
 type CharactersObj = {
   id: string;
   position: [number, number, number];
+  path: number[][];
 };
 
 interface CharactersStore {
