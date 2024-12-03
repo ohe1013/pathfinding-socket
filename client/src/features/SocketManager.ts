@@ -1,34 +1,30 @@
-import useCharactersStore from "@/store/characters";
-import useMapStore from "@/store/map";
+import useCharactersStore, { CharactersObj } from "@/store/characters";
+import useMapStore, { MapObj } from "@/store/map";
 import useUserStore from "@/store/user";
 import { useEffect } from "react";
 import { io } from "socket.io-client";
 export const socket = io("http://localhost:3009");
 
 export const SocketManager = () => {
-  const mapStore = useMapStore();
-  const charStore = useCharactersStore();
-  const userStore = useUserStore();
-  function setConn(item) {
-    mapStore.setState(item.map);
-    userStore.setState(item.id);
-    charStore.setState(item.characters);
-  }
-  function setPlayMove(item) {
-    charStore.setState(
-      charStore.state?.map((char) => {
-        if (char.id === item.id) {
-          return item;
-        } else {
-          return char;
-        }
-      })
-    );
-  }
-  function setCharacters(item) {
-    charStore.setState(item);
-  }
+  const setMapState = useMapStore((state) => state.setState);
+  const setCharState = useCharactersStore((state) => state.setState);
+  const setCharStateWithFilter = useCharactersStore((state) => state.setStateWithFilter);
+  const setUserState = useUserStore((state) => state.setState);
+  console.log("it render?");
+
   useEffect(() => {
+    const setConn = (item: { map: MapObj; id: string; characters: CharactersObj[] }) => {
+      setMapState(item.map);
+      setUserState({ id: item.id });
+      setCharState(item.characters);
+    };
+
+    const setPlayMove = (item: CharactersObj) => {
+      setCharStateWithFilter(item);
+    };
+    const setCharacters = (item: CharactersObj) => {
+      setCharStateWithFilter(item);
+    };
     socket.on("conn", setConn);
     socket.on("playMove", setPlayMove);
     socket.on("characters", setCharacters);
@@ -39,5 +35,7 @@ export const SocketManager = () => {
       socket.off("playMove", setPlayMove);
       socket.off("characters", setCharacters);
     };
-  }, [setConn, setPlayMove, setCharacters]);
+  }, [setCharState, setCharStateWithFilter, setMapState, setUserState]);
+
+  return null;
 };

@@ -2,7 +2,7 @@ import { create } from "zustand";
 
 type Item = Record<string, { size: [number, number]; name: string }>;
 
-interface MapObj {
+export interface MapObj {
   size: [number, number];
   gridDivision: number;
   items: Item[];

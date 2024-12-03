@@ -23,27 +23,29 @@ type GLTFResult = GLTF & {
 
 interface CharacterProps {
   position?: THREE.Vector3;
-  path?: number[][];
+  path?: Array<[number, number, number]>;
   id?: string;
 }
 
 const Fallguy = ({ id, ...props }: CharacterProps) => {
+  console.log("test");
   const group = useRef<Group>(null);
   const { scene, materials, animations } = useGLTF("/models/Fallguy.glb") as GLTFResult;
   const [animation, setAnimation] = useState("idle");
   const { actions } = useAnimations(animations, group);
   const clone = useMemo(() => SkeletonUtils.clone(scene), [scene]);
   const { nodes } = useGraph(clone) as GLTFResult;
-  const grid = useGrid();
-  const [path, setPath] = useState<[number, number, number]>();
+  const [path, setPath] = useState<Array<THREE.Vector3>>();
   const user = useUserStore((state) => state.state);
+  const grid = useGrid();
   useEffect(() => {
-    const path: [number, number, number] = [];
+    if (!grid) return;
+    const path: Array<THREE.Vector3> = [];
     props.path?.forEach((gridPosition) => {
-      path.push(grid?.gridToVector3(gridPosition as [number, number, number]));
+      path.push(grid.gridToVector3(gridPosition));
     });
     setPath(path);
-  }, [props.path]);
+  }, [props.path, grid]);
 
   useEffect(() => {
     const action = actions[animation];

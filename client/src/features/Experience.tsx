@@ -17,6 +17,7 @@ export const Experience = () => {
   const user = useUserStore((state) => state.state);
   const characterList = useCharactersStore((state) => state.state);
   const grid = useGrid()!;
+  console.log("render");
   if (!grid) {
     return null;
   }
