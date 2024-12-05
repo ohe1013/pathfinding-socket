@@ -59,14 +59,14 @@ io.on("connection", (socket) => {
     position: generateRandomPosition(),
   });
 
-  io.emit("characters", characters);
-
   socket.emit("conn", {
     map,
     characters,
     id: socket.id,
     items,
   });
+
+  io.emit("characters", characters);
 
   socket.on("move", (from, to) => {
     const character = characters.find((char) => char.id === socket.id);
@@ -77,7 +77,7 @@ io.on("connection", (socket) => {
 
     character.position = from;
     character.path = path;
-    io.emit("playMove", character);
+    io.emit("playerMove", character);
   });
 
   socket.on("disconnect", () => {

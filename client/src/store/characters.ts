@@ -18,9 +18,11 @@ const useCharactersStore = create<CharactersStore>((set) => ({
     set({ state: newState });
   },
   setStateWithFilter: (newState: CharactersObj) => {
-    set((state) => ({
-      state: state.state!.map((char) => (char.id === newState.id ? newState : char)),
-    }));
+    set((state) => {
+      return {
+        state: state.state!.map((char) => (char.id === newState.id ? newState : char)),
+      };
+    });
   },
 }));
 

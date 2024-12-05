@@ -1,8 +1,6 @@
 import { create } from "zustand";
 
-type UserObj = {
-  id: string;
-};
+type UserObj = string;
 
 interface UserStore {
   state: UserObj | undefined;

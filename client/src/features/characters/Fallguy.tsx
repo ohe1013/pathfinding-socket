@@ -27,9 +27,9 @@ interface CharacterProps {
   id?: string;
 }
 
-const Fallguy = ({ id, ...props }: CharacterProps) => {
-  console.log("test");
+export const Fallguy = ({ id, ...props }: CharacterProps) => {
   const group = useRef<Group>(null);
+  const position = useMemo(() => props.position, []);
   const { scene, materials, animations } = useGLTF("/models/Fallguy.glb") as GLTFResult;
   const [animation, setAnimation] = useState("idle");
   const { actions } = useAnimations(animations, group);
@@ -70,7 +70,7 @@ const Fallguy = ({ id, ...props }: CharacterProps) => {
     } else if (path?.length) {
       path.shift();
     } else {
-      setAnimation("walk");
+      setAnimation("run");
     }
     if (id === user) {
       state.camera.position.x = group.current.position.x + 8;
@@ -80,7 +80,14 @@ const Fallguy = ({ id, ...props }: CharacterProps) => {
     }
   });
   return (
-    <group name={`character-${id}`} ref={group} scale={0.2} dispose={null} {...props}>
+    <group
+      ref={group}
+      {...props}
+      position={position}
+      scale={0.2}
+      dispose={null}
+      name={`character-${id}`}
+    >
       <group name="Scene">
         <group name="fall_guys">
           <primitive object={nodes._rootJoint} />
@@ -124,7 +131,5 @@ const Fallguy = ({ id, ...props }: CharacterProps) => {
   );
 };
 
-export default Fallguy;
-
 // GLB 파일 미리 로드
-useGLTF.preload("/assets/character.glb");
+useGLTF.preload("/models/Fallguy.glb");

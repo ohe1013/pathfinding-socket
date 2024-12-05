@@ -10,30 +10,37 @@ export const SocketManager = () => {
   const setCharState = useCharactersStore((state) => state.setState);
   const setCharStateWithFilter = useCharactersStore((state) => state.setStateWithFilter);
   const setUserState = useUserStore((state) => state.setState);
-  console.log("it render?");
 
   useEffect(() => {
     const setConn = (item: { map: MapObj; id: string; characters: CharactersObj[] }) => {
       setMapState(item.map);
-      setUserState({ id: item.id });
+      setUserState(item.id);
       setCharState(item.characters);
     };
 
-    const setPlayMove = (item: CharactersObj) => {
+    const setplayerMove = (item: CharactersObj) => {
       setCharStateWithFilter(item);
     };
-    const setCharacters = (item: CharactersObj) => {
-      setCharStateWithFilter(item);
+    const setCharacters = (item: CharactersObj[]) => {
+      setCharState(item);
     };
+    function onConnect() {
+      console.log("connected");
+    }
+    function onDisconnect() {
+      console.log("disconnected");
+    }
+    socket.on("connect", onConnect);
     socket.on("conn", setConn);
-    socket.on("playMove", setPlayMove);
+    socket.on("playerMove", setplayerMove);
     socket.on("characters", setCharacters);
-    console.log("effetct");
+    socket.on("disconnect", onDisconnect);
     return () => {
-      console.log("return effetct");
+      socket.off("connect", onConnect);
       socket.off("conn", setConn);
-      socket.off("playMove", setPlayMove);
+      socket.off("playerMove", setplayerMove);
       socket.off("characters", setCharacters);
+      socket.off("disconnect", onDisconnect);
     };
   }, [setCharState, setCharStateWithFilter, setMapState, setUserState]);
 
