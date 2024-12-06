@@ -5,6 +5,7 @@ import { CharacterService } from "../services/CharacterService";
 import Character from "../models/Character";
 import { RoomService } from "../services/RoomService";
 import { generateRandomPosition } from "../util";
+import { Room } from "../models/Room";
 
 export async function setupSocketHandlers(io: Server, socket: Socket) {
   console.log("user Connected");
@@ -15,6 +16,7 @@ export async function setupSocketHandlers(io: Server, socket: Socket) {
   await roomService.loadRooms();
   const characters = characterService.characters;
   const rooms = roomService.getAllRooms();
+  let room: Room | undefined;
 
   socket.emit("conn", {
     rooms: rooms.map((room) => room.toJSON),
@@ -23,8 +25,15 @@ export async function setupSocketHandlers(io: Server, socket: Socket) {
     id: socket.id,
     items,
   });
+  const onRoomUpdate = (room: Room) => {
+    io.to(room.id).emit("characters", room.characters);
+    io.emit(
+      "rooms",
+      rooms.map((room) => room.toJSON())
+    );
+  };
   socket.on("joinRoom", (roomId, opts) => {
-    const room = rooms.find((room) => room.id === roomId);
+    room = rooms.find((room) => room.id === roomId);
     if (!room) {
       return;
     }
@@ -45,14 +54,16 @@ export async function setupSocketHandlers(io: Server, socket: Socket) {
       characters: room.characters,
       id: socket.id,
     });
-    const onRoomUpdate = () => {
-      io.to(room.id).emit("characters", room.characters);
-      io.emit(
-        "rooms",
-        rooms.map((room) => room.toJSON())
-      );
-    };
-    onRoomUpdate();
+
+    onRoomUpdate(room);
+  });
+  socket.on("leaveRoom", () => {
+    if (!room) {
+      return;
+    }
+    socket.leave(room.id);
+    roomService.removeCharacterFromRoom(room.id, socket.id);
+    onRoomUpdate(room);
   });
 
   io.emit("characters", characters);
