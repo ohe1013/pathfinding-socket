@@ -7,7 +7,6 @@ export const Item = ({ item }) => {
   const { name, gridPosition, size, rotation } = item;
   const map = useMapStore((state) => state.state);
   const { scene } = useGLTF(`/models/items/${name}.glb`);
-  // Skinned meshes cannot be re-used in threejs without cloning them
   const clone = useMemo(() => SkeletonUtils.clone(scene), [scene]);
   const width = rotation === 1 || rotation === 3 ? size[1] : size[0];
   const height = rotation === 1 || rotation === 3 ? size[0] : size[1];

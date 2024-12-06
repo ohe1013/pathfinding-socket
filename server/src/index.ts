@@ -1,18 +1,34 @@
-import { items, map } from "./item.js";
+import { items, map } from "../data/item";
 import Pathfinding from "pathfinding";
 import { Server } from "socket.io";
+import { config } from "dotenv";
+import path from "path";
+import { fileURLToPath } from "url";
+import Character from "./models/Character";
+import { Coordinate } from "./types";
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+config({ path: path.join(__dirname, `../env/.env.${process.env.NODE_ENV || "development"}`) });
+const serverConfig = {
+  clientUrl: process.env.CLIENT_URL,
+  port: process.env.PORT,
+  db: {
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+  },
+};
 const io = new Server({
   cors: {
-    origin: "http://localhost:3010",
+    origin: serverConfig.clientUrl,
   },
 });
+console.log(serverConfig.port);
+io.listen(Number(serverConfig.port));
 
-io.listen(3009);
+console.log(`Server is running ${serverConfig.clientUrl}`);
 
-console.log("Server is running on port 3010");
-
-const characters = [];
+const characters: Character[] = [];
 const grid = new Pathfinding.Grid(map.size[0] * map.gridDivision, map.size[1] * map.gridDivision);
 
 const finder = new Pathfinding.AStarFinder({
@@ -45,19 +61,20 @@ const generateRandomPosition = () => {
   }
 };
 
-const findPath = (start, end) => {
+const findPath = (start: Coordinate, end: Coordinate) => {
   const gridClone = grid.clone();
   const path = finder.findPath(start[0], start[1], end[0], end[1], gridClone);
-  return path;
+  return path as Coordinate[];
 };
 
 io.on("connection", (socket) => {
   console.log("user Connected");
-
-  characters.push({
+  const char = new Character({
     id: socket.id,
-    position: generateRandomPosition(),
+    position: generateRandomPosition() as Coordinate,
+    session: Math.round(Math.random() * 1000),
   });
+  characters.push(char);
 
   socket.emit("conn", {
     map,
@@ -71,7 +88,7 @@ io.on("connection", (socket) => {
   socket.on("move", (from, to) => {
     const character = characters.find((char) => char.id === socket.id);
     const path = findPath(from, to);
-    if (!path) {
+    if (!path || !character) {
       return;
     }
 
