@@ -70,7 +70,7 @@ export async function setupSocketHandlers(io: Server, socket: Socket) {
 
   socket.on("move", (from, to) => {
     const character = characters.find((char) => char.id === socket.id);
-    const path = pathfindingService.findPath(from, to);
+    const path = pathfindingService.findPath(room!, from, to);
     if (!path || !character) {
       return;
     }
@@ -82,11 +82,7 @@ export async function setupSocketHandlers(io: Server, socket: Socket) {
 
   socket.on("disconnect", () => {
     console.log("user disconnected");
-
-    characters.splice(
-      characters.findIndex((character) => character.id === socket.id),
-      1
-    );
-    io.emit("characters", characters);
+    roomService.removeCharacterFromRoom(room!.id, socket.id);
+    onRoomUpdate(room!);
   });
 }

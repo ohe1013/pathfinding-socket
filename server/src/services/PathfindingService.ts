@@ -1,16 +1,10 @@
 import Pathfinding from "pathfinding";
-import { map } from "../../data/item";
 import { Coordinate } from "../types";
 import { Room } from "../models/Room";
 
 export class PathfindingService {
-  grid: Pathfinding.Grid;
   finder: Pathfinding.AStarFinder;
   constructor() {
-    this.grid = new Pathfinding.Grid(
-      map.size[0] * map.gridDivision,
-      map.size[1] * map.gridDivision
-    );
     this.finder = new Pathfinding.AStarFinder({
       allowDiagonal: true,
       dontCrossCorners: true,
@@ -38,8 +32,8 @@ export class PathfindingService {
     });
   }
 
-  findPath(start: Coordinate, end: Coordinate) {
-    const gridClone = this.grid.clone();
+  findPath(room: Room, start: Coordinate, end: Coordinate) {
+    const gridClone = room.grid.clone();
     return this.finder.findPath(start[0], start[1], end[0], end[1], gridClone) as Coordinate[];
   }
 }
