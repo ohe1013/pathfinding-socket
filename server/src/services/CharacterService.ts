@@ -7,19 +7,24 @@ import { Coordinate } from "../types";
 export class CharacterService {
   characters: Character[];
   grid: Pathfinding.Grid;
+
   constructor(grid: Pathfinding.Grid) {
     this.characters = [];
     this.grid = grid;
   }
 
   addCharacter(socketId: string) {
-    const character = new Character({
+    const newCharacter = new Character({
       id: socketId,
       position: generateRandomPosition([map.size[0], map.size[1]], map.gridDivision, this.grid),
       session: Math.round(Math.random() * 1000),
     });
-    this.characters.push(character);
-    return character;
+    if (this.characters.filter((character) => character.id === socketId).length > 0) {
+      return console.error("이미 있는 character 입니다.");
+    } else {
+      this.characters = [...this.characters, newCharacter];
+    }
+    return newCharacter;
   }
 
   removeCharacter(socketId: string) {
