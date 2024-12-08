@@ -15,12 +15,15 @@ interface CharactersStore {
 const useCharactersStore = create<CharactersStore>((set) => ({
   state: undefined,
   setState: (newState: CharactersObj[]) => {
+    console.log(newState);
     set({ state: newState });
   },
   setStateWithFilter: (newState: CharactersObj) => {
     set((state) => {
       return {
-        state: state.state!.map((char) => (char.id === newState.id ? newState : char)),
+        state: state.state!.map((char) =>
+          char.id === newState.id ? newState : char
+        ),
       };
     });
   },

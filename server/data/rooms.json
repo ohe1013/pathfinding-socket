@@ -1,5 +1,111 @@
 [
   {
+    "id": "lobby",
+    "name": "lobby",
+    "password": "0000",
+    "size": [20, 20],
+    "items": [
+      {
+        "name": "loungeSofaCorner",
+        "size": [5, 5],
+        "rotation": 3,
+        "gridPosition": [0, 0],
+        "touchEvt": ""
+      },
+      {
+        "name": "bear",
+        "size": [2, 1],
+        "wall": true,
+        "gridPosition": [2, 0],
+        "rotation": 0
+      },
+      {
+        "name": "tableCoffeeGlassSquare",
+        "size": [2, 2],
+        "gridPosition": [5, 4],
+        "rotation": 0
+      },
+      {
+        "name": "loungeSofa",
+        "size": [5, 2],
+        "rotation": 1,
+        "gridPosition": [8, 2]
+      },
+      {
+        "name": "plant",
+        "size": [1, 1],
+        "gridPosition": [0, 6],
+        "rotation": 0
+      },
+      {
+        "name": "chairCushion",
+        "size": [1, 1],
+        "rotation": 1,
+        "gridPosition": [12, 4]
+      },
+      {
+        "name": "deskComputer",
+        "size": [3, 2],
+        "gridPosition": [10, 3],
+        "rotation": 1
+      },
+      {
+        "name": "deskComputer",
+        "size": [3, 2],
+        "gridPosition": [3, 10],
+        "rotation": 0
+      },
+      {
+        "name": "chairCushion",
+        "size": [1, 1],
+        "rotation": 0,
+        "gridPosition": [4, 12]
+      },
+      {
+        "name": "lampSquareFloor",
+        "size": [1, 1],
+        "gridPosition": [13, 0],
+        "rotation": 0
+      },
+      {
+        "name": "speaker",
+        "size": [1, 1],
+        "gridPosition": [7, 0],
+        "rotation": 0
+      },
+      {
+        "name": "speakerSmall",
+        "size": [1, 1],
+        "rotation": 2,
+        "gridPosition": [10, 6]
+      },
+      {
+        "name": "laptop",
+        "size": [1, 1],
+        "gridPosition": [6, 0],
+        "rotation": 0
+      },
+      {
+        "name": "deskComputer",
+        "size": [3, 2],
+        "gridPosition": [8, 10],
+        "rotation": 0
+      },
+      {
+        "name": "chairCushion",
+        "size": [1, 1],
+        "rotation": 0,
+        "gridPosition": [9, 12]
+      },
+      {
+        "name": "speakerSmall",
+        "size": [1, 1],
+        "rotation": 3,
+        "gridPosition": [0, 5]
+      }
+    ]
+  },
+  {
     "id": "partyroom",
     "name": "PARTYROOM",
     "password": "0000",

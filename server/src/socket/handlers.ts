@@ -2,35 +2,36 @@ import { Server, Socket } from "socket.io";
 import { map, items } from "../../data/item";
 import { PathfindingService } from "../services/PathfindingService";
 import { CharacterService } from "../services/CharacterService";
-import Character from "../models/Character";
 import { RoomService } from "../services/RoomService";
-import { generateRandomPosition } from "../util";
 import { Room } from "../models/Room";
 
 export async function setupSocketHandlers(io: Server, socket: Socket) {
   console.log("user Connected");
+  const defaultRoomId = "lobby";
   const pathfindingService = new PathfindingService();
-  const characterService = new CharacterService(pathfindingService.grid);
+  const characterService = new CharacterService();
   const roomService = new RoomService();
-  characterService.addCharacter(socket.id);
   await roomService.loadRooms();
-  const characters = characterService.characters;
   const rooms = roomService.getAllRooms();
-  let room: Room | undefined;
+  let room = rooms.find((room) => room.id === defaultRoomId);
 
+  if (!room) {
+    return;
+  }
+  const newCharcter = characterService.createCharacter(socket.id, room);
+  characterService.addCharacter(newCharcter);
+  roomService.addCharacterToRoom(defaultRoomId, newCharcter);
   socket.emit("conn", {
-    rooms: rooms.map((room) => room.toJSON),
-    map,
-    characters,
+    map: {
+      gridDivision: room.gridDivision,
+      size: room.size,
+      items: room.items,
+    },
+    characters: room.characters,
     id: socket.id,
-    items,
   });
   const onRoomUpdate = (room: Room) => {
     io.to(room.id).emit("characters", room.characters);
-    io.emit(
-      "rooms",
-      rooms.map((room) => room.toJSON())
-    );
   };
   socket.on("joinRoom", (roomId, opts) => {
     room = rooms.find((room) => room.id === roomId);
@@ -38,12 +39,10 @@ export async function setupSocketHandlers(io: Server, socket: Socket) {
       return;
     }
     socket.join(room.id);
-    const character = new Character({
-      id: socket.id,
-      session: Math.round(Math.random() * 1000),
-      position: generateRandomPosition(room.size, room.gridDivision, room.grid),
-    });
-    room.characters.push(character);
+
+    const newCharcter = characterService.createCharacter(socket.id, room);
+    characterService.addCharacter(newCharcter);
+    roomService.addCharacterToRoom(roomId, newCharcter);
 
     socket.emit("roomJoined", {
       map: {
@@ -63,13 +62,17 @@ export async function setupSocketHandlers(io: Server, socket: Socket) {
     }
     socket.leave(room.id);
     roomService.removeCharacterFromRoom(room.id, socket.id);
+    const newCharcter = characterService.createCharacter(socket.id, room);
+    roomService.addCharacterToRoom(defaultRoomId, newCharcter);
     onRoomUpdate(room);
   });
 
-  io.emit("characters", characters);
+  io.emit("characters", characterService.getAllChacters());
 
   socket.on("move", (from, to) => {
-    const character = characters.find((char) => char.id === socket.id);
+    const character = characterService
+      .getAllChacters()
+      .find((char) => char.id === socket.id);
     const path = pathfindingService.findPath(room!, from, to);
     if (!path || !character) {
       return;
@@ -83,6 +86,9 @@ export async function setupSocketHandlers(io: Server, socket: Socket) {
   socket.on("disconnect", () => {
     console.log("user disconnected");
     roomService.removeCharacterFromRoom(room!.id, socket.id);
+    const newCharcter = characterService.createCharacter(socket.id, room);
+
+    roomService.addCharacterToRoom(defaultRoomId, newCharcter);
     onRoomUpdate(room!);
   });
 }

@@ -5,7 +5,7 @@ import { Coordinate } from "../types/index.js";
 import { generateRandomPosition } from "../util/index.js";
 
 export interface RoomData {
-  id: "cosyroom" | "partyroom" | "bathroom";
+  id: "lobby" | "cosyroom" | "partyroom" | "bathroom";
   name: string;
   password: string;
   items: Item[];
@@ -34,7 +34,7 @@ export class RoomService {
       const roomsData = JSON.parse(data);
 
       roomsData.forEach((roomData: RoomData) => {
-        const room = new Room({ ...roomData, size: [7, 7], gridDivision: 2 });
+        const room = new Room({ size: [7, 7], ...roomData, gridDivision: 2 });
         this.pathfinding.updateGrid(room);
         this.rooms.set(room.id, room);
       });
@@ -52,16 +52,26 @@ export class RoomService {
     return this.rooms.get(roomId);
   }
 
-  addCharacterToRoom(roomId: Room["id"], character: Room["characters"][number]) {
+  addCharacterToRoom(
+    roomId: Room["id"],
+    character: Room["characters"][number]
+  ) {
     const room = this.getRoom(roomId);
     if (!room) return null;
 
-    character.position = generateRandomPosition(room.size, room.gridDivision, room.grid);
-    room.characters.push(character);
+    character.position = generateRandomPosition(
+      room.size,
+      room.gridDivision,
+      room.grid
+    );
+    room.addCharacter(character);
     return room;
   }
 
-  removeCharacterFromRoom(roomId: Room["id"], characterId: Room["characters"][number]["id"]) {
+  removeCharacterFromRoom(
+    roomId: Room["id"],
+    characterId: Room["characters"][number]["id"]
+  ) {
     const room = this.getRoom(roomId);
     if (!room) return;
 

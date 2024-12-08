@@ -14,6 +14,7 @@ export const Experience = () => {
   const [onFloor, setOnFloor] = useState(false);
   useCursor(onFloor);
   const characterList = useCharactersStore((state) => state.state);
+  console.log(characterList);
   const grid = useGrid()!;
 
   const scene = useThree((state) => state.scene);
@@ -24,7 +25,11 @@ export const Experience = () => {
   const onCharacterMove = (e: ThreeEvent<MouseEvent>) => {
     const character = scene.getObjectByName(`character-${user}`);
     if (!character) return;
-    socket.emit("move", grid.vector3ToGrid(character.position), grid.vector3ToGrid(e.point));
+    socket.emit(
+      "move",
+      grid.vector3ToGrid(character.position),
+      grid.vector3ToGrid(e.point)
+    );
   };
 
   if (!map) return null;
