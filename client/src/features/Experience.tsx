@@ -14,7 +14,7 @@ export const Experience = () => {
   const [onFloor, setOnFloor] = useState(false);
   useCursor(onFloor);
   const characterList = useCharactersStore((state) => state.state);
-  console.log(characterList);
+
   const grid = useGrid()!;
 
   const scene = useThree((state) => state.scene);

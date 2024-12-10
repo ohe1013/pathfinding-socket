@@ -35,6 +35,7 @@ export const SocketManager = () => {
     };
 
     const setplayerMove = (item: CharactersObj) => {
+      console.log(item);
       setCharStateWithFilter(item);
     };
     const setCharacters = (item: CharactersObj[]) => {
