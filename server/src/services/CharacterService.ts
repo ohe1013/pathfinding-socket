@@ -15,20 +15,17 @@ export class CharacterService {
     return this.characters;
   }
 
-  createCharacter(socketId: string, room: Room) {
+  createCharacter(socketId: string, room: Room, position?: Coordinate) {
     const newCharacter = new Character({
       id: socketId,
-      position: generateRandomPosition(room.size, room.gridDivision, room.grid),
+      position: position || generateRandomPosition(room.size, room.gridDivision, room.grid),
       session: Math.round(Math.random() * 1000),
     });
     return newCharacter;
   }
 
   addCharacter(newCharacter: Character) {
-    if (
-      this.characters.filter((character) => character.id === newCharacter.id)
-        .length > 0
-    ) {
+    if (this.characters.filter((character) => character.id === newCharacter.id).length > 0) {
       return console.error("이미 있는 character 입니다.");
     } else {
       this.characters = [...this.characters, newCharacter];
@@ -39,11 +36,7 @@ export class CharacterService {
     this.characters = this.characters.filter((char) => char.id !== socketId);
   }
 
-  updateCharacterPosition(
-    socketId: string,
-    from: Coordinate,
-    path: Coordinate[]
-  ) {
+  updateCharacterPosition(socketId: string, from: Coordinate, path: Coordinate[]) {
     const character = this.characters.find((char) => char.id === socketId);
     if (character) {
       character.position = from;
