@@ -11,6 +11,7 @@ import { socket } from "./SocketManager";
 
 export const Experience = () => {
   const map = useMapStore((state) => state.state);
+  const [guardEvt, setGuardEvt] = useState(false);
   const [onFloor, setOnFloor] = useState(false);
   useCursor(onFloor);
   const characterList = useCharactersStore((state) => state.state);
