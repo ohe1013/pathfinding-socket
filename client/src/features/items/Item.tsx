@@ -5,6 +5,7 @@ import { SkeletonUtils } from "three-stdlib";
 import { socket } from "../SocketManager";
 import { Item as ItemProps } from "@/store/rooms";
 import { ThreeEvent } from "@react-three/fiber";
+import useInfo from "@/store/info";
 
 export const Item = ({
   item,
@@ -19,10 +20,18 @@ export const Item = ({
   const clone = useMemo(() => SkeletonUtils.clone(scene), [scene]);
   const width = rotation === 1 || rotation === 3 ? size[1] : size[0];
   const height = rotation === 1 || rotation === 3 ? size[0] : size[1];
+  const setInfoState = useInfo((state) => state.setState);
   const go = (e: ThreeEvent<MouseEvent>) => {
     e.stopPropagation();
     if (item.touchEvt) {
-      socket.emit("joinRoom", item.touchEvt.roomId, { position: item.touchEvt.position });
+      if (item.touchEvt.type === "switchRoom") {
+        socket.emit("joinRoom", item.touchEvt.roomId, {
+          position: item.touchEvt.position,
+        });
+      }
+      if (item.touchEvt.type === "watchPhoto") {
+        setInfoState({ situation: "photo" });
+      }
     }
   };
   if (!map) return null;

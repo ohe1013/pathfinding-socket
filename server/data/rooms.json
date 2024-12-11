@@ -408,7 +408,10 @@
         "size": [1, 1],
         "gridPosition": [12, 0],
         "rotation": 0,
-        "positionY": 1
+        "positionY": 1,
+        "touchEvt": {
+          "type": "watchPhoto"
+        }
       },
       {
         "name": "kitchenCabinet",

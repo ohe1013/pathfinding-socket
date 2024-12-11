@@ -7,7 +7,10 @@ import { setupSocketHandlers } from "./socket/handlers";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 config({
-  path: path.join(__dirname, `../env/.env.${process.env.NODE_ENV || "development"}`),
+  path: path.join(
+    __dirname,
+    `../env/.env.${process.env.NODE_ENV || "development"}`
+  ),
 });
 const serverConfig = {
   clientUrl: process.env.CLIENT_URL,

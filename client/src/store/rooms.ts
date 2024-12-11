@@ -16,11 +16,15 @@ export type Item = {
   gridPosition: Coordinate;
   wall?: boolean;
   walkable?: boolean;
-  touchEvt?: {
-    type: "switchRoom";
-    position: string;
-    roomId: RoomId;
-  };
+  touchEvt?:
+    | {
+        type: "switchRoom";
+        position: string;
+        roomId: RoomId;
+      }
+    | {
+        type: "watchPhoto";
+      };
 };
 
 interface RoomsStore {
