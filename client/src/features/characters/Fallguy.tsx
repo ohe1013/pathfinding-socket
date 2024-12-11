@@ -6,6 +6,7 @@ import * as THREE from "three";
 import { useFrame, useGraph } from "@react-three/fiber";
 import { useGrid } from "@/hooks/useGrid";
 import useUserStore from "@/store/user";
+import useMapStore from "@/store/map";
 
 // GLTF 타입 정의
 type GLTFResult = GLTF & {
@@ -29,7 +30,8 @@ interface CharacterProps {
 
 export const Fallguy = ({ id, ...props }: CharacterProps) => {
   const group = useRef<Group>(null);
-  const position = useMemo(() => props.position, []);
+  const map = useMapStore((state) => state.state);
+  const position = useMemo(() => props.position, [map?.roomId]);
   const { scene, materials, animations } = useGLTF("/models/Fallguy.glb") as GLTFResult;
   const [animation, setAnimation] = useState("idle");
   const { actions } = useAnimations(animations, group);

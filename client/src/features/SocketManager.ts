@@ -1,5 +1,6 @@
 import useCharactersStore, { CharactersObj } from "@/store/characters";
 import useMapStore, { MapObj } from "@/store/map";
+import { RoomId } from "@/store/rooms";
 // import useRoomsStore from "@/store/rooms";
 import useUserStore from "@/store/user";
 import { useEffect } from "react";
@@ -9,22 +10,16 @@ export const socket = io("http://localhost:3009");
 export const SocketManager = () => {
   const setMapState = useMapStore((state) => state.setState);
   const setCharState = useCharactersStore((state) => state.setState);
-  const setCharStateWithFilter = useCharactersStore(
-    (state) => state.setStateWithFilter
-  );
+  const setCharStateWithFilter = useCharactersStore((state) => state.setStateWithFilter);
   const setUserState = useUserStore((state) => state.setState);
-  // const setRoomState = useRoomsStore((state) => state.setState);
   useEffect(() => {
-    const onConn = (item: {
-      map: MapObj;
-      id: string;
-      characters: CharactersObj[];
-    }) => {
+    const onConn = (item: { map: MapObj; id: string; characters: CharactersObj[] }) => {
       setMapState(item.map);
       setUserState(item.id);
       setCharState(item.characters);
     };
     const onRoomJoined = (item: {
+      roomId: RoomId;
       map: MapObj;
       id: string;
       characters: CharactersObj[];

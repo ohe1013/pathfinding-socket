@@ -1,8 +1,8 @@
 import { create } from "zustand";
-
-type Item = Record<string, { size: [number, number]; name: string }>;
+import { Item, RoomId } from "./rooms";
 
 export interface MapObj {
+  roomId: RoomId;
   size: [number, number];
   gridDivision: number;
   items: Item[];

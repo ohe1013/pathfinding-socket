@@ -1,19 +1,26 @@
-import { Coordinate } from "@/types";
+import { Coordinate, Size } from "@/types";
 import { create } from "zustand";
 
+export type RoomId = "lobby" | "cosyroom" | "partyroom" | "bathroom";
+
 export type RoomObj = {
-  id: "lobby" | "cosyroom" | "partyroom" | "bathroom";
+  id: RoomId;
   name: string;
   password: string;
   items: Item[];
 };
-type Item = {
+export type Item = {
   name: string;
-  size: Coordinate;
+  size: Size;
   rotation: number;
   gridPosition: Coordinate;
   wall?: boolean;
   walkable?: boolean;
+  touchEvt?: {
+    type: "switchRoom";
+    position: string;
+    roomId: RoomId;
+  };
 };
 
 interface RoomsStore {

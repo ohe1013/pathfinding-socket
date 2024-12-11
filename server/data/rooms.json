@@ -404,6 +404,13 @@
         "rotation": 0
       },
       {
+        "name": "vrKit",
+        "size": [1, 1],
+        "gridPosition": [12, 0],
+        "rotation": 0,
+        "positionY": 1
+      },
+      {
         "name": "kitchenCabinet",
         "size": [2, 2],
         "gridPosition": [12, 2],

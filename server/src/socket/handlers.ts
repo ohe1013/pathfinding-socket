@@ -58,6 +58,7 @@ export async function setupSocketHandlers(io: Server, socket: Socket) {
         gridDivision: newRoom.gridDivision,
         size: newRoom.size,
         items: newRoom.items,
+        roomId: newRoom.id,
       },
       characters: newRoom.characters,
       id: socket.id,
@@ -108,9 +109,7 @@ export async function setupSocketHandlers(io: Server, socket: Socket) {
   io.emit("characters", characterService.getAllChacters());
 
   socket.on("move", (from, to) => {
-    const character = characterService
-      .getAllChacters()
-      .find((char) => char.id === socket.id);
+    const character = characterService.getAllChacters().find((char) => char.id === socket.id);
     const path = pathfindingService.findPath(room!, from, to);
     if (!path || !character) {
       return;

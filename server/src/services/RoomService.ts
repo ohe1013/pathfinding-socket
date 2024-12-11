@@ -52,26 +52,20 @@ export class RoomService {
     return this.rooms.get(roomId);
   }
 
-  addCharacterToRoom(
-    roomId: Room["id"],
-    character: Room["characters"][number]
-  ) {
+  addCharacterToRoom(roomId: Room["id"], character: Room["characters"][number]) {
     const room = this.getRoom(roomId);
     if (!room) return null;
 
-    character.position = generateRandomPosition(
-      room.size,
-      room.gridDivision,
-      room.grid
-    );
+    // character.position = generateRandomPosition(
+    //   room.size,
+    //   room.gridDivision,
+    //   room.grid
+    // );
     room.addCharacter(character);
     return room;
   }
 
-  removeCharacterFromRoom(
-    roomId: Room["id"],
-    characterId: Room["characters"][number]["id"]
-  ) {
+  removeCharacterFromRoom(roomId: Room["id"], characterId: Room["characters"][number]["id"]) {
     const room = this.getRoom(roomId);
     if (!room) return;
 
