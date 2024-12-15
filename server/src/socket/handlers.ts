@@ -18,7 +18,7 @@ export async function setupSocketHandlers(io: Server, socket: Socket) {
     return;
   }
   const newCharcter = characterService.createCharacter(socket.id, room);
-  characterService.addCharacter(newCharcter);
+  // characterService.addCharacter(newCharcter);
   roomService.addCharacterToRoom(defaultRoomId, newCharcter);
   socket.join(room.id);
   socket.emit("conn", {
@@ -74,42 +74,13 @@ export async function setupSocketHandlers(io: Server, socket: Socket) {
     io.to(room.id).emit("characters", room.characters);
   };
   socket.on("joinRoom", (roomId, opts) => {
-    // room = rooms.find((room) => room.id === roomId);
-    // if (!room) {
-    //   return;
-    // }
-    // socket.join(room.id);
-
-    // const newCharcter = characterService.createCharacter(socket.id, room);
-    // characterService.addCharacter(newCharcter);
-    // roomService.addCharacterToRoom(roomId, newCharcter);
-
-    // socket.emit("roomJoined", {
-    //   map: {
-    //     gridDivision: room.gridDivision,
-    //     size: room.size,
-    //     items: room.items,
-    //   },
-    //   characters: room.characters,
-    //   id: socket.id,
-    // });
     switchRoom(roomId, opts);
   });
-  // socket.on("leaveRoom", () => {
-  //   if (!room) {
-  //     return;
-  //   }
-  //   socket.leave(room.id);
-  //   roomService.removeCharacterFromRoom(room.id, socket.id);
-  //   const newCharcter = characterService.createCharacter(socket.id, room);
-  //   roomService.addCharacterToRoom(defaultRoomId, newCharcter);
-  //   onRoomUpdate(room);
-  // });
 
-  io.emit("characters", characterService.getAllChacters());
+  io.emit("characters", room.characters);
 
   socket.on("move", (from, to) => {
-    const character = characterService.getAllChacters().find((char) => char.id === socket.id);
+    const character = room?.characters.find((char) => char.id === socket.id);
     const path = pathfindingService.findPath(room!, from, to);
     if (!path || !character) {
       return;
