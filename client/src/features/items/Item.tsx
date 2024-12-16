@@ -21,7 +21,7 @@ export const Item = ({
   const width = rotation === 1 || rotation === 3 ? size[1] : size[0];
   const height = rotation === 1 || rotation === 3 ? size[0] : size[1];
   const setInfoState = useInfo((state) => state.setState);
-  const go = (e: ThreeEvent<MouseEvent>) => {
+  const onClickEvt = (e: ThreeEvent<MouseEvent>) => {
     e.stopPropagation();
     if (item.touchEvt) {
       if (item.touchEvt.type === "switchRoom") {
@@ -36,7 +36,7 @@ export const Item = ({
   };
   if (!map) return null;
   return (
-    <mesh onClick={go}>
+    <mesh onClick={onClickEvt}>
       <primitive
         object={clone}
         position={[

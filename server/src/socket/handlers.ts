@@ -18,7 +18,6 @@ export async function setupSocketHandlers(io: Server, socket: Socket) {
     return;
   }
   const newCharcter = characterService.createCharacter(socket.id, room);
-  // characterService.addCharacter(newCharcter);
   roomService.addCharacterToRoom(defaultRoomId, newCharcter);
   socket.join(room.id);
   socket.emit("conn", {
@@ -26,6 +25,7 @@ export async function setupSocketHandlers(io: Server, socket: Socket) {
       gridDivision: room.gridDivision,
       size: room.size,
       items: room.items,
+      roomId: room.id,
     },
     characters: room.characters,
     id: socket.id,
@@ -92,13 +92,18 @@ export async function setupSocketHandlers(io: Server, socket: Socket) {
     io.to(room!.id).emit("playerMove", character);
   });
 
+  socket.on("chatMessage", (message) => {
+    console.log(room!.id, message);
+    io.to(room!.id).emit("playerChatMessage", {
+      id: socket.id,
+      message,
+    });
+  });
+
   socket.on("disconnect", () => {
     console.log("user disconnected");
     if (!room) return;
     roomService.removeCharacterFromRoom(room.id, socket.id);
-    // const newCharcter = characterService.createCharacter(socket.id, room);
-
-    // roomService.addCharacterToRoom(defaultRoomId, newCharcter);
     onRoomUpdate(room!);
   });
 }

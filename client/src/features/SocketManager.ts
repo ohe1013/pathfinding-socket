@@ -10,7 +10,6 @@ export const socket = io("http://localhost:3009");
 export const SocketManager = () => {
   const setMapState = useMapStore((state) => state.setState);
   const setCharState = useCharactersStore((state) => state.setState);
-  const setCharStateWithFilter = useCharactersStore((state) => state.setStateWithFilter);
   const setUserState = useUserStore((state) => state.setState);
   useEffect(() => {
     const onConn = (item: { map: MapObj; id: string; characters: CharactersObj[] }) => {
@@ -29,10 +28,6 @@ export const SocketManager = () => {
       setCharState(item.characters);
     };
 
-    const setplayerMove = (item: CharactersObj) => {
-      console.log(item);
-      setCharStateWithFilter(item);
-    };
     const setCharacters = (item: CharactersObj[]) => {
       setCharState(item);
     };
@@ -45,18 +40,16 @@ export const SocketManager = () => {
     socket.on("connect", onConnect);
     socket.on("conn", onConn);
     socket.on("roomJoined", onRoomJoined);
-    socket.on("playerMove", setplayerMove);
     socket.on("characters", setCharacters);
     socket.on("disconnect", onDisconnect);
     return () => {
       socket.off("connect", onConnect);
       socket.off("conn", onConn);
       socket.off("roomJoined", onRoomJoined);
-      socket.off("playerMove", setplayerMove);
       socket.off("characters", setCharacters);
       socket.off("disconnect", onDisconnect);
     };
-  }, [setCharState, setCharStateWithFilter, setMapState, setUserState]);
+  }, [setCharState, setMapState, setUserState]);
 
   return null;
 };

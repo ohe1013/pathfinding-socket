@@ -1,5 +1,5 @@
-import { useAnimations, useGLTF } from "@react-three/drei";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Html, useAnimations, useGLTF } from "@react-three/drei";
+import { SetStateAction, useEffect, useMemo, useRef, useState } from "react";
 import { Group } from "three";
 import { GLTF, SkeletonUtils } from "three-stdlib";
 import * as THREE from "three";
@@ -7,7 +7,7 @@ import { useFrame, useGraph } from "@react-three/fiber";
 import { useGrid } from "@/hooks/useGrid";
 import useUserStore from "@/store/user";
 import useMapStore from "@/store/map";
-
+import { socket } from "../SocketManager";
 // GLTF 타입 정의
 type GLTFResult = GLTF & {
   nodes: {
@@ -31,7 +31,10 @@ interface CharacterProps {
 export const Fallguy = ({ id, ...props }: CharacterProps) => {
   const group = useRef<Group>(null);
   const map = useMapStore((state) => state.state);
+  const [chatMessage, setChatMessage] = useState("");
+  const [showChatBubble, setShowChatBubble] = useState(false);
   const position = useMemo(() => props.position, [map?.roomId]);
+  console.log(position, group.current?.position);
   const { scene, materials, animations } = useGLTF("/models/Fallguy.glb") as GLTFResult;
   const [animation, setAnimation] = useState("idle");
   const { actions } = useAnimations(animations, group);
@@ -58,6 +61,37 @@ export const Fallguy = ({ id, ...props }: CharacterProps) => {
       };
     }
   }, [animation, actions]);
+
+  useEffect(() => {
+    function onPlayerMove(value: { id: string | undefined; path: [number, number, number][] }) {
+      if (value.id === id) {
+        const path: THREE.Vector3[] = [];
+        value.path.forEach((gridPosition: [number, number, number]) => {
+          path.push(grid!.gridToVector3(gridPosition));
+        });
+        setPath(path);
+      }
+    }
+    let chatMessageBubbleTimeOut: number;
+    const TIME_OUT = 5000;
+    function onChatMessage(value: { id: string | undefined; message: SetStateAction<string> }) {
+      if (value.id === id) {
+        setChatMessage(value.message);
+        clearTimeout(chatMessageBubbleTimeOut);
+        setShowChatBubble(true);
+        chatMessageBubbleTimeOut = setTimeout(() => {
+          setShowChatBubble(false);
+        }, TIME_OUT);
+      }
+    }
+
+    socket.on("playerMove", onPlayerMove);
+    socket.on("playerChatMessage", onChatMessage);
+    return () => {
+      socket.off("playerMove", onPlayerMove);
+      socket.off("playerChatMessage", onChatMessage);
+    };
+  }, [id]);
   useFrame((state) => {
     if (!group.current) return;
     if (path?.length && group.current.position.distanceTo(path[0]) > 0.1) {
@@ -68,11 +102,11 @@ export const Fallguy = ({ id, ...props }: CharacterProps) => {
         .multiplyScalar(0.032);
       group.current.position.sub(direction);
       group.current.lookAt(path[0]);
-      setAnimation("walk");
+      setAnimation("run");
     } else if (path?.length) {
       path.shift();
     } else {
-      setAnimation("run");
+      setAnimation("idle");
     }
     if (id === user) {
       state.camera.position.x = group.current.position.x + 8;
@@ -82,54 +116,67 @@ export const Fallguy = ({ id, ...props }: CharacterProps) => {
     }
   });
   return (
-    <group
-      ref={group}
-      {...props}
-      position={position}
-      scale={0.2}
-      dispose={null}
-      name={`character-${id}`}
-    >
-      <group name="Scene">
-        <group name="fall_guys">
-          <primitive object={nodes._rootJoint} />
-          <mesh>
-            <skinnedMesh
-              name="body"
-              geometry={nodes.body.geometry}
-              material={materials.Material}
-              skeleton={nodes.body.skeleton}
-              castShadow
-              receiveShadow
-            />
-            <skinnedMesh
-              name="eye"
-              geometry={nodes.eye.geometry}
-              material={materials.Material}
-              skeleton={nodes.eye.skeleton}
-              castShadow
-              receiveShadow
-            />
-            <skinnedMesh
-              name="hand-"
-              geometry={nodes["hand-"].geometry}
-              material={materials.Material}
-              skeleton={nodes["hand-"].skeleton}
-              castShadow
-              receiveShadow
-            />
-            <skinnedMesh
-              name="leg"
-              geometry={nodes.leg.geometry}
-              material={materials.Material}
-              skeleton={nodes.leg.skeleton}
-              castShadow
-              receiveShadow
-            />
-          </mesh>
+    <>
+      <Html position-y={2}>
+        <div className="w-60 max-w-full">
+          <p
+            className={`absolute max-w-full text-center break-words  p-2 px-4 -translate-x-1/2 rounded-lg bg-white bg-opacity-40 backdrop-blur-sm text-black transition-opacity duration-500 ${
+              showChatBubble ? "" : "opacity-0"
+            }`}
+          >
+            {chatMessage}
+          </p>
+        </div>
+      </Html>
+      <group
+        ref={group}
+        {...props}
+        position={position}
+        scale={0.2}
+        dispose={null}
+        name={`character-${id}`}
+      >
+        <group name="Scene">
+          <group name="fall_guys">
+            <primitive object={nodes._rootJoint} />
+            <mesh>
+              <skinnedMesh
+                name="body"
+                geometry={nodes.body.geometry}
+                material={materials.Material}
+                skeleton={nodes.body.skeleton}
+                castShadow
+                receiveShadow
+              />
+              <skinnedMesh
+                name="eye"
+                geometry={nodes.eye.geometry}
+                material={materials.Material}
+                skeleton={nodes.eye.skeleton}
+                castShadow
+                receiveShadow
+              />
+              <skinnedMesh
+                name="hand-"
+                geometry={nodes["hand-"].geometry}
+                material={materials.Material}
+                skeleton={nodes["hand-"].skeleton}
+                castShadow
+                receiveShadow
+              />
+              <skinnedMesh
+                name="leg"
+                geometry={nodes.leg.geometry}
+                material={materials.Material}
+                skeleton={nodes.leg.skeleton}
+                castShadow
+                receiveShadow
+              />
+            </mesh>
+          </group>
         </group>
       </group>
-    </group>
+    </>
   );
 };
 

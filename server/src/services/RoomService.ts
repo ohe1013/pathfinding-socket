@@ -56,11 +56,6 @@ export class RoomService {
     const room = this.getRoom(roomId);
     if (!room) return null;
 
-    // character.position = generateRandomPosition(
-    //   room.size,
-    //   room.gridDivision,
-    //   room.grid
-    // );
     room.addCharacter(character);
     return room;
   }

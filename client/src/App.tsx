@@ -3,7 +3,10 @@ import { Experience } from "./features/Experience";
 import { SocketManager } from "./features/SocketManager";
 import useInfo from "./store/info";
 import { PhotoRoom } from "./features/rooms/PhotoRoom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { UI } from "./features/UI/UI";
+import { useProgress } from "@react-three/drei";
+import useMapStore from "./store/map";
 
 const pexel = (id) => `/images/${id}.JPG`;
 const images = [
@@ -47,8 +50,10 @@ const images = [
 ];
 
 function App() {
+  const [loaded, setLoaded] = useState(false);
   const { situation } = useInfo((state) => state.state);
   const setInfo = useInfo((state) => state.setState);
+  const { progress } = useProgress();
   useEffect(() => {
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape") {
@@ -56,14 +61,24 @@ function App() {
       }
     });
   }, []);
+  const map = useMapStore((map) => map.state);
+  useEffect(() => {
+    if (progress === 100 && map?.items) {
+      setLoaded(true);
+    }
+  }, [progress]);
+
   return (
     <>
       <SocketManager />
       {situation === "discovery" ? (
-        <Canvas shadows camera={{ position: [8, 8, 8], fov: 30 }}>
-          <color attach={"background"} args={["#ececec"]} />
-          <Experience />
-        </Canvas>
+        <>
+          <Canvas shadows camera={{ position: [8, 8, 8], fov: 30 }}>
+            <color attach={"background"} args={["#ececec"]} />
+            <Experience />
+          </Canvas>
+          {loaded && <UI />}
+        </>
       ) : (
         <PhotoRoom images={images} />
       )}
