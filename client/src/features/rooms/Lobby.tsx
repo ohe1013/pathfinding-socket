@@ -51,7 +51,6 @@ export const Lobby = () => {
         initial={{
           y: firstLoad ? 0.5 : 1.5,
           rotateY: isSafari ? 0 : isMobile ? 0 : Math.PI / 8,
-          // removed because of safari issue with transform enabled on HTML
         }}
         animate={{
           y: isMobile ? 1.65 : 1.5,
