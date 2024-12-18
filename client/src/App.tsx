@@ -70,9 +70,9 @@ function App() {
 
   return (
     <>
-      <SocketManager />
       {situation === "discovery" ? (
         <>
+          <SocketManager />
           <Canvas shadows camera={{ position: [8, 8, 8], fov: 30 }}>
             <color attach={"background"} args={["#ececec"]} />
             <Experience />

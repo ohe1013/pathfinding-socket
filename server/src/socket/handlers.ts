@@ -93,7 +93,7 @@ export async function setupSocketHandlers(io: Server, socket: Socket) {
   });
 
   socket.on("chatMessage", (message) => {
-    console.log(room!.id, message);
+    console.log(room!.id, message, socket.id);
     io.to(room!.id).emit("playerChatMessage", {
       id: socket.id,
       message,

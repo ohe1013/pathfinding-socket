@@ -34,7 +34,6 @@ export const Fallguy = ({ id, ...props }: CharacterProps) => {
   const [chatMessage, setChatMessage] = useState("");
   const [showChatBubble, setShowChatBubble] = useState(false);
   const position = useMemo(() => props.position, [map?.roomId]);
-  console.log(position, group.current?.position);
   const { scene, materials, animations } = useGLTF("/models/Fallguy.glb") as GLTFResult;
   const [animation, setAnimation] = useState("idle");
   const { actions } = useAnimations(animations, group);
@@ -43,6 +42,15 @@ export const Fallguy = ({ id, ...props }: CharacterProps) => {
   const [path, setPath] = useState<Array<THREE.Vector3>>();
   const user = useUserStore((state) => state.state);
   const grid = useGrid();
+  const newMaterial = (materials.Material as THREE.MeshStandardMaterial).clone();
+
+  function getRandomHexColor(): string {
+    const randomColor = Math.floor(Math.random() * 16777215).toString(16); // 16777215는 0xFFFFFF의 10진수 값
+    return `#${randomColor.padStart(6, "0")}`; // 6자리로 패딩하여 반환
+  }
+
+  newMaterial.color.set(getRandomHexColor());
+
   useEffect(() => {
     if (!grid) return;
     const path: Array<THREE.Vector3> = [];
@@ -63,6 +71,7 @@ export const Fallguy = ({ id, ...props }: CharacterProps) => {
   }, [animation, actions]);
 
   useEffect(() => {
+    console.log("current User:", user, "id:", id);
     function onPlayerMove(value: { id: string | undefined; path: [number, number, number][] }) {
       if (value.id === id) {
         const path: THREE.Vector3[] = [];
@@ -76,6 +85,7 @@ export const Fallguy = ({ id, ...props }: CharacterProps) => {
     const TIME_OUT = 5000;
     function onChatMessage(value: { id: string | undefined; message: SetStateAction<string> }) {
       if (value.id === id) {
+        console.log("current User:", user, "messageId:", value.id, "id:", id);
         setChatMessage(value.message);
         clearTimeout(chatMessageBubbleTimeOut);
         setShowChatBubble(true);
@@ -117,17 +127,6 @@ export const Fallguy = ({ id, ...props }: CharacterProps) => {
   });
   return (
     <>
-      <Html position-y={2}>
-        <div className="w-60 max-w-full">
-          <p
-            className={`absolute max-w-full text-center break-words  p-2 px-4 -translate-x-1/2 rounded-lg bg-white bg-opacity-40 backdrop-blur-sm text-black transition-opacity duration-500 ${
-              showChatBubble ? "" : "opacity-0"
-            }`}
-          >
-            {chatMessage}
-          </p>
-        </div>
-      </Html>
       <group
         ref={group}
         {...props}
@@ -136,6 +135,17 @@ export const Fallguy = ({ id, ...props }: CharacterProps) => {
         dispose={null}
         name={`character-${id}`}
       >
+        <Html position-y={2}>
+          <div className="w-60 max-w-full">
+            <p
+              className={`absolute max-w-full text-center break-words  p-2 px-4 -translate-x-1/2 rounded-lg bg-white bg-opacity-40 backdrop-blur-sm text-black transition-opacity duration-500 ${
+                showChatBubble ? "" : "opacity-0"
+              }`}
+            >
+              {chatMessage}
+            </p>
+          </div>
+        </Html>
         <group name="Scene">
           <group name="fall_guys">
             <primitive object={nodes._rootJoint} />
@@ -143,7 +153,7 @@ export const Fallguy = ({ id, ...props }: CharacterProps) => {
               <skinnedMesh
                 name="body"
                 geometry={nodes.body.geometry}
-                material={materials.Material}
+                material={newMaterial}
                 skeleton={nodes.body.skeleton}
                 castShadow
                 receiveShadow
@@ -159,7 +169,7 @@ export const Fallguy = ({ id, ...props }: CharacterProps) => {
               <skinnedMesh
                 name="hand-"
                 geometry={nodes["hand-"].geometry}
-                material={materials.Material}
+                material={newMaterial}
                 skeleton={nodes["hand-"].skeleton}
                 castShadow
                 receiveShadow
@@ -167,7 +177,7 @@ export const Fallguy = ({ id, ...props }: CharacterProps) => {
               <skinnedMesh
                 name="leg"
                 geometry={nodes.leg.geometry}
-                material={materials.Material}
+                material={newMaterial}
                 skeleton={nodes.leg.skeleton}
                 castShadow
                 receiveShadow

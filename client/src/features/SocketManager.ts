@@ -15,7 +15,7 @@ export const SocketManager = () => {
     const onConn = (item: { map: MapObj; id: string; characters: CharactersObj[] }) => {
       setMapState(item.map);
       setUserState(item.id);
-      setCharState(item.characters);
+      // setCharState(item.characters);
     };
     const onRoomJoined = (item: {
       roomId: RoomId;

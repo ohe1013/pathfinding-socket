@@ -7,7 +7,7 @@ let firstLoad = true;
 export const Lobby = () => {
   const isMobile = window.innerWidth < 1024;
 
-  const tablet = useRef();
+  const tablet = useRef(null);
 
   const goldenRatio = Math.min(1, window.innerWidth / 1600);
 
