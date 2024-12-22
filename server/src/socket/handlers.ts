@@ -11,13 +11,17 @@ const pathfindingService = new PathfindingService();
 const characterService = new CharacterService();
 export async function setupSocketHandlers(io: Server, socket: Socket) {
   console.log("user Connected");
-  const defaultRoomId = "lobby";
+  const defaultRoomId = "weddingroom";
   const rooms = roomService.getAllRooms();
   let room = rooms.find((room) => room.id === defaultRoomId);
   if (!room) {
     return;
   }
-  const newCharcter = characterService.createCharacter(socket.id, room);
+  const newCharcter = characterService.createCharacter(
+    socket.id,
+    room,
+    [0, 20]
+  );
   roomService.addCharacterToRoom(defaultRoomId, newCharcter);
   socket.join(room.id);
   socket.emit("conn", {

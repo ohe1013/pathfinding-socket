@@ -549,5 +549,201 @@
         "rotation": 0
       }
     ]
+  },
+  {
+    "id": "weddingroom",
+    "name": "WEDDINGROOM",
+    "password": "0000",
+    "size": [10, 15],
+    "items": [
+      {
+        "name": "virginRoad",
+        "size": [4, 20],
+        "gridPosition": [8, 0],
+        "rotation": 0,
+        "positionY": 0.15
+      },
+      {
+        "name": "virginRoadWing",
+        "size": [6, 4],
+        "gridPosition": [2, 0],
+        "rotation": 0,
+        "positionY": 0.15
+      },
+      {
+        "name": "virginRoadWing",
+        "size": [6, 4],
+        "gridPosition": [10, 0],
+        "rotation": 0,
+        "positionY": 0.15
+      },
+      {
+        "name": "tableWithChair",
+        "size": [2, 2],
+        "gridPosition": [14, 8],
+        "rotation": 0
+      },
+      {
+        "name": "tableFlower",
+        "size": [2, 2],
+        "gridPosition": [14, 8],
+        "rotation": 0,
+        "positionY": 0.7
+      },
+      {
+        "name": "tableWithChair",
+        "size": [2, 2],
+        "gridPosition": [14, 13],
+        "rotation": 0
+      },
+      {
+        "name": "tableFlower",
+        "size": [2, 2],
+        "gridPosition": [14, 13],
+        "rotation": 0,
+        "positionY": 0.7
+      },
+      {
+        "name": "tableWithChair",
+        "size": [2, 2],
+        "gridPosition": [3, 8],
+        "rotation": 0
+      },
+      {
+        "name": "tableFlower",
+        "size": [2, 2],
+        "gridPosition": [3, 8],
+        "rotation": 0,
+        "positionY": 0.7
+      },
+      {
+        "name": "tableWithChair",
+        "size": [2, 2],
+        "gridPosition": [3, 13],
+        "rotation": 0
+      },
+      {
+        "name": "tableFlower",
+        "size": [2, 2],
+        "gridPosition": [3, 13],
+        "rotation": 0,
+        "positionY": 0.7
+      },
+      {
+        "name": "virginRoadGate",
+        "size": [2, 1],
+        "gridPosition": [9, 19],
+        "rotation": 0,
+        "positionY": 0.3
+      },
+      {
+        "name": "virginRoadFlower_1",
+        "size": [1, 1],
+        "rotation": 0,
+        "gridPosition": [12, 18],
+        "positionY": 0.3
+      },
+      {
+        "name": "virginRoadFlower_1",
+        "size": [1, 1],
+        "rotation": 0,
+        "gridPosition": [8, 18],
+        "positionY": 0.3
+      },
+      {
+        "name": "virginRoadFlower_1",
+        "size": [1, 1],
+        "rotation": 0,
+        "gridPosition": [12, 16],
+        "positionY": 0.3
+      },
+      {
+        "name": "virginRoadFlower_1",
+        "size": [1, 1],
+        "rotation": 0,
+        "gridPosition": [8, 16],
+        "positionY": 0.3
+      },
+      {
+        "name": "virginRoadFlower_1",
+        "size": [1, 1],
+        "rotation": 0,
+        "gridPosition": [12, 14],
+        "positionY": 0.3
+      },
+      {
+        "name": "virginRoadFlower_1",
+        "size": [1, 1],
+        "rotation": 0,
+        "gridPosition": [8, 14],
+        "positionY": 0.3
+      },
+      {
+        "name": "virginRoadFlower_1",
+        "size": [1, 1],
+        "rotation": 0,
+        "gridPosition": [12, 12],
+        "positionY": 0.3
+      },
+      {
+        "name": "virginRoadFlower_1",
+        "size": [1, 1],
+        "rotation": 0,
+        "gridPosition": [8, 12],
+        "positionY": 0.3
+      },
+      {
+        "name": "virginRoadFlower_1",
+        "size": [1, 1],
+        "rotation": 0,
+        "gridPosition": [12, 10],
+        "positionY": 0.3
+      },
+      {
+        "name": "virginRoadFlower_1",
+        "size": [1, 1],
+        "rotation": 0,
+        "gridPosition": [8, 10],
+        "positionY": 0.3
+      },
+      {
+        "name": "virginRoadFlower_1",
+        "size": [1, 1],
+        "rotation": 0,
+        "gridPosition": [12, 8],
+        "positionY": 0.3
+      },
+      {
+        "name": "virginRoadFlower_1",
+        "size": [1, 1],
+        "rotation": 0,
+        "gridPosition": [8, 8],
+        "positionY": 0.3
+      },
+      {
+        "name": "virginRoadChandlier",
+        "size": [2, 2],
+        "rotation": 0,
+        "gridPosition": [10, 18],
+        "positionY": 3,
+        "walkable": true
+      },
+      {
+        "name": "virginRoadChandlier",
+        "size": [2, 2],
+        "rotation": 0,
+        "gridPosition": [10, 14],
+        "positionY": 3,
+        "walkable": true
+      },
+      {
+        "name": "virginRoadChandlier",
+        "size": [2, 2],
+        "rotation": 0,
+        "gridPosition": [10, 10],
+        "positionY": 3,
+        "walkable": true
+      }
+    ]
   }
 ]

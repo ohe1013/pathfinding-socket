@@ -26,14 +26,18 @@ export const Experience = () => {
   const onCharacterMove = (e: ThreeEvent<MouseEvent>) => {
     const character = scene.getObjectByName(`character-${user}`);
     if (!character) return;
-    socket.emit("move", grid.vector3ToGrid(character.position), grid.vector3ToGrid(e.point));
+    socket.emit(
+      "move",
+      grid.vector3ToGrid(character.position),
+      grid.vector3ToGrid(e.point)
+    );
   };
 
   if (!map) return null;
   return (
     <>
       <Environment preset="sunset" />
-      <ambientLight intensity={1} />
+      {/* <ambientLight intensity={0} /> */}
       <OrbitControls />
       {map.items.map((item, idx) => (
         <Item
