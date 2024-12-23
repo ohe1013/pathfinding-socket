@@ -1,11 +1,12 @@
 import useMapStore from "@/store/map";
 import { useGLTF } from "@react-three/drei";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { SkeletonUtils } from "three-stdlib";
 import { socket } from "../SocketManager";
 import { Item as ItemProps } from "@/store/rooms";
 import { ThreeEvent } from "@react-three/fiber";
 import useInfo from "@/store/info";
+import { useGrid } from "@/hooks/useGrid";
 
 export const Item = ({
   item,
@@ -21,6 +22,7 @@ export const Item = ({
   const width = rotation === 1 || rotation === 3 ? size[1] : size[0];
   const height = rotation === 1 || rotation === 3 ? size[0] : size[1];
   const setInfoState = useInfo((state) => state.setState);
+  const grid = useGrid();
   const onClickEvt = (e: ThreeEvent<MouseEvent>) => {
     e.stopPropagation();
     if (item.touchEvt) {
@@ -34,18 +36,18 @@ export const Item = ({
       }
     }
   };
+  useEffect(() => {
+    clone.traverse((child) => {
+      if (child.isMesh) {
+        child.castShadow = true;
+        child.receiveShadow = true;
+      }
+    });
+  }, []);
   if (!map) return null;
   return (
-    <mesh onClick={onClickEvt}>
-      <primitive
-        object={clone}
-        position={[
-          width / map.gridDivision / 2 + gridPosition[0] / map.gridDivision,
-          item.positionY || 0,
-          height / map.gridDivision / 2 + gridPosition[1] / map.gridDivision,
-        ]}
-        rotation-y={((rotation || 0) * Math.PI) / 2}
-      />
-    </mesh>
+    <group position={grid?.gridToVector3([...gridPosition, 0], width, height)} onClick={onClickEvt}>
+      <primitive object={clone} rotation-y={((rotation || 0) * Math.PI) / 2}></primitive>
+    </group>
   );
 };

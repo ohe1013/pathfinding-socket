@@ -5,7 +5,7 @@ import useInfo from "./store/info";
 import { PhotoRoom } from "./features/rooms/PhotoRoom";
 import { useEffect, useState } from "react";
 import { UI } from "./features/UI/UI";
-import { useProgress } from "@react-three/drei";
+import { ScrollControls, useProgress } from "@react-three/drei";
 import useMapStore from "./store/map";
 
 const pexel = (id) => `/images/${id}.JPG`;
@@ -49,9 +49,14 @@ const images = [
   },
 ];
 
+const roomPage = {
+  weddingroom: 0,
+} as const;
+
 function App() {
   const [loaded, setLoaded] = useState(false);
   const { situation } = useInfo((state) => state.state);
+  const map = useMapStore((state) => state.state);
   const setInfo = useInfo((state) => state.setState);
   const { progress } = useProgress();
   useEffect(() => {
@@ -61,7 +66,6 @@ function App() {
       }
     });
   }, []);
-  const map = useMapStore((map) => map.state);
   useEffect(() => {
     if (progress === 100 && map?.items) {
       setLoaded(true);
@@ -73,9 +77,11 @@ function App() {
       <SocketManager />
       {situation === "discovery" ? (
         <>
-          <Canvas shadows camera={{ position: [8, 8, 8], fov: 30 }}>
-            <color attach={"background"} args={["#ececec"]} />
-            <Experience />
+          <Canvas shadows camera={{ position: [0, 8, 2], fov: 30 }}>
+            <color attach="background" args={["#ffffff"]} />
+            <ScrollControls pages={roomPage[map?.roomId ?? "weddingroom"]}>
+              <Experience loaded={loaded} />
+            </ScrollControls>
           </Canvas>
           {loaded && <UI />}
         </>

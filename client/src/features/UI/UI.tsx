@@ -32,7 +32,7 @@ export const UI = () => {
               <input
                 type="text"
                 className="w-56 border px-5 p-4 h-full rounded-full"
-                placeholder="Message..."
+                placeholder="채팅창"
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     sendChatMessage();
