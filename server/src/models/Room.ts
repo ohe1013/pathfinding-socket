@@ -31,7 +31,10 @@ export class Room {
   }
 
   addCharacter(newCharacter: Character) {
-    if (this.characters.filter((character) => character.id === newCharacter.id).length > 0) {
+    if (
+      this.characters.filter((character) => character.id === newCharacter.id)
+        .length > 0
+    ) {
       return console.error("이미 있는 character 입니다.");
     } else {
       this.characters = [...this.characters, newCharacter];
