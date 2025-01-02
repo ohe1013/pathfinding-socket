@@ -743,6 +743,19 @@
         "gridPosition": [10, 10],
         "positionY": 3,
         "walkable": true
+      },
+      {
+        "name": "door",
+        "size": [2, 2],
+        "rotation": 1,
+        "positionY": 0,
+        "gridPosition": [16, 29],
+        "walkable": true,
+        "touchEvt": {
+          "type": "switchRoom",
+          "roomId": "lobby",
+          "position": [10, 10]
+        }
       }
     ]
   }

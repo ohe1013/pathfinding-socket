@@ -68,30 +68,33 @@ export const Item = ({
       position-y={item.positionY ?? 0}
       onClick={onClickEvt}
     >
-      <primitive object={clone} rotation-y={((rotation || 0) * Math.PI) / 2}></primitive>
-      {isVirginRoad && (
+      <primitive
+        object={clone}
+        rotation-y={((rotation || 0) * Math.PI) / 2}
+      ></primitive>
+      {/* {isVirginRoad && (
         <spotLight
-          position={[0, 5, 0]}
-          angle={0.4}
-          intensity={1.5} // 밝기 약간 낮춤
+          position={[0, item.positionY ?? 5, 0]}
+          // angle={0.4}
+          intensity={5} // 밝기 약간 낮춤
           penumbra={0.3}
-          castShadow
-          shadow-mapSize-width={512} // 그림자 품질 조절
-          shadow-mapSize-height={512}
+          castShadow={false}
+          shadow-mapSize-width={256} // 그림자 품질 조절
+          shadow-mapSize-height={256}
           color={"#ffffe0"}
         />
-      )}
+      )} */}
 
       {isChandlier && (
         <pointLight
-          position={[0, 3, 0]}
-          intensity={1.2} // 밝기 약간 낮춤
-          distance={4} // 범위 조정
+          position={[0, item.positionY ?? 5, 0]}
+          intensity={19} // 밝기 약간 낮춤
+          distance={8} // 범위 조정
           decay={2}
-          color={"#ffc0cb"}
-          castShadow
-          shadow-mapSize-width={512} // 그림자 해상도 최적화
-          shadow-mapSize-height={512}
+          color={"#f9f2b4"}
+          castShadow={false}
+          shadow-mapSize-width={256} // 그림자 해상도 최적화
+          shadow-mapSize-height={256}
         />
       )}
     </group>
