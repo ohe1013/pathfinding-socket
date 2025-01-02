@@ -110,7 +110,7 @@ export const Fallguy = ({ id, ...props }: CharacterProps) => {
         .clone()
         .sub(path[0])
         .normalize()
-        .multiplyScalar(MOVEMENT_SPEED * delta);
+        .multiplyScalar(0.032);
       group.current.position.sub(direction);
       group.current.lookAt(path[0]);
       setAnimation("run");
