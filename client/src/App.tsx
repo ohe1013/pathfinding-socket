@@ -7,8 +7,11 @@ import { useEffect, useState } from "react";
 import { UI } from "./features/UI/UI";
 import { ScrollControls, useProgress } from "@react-three/drei";
 import useMapStore from "./store/map";
+import { Loader } from "./features/Loader";
+import * as THREE from "three";
+import { RoomId } from "./store/rooms";
 
-const pexel = (id) => `/images/${id}.JPG`;
+const pexel = (id: number) => `/images/${id}.JPG`;
 const images = [
   // Front
   { position: [0, 0, 1.5], rotation: [0, 0, 0], url: pexel(1) },
@@ -51,7 +54,11 @@ const images = [
 
 const roomPage = {
   weddingroom: 0,
-} as const;
+  bathroom: 1,
+  cosyroom: 2,
+  lobby: 3,
+  partyroom: 4,
+} as Record<RoomId, number>;
 
 function App() {
   const [loaded, setLoaded] = useState(false);
@@ -77,12 +84,26 @@ function App() {
       <SocketManager />
       {situation === "discovery" ? (
         <>
-          <Canvas shadows camera={{ position: [0, 8, 2], fov: 30 }}>
+          <Canvas
+            gl={(canvas) => {
+              const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+              renderer.shadowMap.enabled = true;
+              renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+              // ✨ 디버깅용 텍스처 상태 체크
+              console.log("Max Textures:", renderer.capabilities.maxTextures);
+              console.log("Max Vertex Textures:", renderer.capabilities.maxVertexTextures);
+
+              return renderer;
+            }}
+            shadows
+            camera={{ position: [0, 8, 2], fov: 30 }}
+          >
             <color attach="background" args={["#ffffff"]} />
             <ScrollControls pages={roomPage[map?.roomId ?? "weddingroom"]}>
               <Experience loaded={loaded} />
             </ScrollControls>
           </Canvas>
+          <Loader loaded={loaded} />
           {loaded && <UI />}
         </>
       ) : (

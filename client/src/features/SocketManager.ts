@@ -3,28 +3,39 @@ import useMapStore, { MapObj } from "@/store/map";
 import { RoomId } from "@/store/rooms";
 // import useRoomsStore from "@/store/rooms";
 import useUserStore from "@/store/user";
-import { useEffect, useRef } from "react";
+import { useGLTF } from "@react-three/drei";
+import { useEffect } from "react";
 import { io } from "socket.io-client";
-import { GLTF, GLTFLoader } from "three-stdlib";
-export const socket = io("https://pathfinding-socket.onrender.com");
+// import { DRACOLoader, GLTF, GLTFLoader } from "three-stdlib";
+
+export const socket = io(
+  import.meta.env.DEV ? "localhost:3009" : "https://pathfinding-socket.onrender.com"
+);
 
 export const SocketManager = () => {
   const setMapState = useMapStore((state) => state.setState);
   const mapState = useMapStore((state) => state.state);
   const setCharState = useCharactersStore((state) => state.setState);
   const setUserState = useUserStore((state) => state.setState);
-  const cache = useRef<{ [key: string]: GLTF }>({});
+  // const cache = useRef<{ [key: string]: GLTF }>({});
 
   useEffect(() => {
     if (!mapState?.items) {
       return;
     }
+    // const loader = new GLTFLoader();
+    // const draoLoader = new DRACOLoader();
+    // loader.setDRACOLoader(draoLoader);
     Object.values(mapState.items).forEach((item) => {
-      const loader = new GLTFLoader();
-      loader.load(`/models/items/${item.name}.glb`, (gltf) => {
-        cache.current[item.name] = gltf; // 캐시에 저장
-      });
+      useGLTF.preload(`/models/items/${item.name}.glb`);
     });
+    // Object.values(mapState.items).forEach((item) => {
+    //   console.log(item);
+    //   loader.load(`/models/items/${item.name}.glb`, (gltf) => {
+    //     console.log(gltf);
+    //     cache.current[item.name] = gltf; // 캐시에 저장
+    //   });
+    // });
   }, [mapState?.items]);
   useEffect(() => {
     const onConn = (item: { map: MapObj; id: string; characters: CharactersObj[] }) => {

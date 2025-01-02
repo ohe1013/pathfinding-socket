@@ -4,6 +4,7 @@ export type CharactersObj = {
   id: string;
   position: [number, number, number];
   path: [number, number, number][];
+  session: string;
 };
 
 interface CharactersStore {
@@ -21,9 +22,7 @@ const useCharactersStore = create<CharactersStore>((set) => ({
   setStateWithFilter: (newState: CharactersObj) => {
     set((state) => {
       return {
-        state: state.state!.map((char) =>
-          char.id === newState.id ? newState : char
-        ),
+        state: state.state!.map((char) => (char.id === newState.id ? newState : char)),
       };
     });
   },
