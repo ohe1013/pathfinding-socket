@@ -46,8 +46,15 @@ export const Item = ({
   }, []);
   if (!map) return null;
   return (
-    <group position={grid?.gridToVector3([...gridPosition, 0], width, height)} onClick={onClickEvt}>
-      <primitive object={clone} rotation-y={((rotation || 0) * Math.PI) / 2}></primitive>
+    <group
+      position={grid?.gridToVector3([...gridPosition, 0], width, height)}
+      position-y={item.positionY ?? 0}
+      onClick={onClickEvt}
+    >
+      <primitive
+        object={clone}
+        rotation-y={((rotation || 0) * Math.PI) / 2}
+      ></primitive>
     </group>
   );
 };

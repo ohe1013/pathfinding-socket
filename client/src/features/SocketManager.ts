@@ -6,7 +6,7 @@ import useUserStore from "@/store/user";
 import { useEffect, useRef } from "react";
 import { io } from "socket.io-client";
 import { GLTF, GLTFLoader } from "three-stdlib";
-export const socket = io("http://localhost:3009");
+export const socket = io("https://pathfinding-socket.onrender.com");
 
 export const SocketManager = () => {
   const setMapState = useMapStore((state) => state.setState);

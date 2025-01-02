@@ -1,11 +1,10 @@
 import fs from "fs/promises";
-import { Room } from "../models/Room.js";
-import { PathfindingService } from "./PathfindingService.js";
-import { Coordinate } from "../types/index.js";
-import { generateRandomPosition } from "../util/index.js";
+import { Room } from "../models/Room";
+import { PathfindingService } from "./PathfindingService";
+import { Coordinate } from "../types/index";
 
 export interface RoomData {
-  id: "lobby" | "cosyroom" | "partyroom" | "bathroom";
+  id: "lobby" | "cosyroom" | "partyroom" | "bathroom" | "weddingroom";
   name: string;
   password: string;
   items: Item[];
@@ -30,7 +29,7 @@ export class RoomService {
 
   async loadRooms() {
     try {
-      const data = await fs.readFile("data/rooms.json", "utf8");
+      const data = await fs.readFile("src/data/rooms.json", "utf8");
       const roomsData = JSON.parse(data);
 
       roomsData.forEach((roomData: RoomData) => {
@@ -52,7 +51,10 @@ export class RoomService {
     return this.rooms.get(roomId);
   }
 
-  addCharacterToRoom(roomId: Room["id"], character: Room["characters"][number]) {
+  addCharacterToRoom(
+    roomId: Room["id"],
+    character: Room["characters"][number]
+  ) {
     const room = this.getRoom(roomId);
     if (!room) return null;
 
@@ -60,7 +62,10 @@ export class RoomService {
     return room;
   }
 
-  removeCharacterFromRoom(roomId: Room["id"], characterId: Room["characters"][number]["id"]) {
+  removeCharacterFromRoom(
+    roomId: Room["id"],
+    characterId: Room["characters"][number]["id"]
+  ) {
     const room = this.getRoom(roomId);
     if (!room) return;
 

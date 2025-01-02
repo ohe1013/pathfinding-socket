@@ -17,7 +17,11 @@ export async function setupSocketHandlers(io: Server, socket: Socket) {
   if (!room) {
     return;
   }
-  const newCharcter = characterService.createCharacter(socket.id, room, [0, 20]);
+  const newCharcter = characterService.createCharacter(
+    socket.id,
+    room,
+    [0, 20]
+  );
   roomService.addCharacterToRoom(defaultRoomId, newCharcter);
   socket.join(room.id);
   socket.emit("conn", {
