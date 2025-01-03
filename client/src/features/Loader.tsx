@@ -1,7 +1,7 @@
 import { useProgress } from "@react-three/drei";
 import useMapStore from "@/store/map";
 
-export const Loader = ({ loaded }) => {
+export const Loader = ({ loaded }: { loaded: boolean }) => {
   const { progress } = useProgress();
   const items = useMapStore((map) => map.state?.items);
   return (
