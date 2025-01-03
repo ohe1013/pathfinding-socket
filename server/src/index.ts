@@ -23,7 +23,7 @@ const serverConfig = {
 };
 const io = new Server({
   cors: {
-    origin: serverConfig.clientUrl,
+    origin: "*",
   },
 });
 io.listen(Number(serverConfig.port));
