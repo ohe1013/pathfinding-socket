@@ -9,6 +9,7 @@ import { useGrid } from "@/hooks/useGrid";
 import useCharactersStore from "@/store/characters";
 import { socket } from "./SocketManager";
 import { Vector3 } from "three";
+import { useGesture } from "@use-gesture/react";
 
 export const Experience = ({ loaded }: { loaded: boolean }) => {
   const map = useMapStore((state) => state.state);
@@ -35,22 +36,45 @@ export const Experience = ({ loaded }: { loaded: boolean }) => {
     }
   }, [map?.roomId]);
   // 마우스 휠 핸들러
-  useEffect(() => {
-    const handleWheel = (event: WheelEvent) => {
-      setZoomLevel((prev) => {
-        const nextZoom = prev + event.deltaY * 0.01; // 줌 거리 조절
-        return Math.min(Math.max(nextZoom, 5), 50); // 최소 5 ~ 최대 50 제한
-      });
-    };
+  // useEffect(() => {
+  //   const handleWheel = (event: WheelEvent) => {
+  //     setZoomLevel((prev) => {
+  //       const nextZoom = prev + event.deltaY * 0.01; // 줌 거리 조절
+  //       return Math.min(Math.max(nextZoom, 5), 50); // 최소 5 ~ 최대 50 제한
+  //     });
+  //   };
 
-    // 이벤트 리스너 추가
-    window.addEventListener("wheel", handleWheel);
+  //   // 이벤트 리스너 추가
+  //   window.addEventListener("wheel", handleWheel);
 
-    // 정리(cleanup) 함수
-    return () => {
-      window.removeEventListener("wheel", handleWheel);
-    };
-  }, []); // 한 번만 실행되도록 빈 배열 사용
+  //   // 정리(cleanup) 함수
+  //   return () => {
+  //     window.removeEventListener("wheel", handleWheel);
+  //   };
+  // }, []); // 한 번만 실행되도록 빈 배열 사용
+  useGesture(
+    {
+      // 휠 스크롤 이벤트 처리
+      onWheel: ({ delta: [, dy] }) => {
+        setZoomLevel((prev) => {
+          const nextZoom = prev + dy * 0.01;
+          return Math.min(Math.max(nextZoom, 5), 50); // 줌 범위 제한
+        });
+      },
+
+      // 터치 핀치 이벤트 처리
+      onPinch: ({ offset: [d] }) => {
+        setZoomLevel((prev) => {
+          const nextZoom = prev - d * 0.02; // 핀치 동작도 비율 조절
+          return Math.min(Math.max(nextZoom, 5), 50);
+        });
+      },
+    },
+    {
+      target: window, // 이벤트 타겟 (전역 설정)
+      eventOptions: { passive: false }, // 기본 동작 차단
+    }
+  );
   useFrame(({ scene }) => {
     if (!user) {
       return;
@@ -110,7 +134,7 @@ export const Experience = ({ loaded }: { loaded: boolean }) => {
       )}
       <CameraControls
         ref={controls}
-        dollySpeed={0.5} // 줌 속도 조절
+        dollySpeed={2} // 줌 속도 조절
         minDistance={10} // 최소 거리 제한
         maxDistance={200} // 최대 거리 제한
         mouseButtons={{

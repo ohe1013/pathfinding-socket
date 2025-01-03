@@ -9,7 +9,7 @@ import { io } from "socket.io-client";
 // import { DRACOLoader, GLTF, GLTFLoader } from "three-stdlib";
 
 export const socket = io(
-  import.meta.env.DEV ? "localhost:3009" : "https://pathfinding-socket.onrender.com"
+  !import.meta.env.DEV ? "localhost:3009" : "https://pathfinding-socket.onrender.com"
 );
 
 export const SocketManager = () => {
