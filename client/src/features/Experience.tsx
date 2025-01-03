@@ -1,21 +1,14 @@
 import useMapStore from "@/store/map.ts";
-import {
-  // AccumulativeShadows,
-  CameraControls,
-  Environment,
-  Grid,
-  // RandomizedLight,
-  Sky,
-  useCursor,
-} from "@react-three/drei";
+import { CameraControls, Environment, Grid, Sky, useCursor } from "@react-three/drei";
 import { Item } from "./items/Item";
-import { Suspense, useEffect, useMemo, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { ThreeEvent, useFrame, useThree } from "@react-three/fiber";
 import useUserStore from "@/store/user";
 import { Fallguy } from "./characters/Fallguy";
 import { useGrid } from "@/hooks/useGrid";
 import useCharactersStore from "@/store/characters";
 import { socket } from "./SocketManager";
+import { Vector3 } from "three";
 
 export const Experience = ({ loaded }: { loaded: boolean }) => {
   const map = useMapStore((state) => state.state);
@@ -29,34 +22,6 @@ export const Experience = ({ loaded }: { loaded: boolean }) => {
 
   const scene = useThree((state) => state.scene);
   const user = useUserStore((state) => state.state);
-  // const accumulativeShadows = useMemo(
-  //   () => (
-  //     <AccumulativeShadows
-  //       temporal
-  //       frames={42}
-  //       alphaTest={0.85}
-  //       scale={30}
-  //       position={[0, 0, 0]}
-  //       color="pink"
-  //     >
-  //       <RandomizedLight
-  //         amount={4}
-  //         radius={9}
-  //         intensity={0.38}
-  //         ambient={0.25}
-  //         position={[15, 5, -20]}
-  //       />
-  //       <RandomizedLight
-  //         amount={4}
-  //         radius={5}
-  //         intensity={0.25}
-  //         ambient={0.55}
-  //         position={[-5, 5, -20]}
-  //       />
-  //     </AccumulativeShadows>
-  //   ),
-  //   [map?.items]
-  // );
   useEffect(() => {
     if (!loaded) {
       controls.current?.setPosition(0, 8, 2);
@@ -111,6 +76,11 @@ export const Experience = ({ loaded }: { loaded: boolean }) => {
     if (!character) return;
     socket.emit("move", grid.vector3ToGrid(character.position), grid.vector3ToGrid(e.point));
   };
+  const onCharacterMoveToItem = (position: Vector3) => {
+    const character = scene.getObjectByName(`character-${user}`);
+    if (!character) return;
+    socket.emit("move", grid.vector3ToGrid(character.position), grid.vector3ToGrid(position));
+  };
   if (!map) return null;
   if (!loaded) return null;
   return (
@@ -122,26 +92,22 @@ export const Experience = ({ loaded }: { loaded: boolean }) => {
         azimuth={0.25}
         rayleigh={0.1}
       />
-      {/* <Environment files={"/textures/venice_sunset_1k.hdr"} /> */}
-      {/* <ambientLight intensity={0.1} />
-      <directionalLight
-        position={[4, 4, -4]}
-        castShadow
-        intensity={0.35}
-        shadow-mapSize={[1024, 1024]}
-      >
-        <orthographicCamera attach={"shadow-camera"} args={[-10, 10, 10, -10]} far={20 + 2} />
-      </directionalLight> */}
-      <ambientLight intensity={0.3} /> // 전체 조명 어둡게
-      <spotLight
-        position={[0, 10, 0]} // 무대 집중 조명 위치
-        angle={0.3}
-        penumbra={0.5}
-        intensity={2.0}
-        color={"#ffffe0"}
-        castShadow
-        target-position={[0, 0, 0]} // 무대 중앙 타겟팅
-      />
+      {map.roomId !== "weddingroom" ? (
+        <>
+          <Environment files={"/textures/venice_sunset_1k.hdr"} />
+          <ambientLight intensity={0.1} />
+          <directionalLight
+            position={[4, 4, -4]}
+            castShadow
+            intensity={0.35}
+            shadow-mapSize={[1024, 1024]}
+          >
+            <orthographicCamera attach={"shadow-camera"} args={[-10, 10, 10, -10]} far={20 + 2} />
+          </directionalLight>
+        </>
+      ) : (
+        <ambientLight intensity={0.5} />
+      )}
       <CameraControls
         ref={controls}
         dollySpeed={0.5} // 줌 속도 조절
@@ -159,16 +125,13 @@ export const Experience = ({ loaded }: { loaded: boolean }) => {
           three: 64,
         }}
       />
-      {/* <Environment preset="sunset" /> */}
-      {/* <ambientLight intensity={0} /> */}
-      {/* {accumulativeShadows} */}
-      {/* <OrbitControls /> */}
       {map.items.map((item, idx) => (
         <Item
           key={`${item.name}-${idx}`}
           item={item}
           guardEvt={guardEvt}
           setGuardEvt={setGuardEvt}
+          onCharacterMoveToItem={onCharacterMoveToItem}
         />
       ))}
       <mesh

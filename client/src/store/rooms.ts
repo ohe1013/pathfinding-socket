@@ -17,6 +17,16 @@ export type Item = {
   wall?: boolean;
   walkable?: boolean;
   positionY?: number;
+  light?: {
+    type: "pointLight" | "spotLight";
+    position: [number, number, number];
+    angle: number;
+    penumbra: number;
+    intensity: number;
+    distance: number;
+    decay: number;
+    color: string;
+  };
   touchEvt?:
     | {
         type: "switchRoom";

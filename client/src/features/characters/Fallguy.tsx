@@ -27,10 +27,9 @@ interface CharacterProps {
   path?: Array<[number, number, number]>;
   id?: string;
 }
-const MOVEMENT_SPEED = 2;
 export const Fallguy = ({ id, ...props }: CharacterProps) => {
   const group = useRef<Group>(null);
-  const htmlRef = useRef<typeof Html>();
+  // const htmlRef = useRef<typeof Html>();
   const map = useMapStore((state) => state.state);
   const [chatMessage, setChatMessage] = useState("");
   const [showChatBubble, setShowChatBubble] = useState(false);
@@ -103,7 +102,7 @@ export const Fallguy = ({ id, ...props }: CharacterProps) => {
       socket.off("playerChatMessage", onChatMessage);
     };
   }, [id]);
-  useFrame((_state, delta) => {
+  useFrame(() => {
     if (!group.current) return;
     if (path?.length && group.current.position.distanceTo(path[0]) > 0.1) {
       const direction = group.current.position
