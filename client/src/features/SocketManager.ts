@@ -8,8 +8,15 @@ import { useEffect } from "react";
 import { io } from "socket.io-client";
 // import { DRACOLoader, GLTF, GLTFLoader } from "three-stdlib";
 
+// export const socket = io(
+//   import.meta.env.DEV
+//     ? "192.168.0.3:3009"
+//     : "https://pathfinding-socket.onrender.com"
+// );
 export const socket = io(
-  import.meta.env.DEV ? "localhost:3009" : "https://pathfinding-socket.onrender.com"
+  !import.meta.env.DEV
+    ? "http://ec2-43-201-146-59.ap-northeast-2.compute.amazonaws.com:3009"
+    : "https://pathfinding-socket.onrender.com"
 );
 
 export const SocketManager = () => {
@@ -38,7 +45,11 @@ export const SocketManager = () => {
     // });
   }, [mapState?.items]);
   useEffect(() => {
-    const onConn = (item: { map: MapObj; id: string; characters: CharactersObj[] }) => {
+    const onConn = (item: {
+      map: MapObj;
+      id: string;
+      characters: CharactersObj[];
+    }) => {
       setMapState(item.map);
       setUserState(item.id);
       // setCharState(item.characters);

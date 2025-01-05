@@ -42,7 +42,9 @@ export const Fallguy = ({ id, ...props }: CharacterProps) => {
   const [path, setPath] = useState<Array<THREE.Vector3>>();
   const user = useUserStore((state) => state.state);
   const grid = useGrid();
-  const newMaterial = (materials.Material as THREE.MeshStandardMaterial).clone();
+  const newMaterial = (
+    materials.Material as THREE.MeshStandardMaterial
+  ).clone();
 
   // function getRandomHexColor(): string {
   //   const randomColor = Math.floor(Math.random() * 16777215).toString(16); // 16777215는 0xFFFFFF의 10진수 값
@@ -72,7 +74,10 @@ export const Fallguy = ({ id, ...props }: CharacterProps) => {
 
   useEffect(() => {
     console.log("current User:", user, "id:", id);
-    function onPlayerMove(value: { id: string | undefined; path: [number, number, number][] }) {
+    function onPlayerMove(value: {
+      id: string | undefined;
+      path: [number, number, number][];
+    }) {
       if (value.id === id) {
         const path: THREE.Vector3[] = [];
         value.path.forEach((gridPosition: [number, number, number]) => {
@@ -83,7 +88,10 @@ export const Fallguy = ({ id, ...props }: CharacterProps) => {
     }
     let chatMessageBubbleTimeOut: number;
     const TIME_OUT = 5000;
-    function onChatMessage(value: { id: string | undefined; message: SetStateAction<string> }) {
+    function onChatMessage(value: {
+      id: string | undefined;
+      message: SetStateAction<string>;
+    }) {
       if (value.id === id) {
         console.log("current User:", user, "messageId:", value.id, "id:", id);
         setChatMessage(value.message);
@@ -102,14 +110,18 @@ export const Fallguy = ({ id, ...props }: CharacterProps) => {
       socket.off("playerChatMessage", onChatMessage);
     };
   }, [id]);
-  useFrame(() => {
+  useFrame((_, delta) => {
     if (!group.current) return;
+
     if (path?.length && group.current.position.distanceTo(path[0]) > 0.1) {
+      // 🌟 Delta 적용하여 속도 일정화
+      const speed = 3; // 속도 조절 (1초에 3유닛 이동)
       const direction = group.current.position
         .clone()
         .sub(path[0])
         .normalize()
-        .multiplyScalar(0.032);
+        .multiplyScalar(speed * delta); // delta 적용!
+
       group.current.position.sub(direction);
       group.current.lookAt(path[0]);
       setAnimation("run");

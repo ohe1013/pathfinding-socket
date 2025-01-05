@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
 type InfoObj = {
-  situation: "discovery" | "photo";
+  situation: "lobby" | "room";
 };
 
 type InfoStore = {
@@ -11,7 +11,7 @@ type InfoStore = {
 
 const useInfo = create<InfoStore>((set) => ({
   state: {
-    situation: "discovery",
+    situation: "lobby",
   },
   setState: (newState) => set({ state: newState }),
 }));
