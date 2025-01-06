@@ -1,7 +1,6 @@
 import { Canvas } from "@react-three/fiber";
 import { Experience } from "./features/Experience";
 import { SocketManager } from "./features/SocketManager";
-import useInfo from "./store/info";
 // import { PhotoRoom } from "./features/rooms/PhotoRoom";
 import { useEffect, useState } from "react";
 import { UI } from "./features/UI/UI";
@@ -64,26 +63,19 @@ function App() {
   const [loaded, setLoaded] = useState(false);
   // const { situation } = useInfo((state) => state.state);
   const map = useMapStore((state) => state.state);
-  const setInfo = useInfo((state) => state.setState);
+  const mapLoadState = useMapStore((state) => state.loadState);
+  const setMapLoadState = useMapStore((state) => state.setLoadState);
   const { progress } = useProgress();
   useEffect(() => {
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") {
-        setInfo({ situation: "discovery" });
-      }
-    });
-  }, []);
-  useEffect(() => {
-    if (progress === 100 && map?.items) {
+    if (progress === 100 && mapLoadState === "success") {
       setLoaded(true);
+      setMapLoadState("idle");
     }
-  }, [progress]);
+  }, [progress, mapLoadState]);
 
   return (
     <>
       <SocketManager />
-      {/* {situation === "discovery" ? (
-        <> */}
       <Canvas
         gl={(canvas) => {
           const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
@@ -91,10 +83,7 @@ function App() {
           renderer.shadowMap.type = THREE.PCFSoftShadowMap;
           // ✨ 디버깅용 텍스처 상태 체크
           console.log("Max Textures:", renderer.capabilities.maxTextures);
-          console.log(
-            "Max Vertex Textures:",
-            renderer.capabilities.maxVertexTextures
-          );
+          console.log("Max Vertex Textures:", renderer.capabilities.maxVertexTextures);
 
           return renderer;
         }}
@@ -109,10 +98,6 @@ function App() {
       <Loader loaded={loaded} />
       {loaded && <UI />}
     </>
-    //   ) : (
-    //     <PhotoRoom images={images} />
-    //   )}
-    // </>
   );
 }
 

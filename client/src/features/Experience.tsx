@@ -18,6 +18,7 @@ export const Experience = ({ loaded }: { loaded: boolean }) => {
   const user = useUserStore((state) => state.state);
   const info = useInfo((state) => state.state);
   useEffect(() => {
+    console.log(info.situation);
     if (!loaded) {
       controls.current?.setPosition(0, 8, 2);
       controls.current?.setTarget(0, 8, 0);
@@ -86,12 +87,7 @@ export const Experience = ({ loaded }: { loaded: boolean }) => {
     if (!character) {
       return;
     }
-    controls.current?.setTarget(
-      character.position.x,
-      0,
-      character.position.z,
-      true
-    );
+    controls.current?.setTarget(character.position.x, 0, character.position.z, true);
     controls.current?.setPosition(
       character.position.x + zoomLevel,
       character.position.y + zoomLevel,
@@ -121,11 +117,7 @@ export const Experience = ({ loaded }: { loaded: boolean }) => {
             intensity={0.35}
             shadow-mapSize={[1024, 1024]}
           >
-            <orthographicCamera
-              attach={"shadow-camera"}
-              args={[-10, 10, 10, -10]}
-              far={20 + 2}
-            />
+            <orthographicCamera attach={"shadow-camera"} args={[-10, 10, 10, -10]} far={20 + 2} />
           </directionalLight>
         </>
       ) : (
@@ -149,7 +141,6 @@ export const Experience = ({ loaded }: { loaded: boolean }) => {
         }}
       />
       {situation === "room" ? <Room /> : <Lobby />}
-      {/* <Lobby /> */}
     </>
   );
 };

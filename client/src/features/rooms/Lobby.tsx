@@ -1,13 +1,6 @@
-import {
-  AccumulativeShadows,
-  Html,
-  RandomizedLight,
-  Text3D,
-  useFont,
-  useTexture,
-} from "@react-three/drei";
+import { Html, useFont, useTexture } from "@react-three/drei";
 import { motion } from "framer-motion-3d";
-import { Suspense, useMemo, useRef } from "react";
+import { Suspense, useRef } from "react";
 // import { LobbyAvatar } from "./LobbyAvatar";
 // import { Skyscraper } from "./Skyscraper";
 let firstLoad = true;
@@ -44,23 +37,14 @@ export const Lobby = () => {
         }}
       >
         {/* <Tablet scale={0.03} rotation-x={Math.PI / 2} /> */}
-        <Html
-          position={[0, 5, 0.11]}
-          transform={!isSafari}
-          center
-          scale={0.121}
-        >
+        <Html position={[0, 5, 0.11]} transform={!isSafari} center scale={0.121}>
           <div
             className={`${
-              isSafari
-                ? "w-[310px] h-[200px] lg:w-[390px] lg:h-[200px]"
-                : "w-[390px] h-[200px]"
+              isSafari ? "w-[310px] h-[200px] lg:w-[390px] lg:h-[200px]" : "w-[390px] h-[200px]"
             }  max-w-full  overflow-hidden p-5  place-items-center pointer-events-none select-none`}
           >
             <div className="w-full overflow-hidden flex flex-col space-y-2">
-              <h1 className="text-center text-white text-xl font-bold">
-                결혼식 미리보기
-              </h1>
+              <h1 className="text-center text-white text-xl font-bold">결혼식 미리보기</h1>
             </div>
           </div>
         </Html>
