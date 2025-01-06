@@ -37,7 +37,7 @@ export const Lobby = () => {
         }}
       >
         {/* <Tablet scale={0.03} rotation-x={Math.PI / 2} /> */}
-        <Html position={[0, 5, 0.11]} transform={!isSafari} center scale={0.121}>
+        {/* <Html position={[0, 5, 0.11]} transform={!isSafari} center scale={0.121}>
           <div
             className={`${
               isSafari ? "w-[310px] h-[200px] lg:w-[390px] lg:h-[200px]" : "w-[390px] h-[200px]"
@@ -47,7 +47,7 @@ export const Lobby = () => {
               <h1 className="text-center text-white text-xl font-bold">결혼식 미리보기</h1>
             </div>
           </div>
-        </Html>
+        </Html> */}
       </motion.group>
 
       {/* <Skyscraper scale={1.32} />

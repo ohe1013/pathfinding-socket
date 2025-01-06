@@ -12,8 +12,8 @@ import { io } from "socket.io-client";
 //     : "https://pathfinding-socket.onrender.com"
 // );
 export const socket = io(
-  !import.meta.env.DEV
-    ? "http://ec2-43-201-146-59.ap-northeast-2.compute.amazonaws.com:3009"
+  import.meta.env.DEV
+    ? "localhost:3009"
     : "https://pathfinding-socket.onrender.com"
 );
 
@@ -36,7 +36,11 @@ export const SocketManager = () => {
     mapSetLoadState("success");
   }, [mapState?.items, mapSetLoadState]);
   useEffect(() => {
-    const onConn = (item: { map: MapObj; id: string; characters: CharactersObj[] }) => {
+    const onConn = (item: {
+      map: MapObj;
+      id: string;
+      characters: CharactersObj[];
+    }) => {
       setMapState(item.map);
       setUserState(item.id);
     };

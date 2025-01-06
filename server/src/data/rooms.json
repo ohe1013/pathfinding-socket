@@ -34,6 +34,44 @@
     "size": [10, 15],
     "items": [
       {
+        "name": "door",
+        "size": [2, 1],
+        "rotation": 1,
+        "positionY": 1,
+        "gridPosition": [18, 29],
+        "walkable": true,
+        "touchEvt": {
+          "type": "switchRoom",
+          "roomId": "lobby",
+          "position": [12, 12]
+        }
+      },
+      {
+        "name": "tablet",
+        "size": [2, 2],
+        "gridPosition": [1, 28],
+        "rotation": 0,
+        "positionY": 1.15,
+        "touchEvt": {
+          "type": "watchGuestBook"
+        },
+        "light": {
+          "type": "pointLight",
+          "position": [0, 3, 0],
+          "intensity": 19,
+          "distance": 8,
+          "decay": 2,
+          "color": "#f9f2b4"
+        }
+      },
+      {
+        "name": "table",
+        "size": [1, 1],
+        "gridPosition": [1, 28],
+        "positionY": 0.5,
+        "rotation": 0
+      },
+      {
         "name": "virginRoad",
         "size": [4, 20],
         "gridPosition": [8, 0],
@@ -351,19 +389,6 @@
           "distance": 8,
           "decay": 2,
           "color": "#f9f2b4"
-        }
-      },
-      {
-        "name": "door",
-        "size": [2, 1],
-        "rotation": 1,
-        "positionY": 1,
-        "gridPosition": [18, 29],
-        "walkable": true,
-        "touchEvt": {
-          "type": "switchRoom",
-          "roomId": "lobby",
-          "position": [12, 12]
         }
       }
     ]

@@ -1,7 +1,12 @@
 import { Coordinate, Size } from "@/types";
 import { create } from "zustand";
 
-export type RoomId = "lobby" | "cosyroom" | "partyroom" | "bathroom" | "weddingroom";
+export type RoomId =
+  | "lobby"
+  | "cosyroom"
+  | "partyroom"
+  | "bathroom"
+  | "weddingroom";
 
 export type RoomObj = {
   id: RoomId;
@@ -35,6 +40,9 @@ export type Item = {
       }
     | {
         type: "watchPhoto";
+      }
+    | {
+        type: "watchGuestBook";
       };
 };
 
