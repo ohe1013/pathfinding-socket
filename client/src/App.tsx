@@ -67,6 +67,7 @@ function App() {
   const setMapLoadState = useMapStore((state) => state.setLoadState);
   const { progress } = useProgress();
   useEffect(() => {
+    console.log(mapLoadState);
     if (progress === 100 && mapLoadState === "success") {
       setLoaded(true);
       setMapLoadState("idle");

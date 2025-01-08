@@ -5,15 +5,9 @@ import useUserStore from "@/store/user";
 import { useGLTF } from "@react-three/drei";
 import { useEffect } from "react";
 import { io } from "socket.io-client";
-
-// export const socket = io(
-//   import.meta.env.DEV
-//     ? "192.168.0.3:3009"
-//     : "https://pathfinding-socket.onrender.com"
-// );
 export const socket = io(
   import.meta.env.DEV
-    ? "localhost:3009"
+    ? `${window.location.hostname}:3009`
     : "https://pathfinding-socket.onrender.com"
 );
 
@@ -22,25 +16,21 @@ export const SocketManager = () => {
   const mapState = useMapStore((state) => state.state);
   const setCharState = useCharactersStore((state) => state.setState);
   const setUserState = useUserStore((state) => state.setState);
-  const mapSetLoadState = useMapStore((state) => state.setLoadState);
+  const setMapLoadState = useMapStore((state) => state.setLoadState);
   // const cache = useRef<{ [key: string]: GLTF }>({});
 
   useEffect(() => {
     if (!mapState?.items) {
       return;
     }
-    mapSetLoadState("loading");
+    setMapLoadState("loading");
     Object.values(mapState.items).forEach((item) => {
       useGLTF.preload(`/models/items/${item.name}.glb`);
     });
-    mapSetLoadState("success");
-  }, [mapState?.items, mapSetLoadState]);
+    setMapLoadState("success");
+  }, [mapState?.items, setMapLoadState]);
   useEffect(() => {
-    const onConn = (item: {
-      map: MapObj;
-      id: string;
-      characters: CharactersObj[];
-    }) => {
+    const onConn = (item: { map: MapObj; id: string; characters: CharactersObj[] }) => {
       setMapState(item.map);
       setUserState(item.id);
     };

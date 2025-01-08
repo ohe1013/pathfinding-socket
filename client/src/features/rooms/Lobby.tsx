@@ -1,4 +1,4 @@
-import { Html, useFont, useTexture } from "@react-three/drei";
+import { useFont, useTexture } from "@react-three/drei";
 import { motion } from "framer-motion-3d";
 import { Suspense, useRef } from "react";
 // import { LobbyAvatar } from "./LobbyAvatar";
@@ -62,12 +62,9 @@ export const Lobby = () => {
           rotation-y={-Math.PI / 8}
         /> */}
         <mesh
-          position-z={-1}
-          position-x={0}
-          position-y={isMobile ? -0.4 : 0}
+          position={[0, 0, -1]} // 위치 고정
           rotation-x={-Math.PI / 2}
-          // rotation-z={-Math.PI / 2}
-          scale={[5, 7, 1]}
+          scale={[5, 7, 1]} // 크기 고정
         >
           <planeGeometry args={[1, 1]} />
           <meshBasicMaterial transparent={true} map={backgroundTexture} />

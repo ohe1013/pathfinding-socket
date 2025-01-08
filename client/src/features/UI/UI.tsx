@@ -8,18 +8,8 @@ export const UI = () => {
   const map = useMapStore((map) => map.state);
   const info = useInfo((info) => info.state);
   const setInfo = useInfo((info) => info.setState);
-  const [loginInfo, setLoginInfo] = useState({ username: "", password: "" });
+  const [name, setName] = useState<string>("");
 
-  const handleLogin = () => {
-    if (loginInfo.username && loginInfo.password) {
-      // 여기에 로그인 처리를 위한 socket 또는 API 호출 로직을 작성
-      socket.emit("login", loginInfo);
-      console.log("로그인 시도", loginInfo);
-      setLoginInfo({ username: "", password: "" });
-    } else {
-      console.log("아이디와 비밀번호를 입력해주세요!");
-    }
-  };
   const switchSituation = () => {
     if (info.situation === "lobby") {
       setInfo({ situation: "room" });
@@ -35,6 +25,10 @@ export const UI = () => {
       socket.emit("chatMessage", chatMessage);
       setChatMessage("");
     }
+  };
+
+  const login = (value: string) => {
+    localStorage.setItem("name", value);
   };
 
   return (
@@ -92,12 +86,12 @@ export const UI = () => {
                     sendChatMessage();
                   }
                 }}
-                value={chatMessage}
-                onChange={(e) => setChatMessage(e.target.value)}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
               />
               <button
                 className="p-4 rounded-full bg-slate-500 text-white drop-shadow-md cursor-pointer hover:bg-slate-800 transition-colors"
-                onClick={sendChatMessage}
+                onClick={() => login(name)}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -180,7 +174,7 @@ export const UI = () => {
                     />
                   </svg>
                   <span className="absolute inset-0 flex items-center justify-center">
-                    <span className="absolute w-12 h-0.5 bg-white rotate-45"></span>
+                    <span className="absolute w-full h-0.5 bg-white rotate-45"></span>
                   </span>
                 </button>
               )}
