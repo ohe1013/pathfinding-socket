@@ -8,7 +8,7 @@ export const UI = () => {
   const map = useMapStore((map) => map.state);
   const info = useInfo((info) => info.state);
   const setInfo = useInfo((info) => info.setState);
-  const [name, setName] = useState<string>("");
+  const [name, setName] = useState<string>(localStorage.getItem("name") || "");
 
   const switchSituation = () => {
     if (info.situation === "lobby") {
@@ -83,7 +83,7 @@ export const UI = () => {
                 placeholder="이름"
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
-                    sendChatMessage();
+                    login(name);
                   }
                 }}
                 value={name}

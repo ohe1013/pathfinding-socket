@@ -20,6 +20,7 @@ export const SocketManager = () => {
   // const cache = useRef<{ [key: string]: GLTF }>({});
 
   useEffect(() => {
+    console.log(mapState?.items);
     if (!mapState?.items) {
       return;
     }
@@ -30,7 +31,11 @@ export const SocketManager = () => {
     setMapLoadState("success");
   }, [mapState?.items, setMapLoadState]);
   useEffect(() => {
-    const onConn = (item: { map: MapObj; id: string; characters: CharactersObj[] }) => {
+    const onConn = (item: {
+      map: MapObj;
+      id: string;
+      characters: CharactersObj[];
+    }) => {
       setMapState(item.map);
       setUserState(item.id);
     };

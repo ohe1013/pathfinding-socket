@@ -94,7 +94,8 @@ export const Fallguy = ({ id, ...props }: CharacterProps) => {
     }) {
       if (value.id === id) {
         console.log("current User:", user, "messageId:", value.id, "id:", id);
-        setChatMessage(value.message);
+        const name = localStorage.getItem("name");
+        setChatMessage(name + ": " + value.message);
         clearTimeout(chatMessageBubbleTimeOut);
         setShowChatBubble(true);
         chatMessageBubbleTimeOut = setTimeout(() => {

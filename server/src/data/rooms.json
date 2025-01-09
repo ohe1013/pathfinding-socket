@@ -71,6 +71,21 @@
         "positionY": 0.5,
         "rotation": 0
       },
+
+      {
+        "name": "man",
+        "size": [1, 1],
+        "gridPosition": [8, 0],
+        "rotation": 0,
+        "positionY": 0.3
+      },
+      {
+        "name": "woman",
+        "size": [1, 1],
+        "gridPosition": [9, 0],
+        "rotation": 0,
+        "positionY": 0.3
+      },
       {
         "name": "virginRoad",
         "size": [4, 20],
