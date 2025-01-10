@@ -1,6 +1,6 @@
 import useMapStore from "@/store/map";
-import { useGLTF } from "@react-three/drei";
-import { useEffect, useMemo } from "react";
+import { useAnimations, useGLTF } from "@react-three/drei";
+import { useEffect, useMemo, useRef } from "react";
 import { SkeletonUtils } from "three-stdlib";
 import { socket } from "../SocketManager";
 import { Item as ItemProps } from "@/store/rooms";
@@ -20,6 +20,27 @@ export const Item = ({
   const { name, gridPosition, size, rotation } = item;
   const map = useMapStore((state) => state.state);
   const { scene } = useGLTF(`/models/items/${name}.glb`, true);
+  const objectRef = useRef(null);
+  const animation = useGLTF(`/animations/aerobic.glb`);
+  const actions = useAnimations(animation.animations, objectRef);
+  useEffect(() => {
+    if ((name === "woman" || name === "man") && actions) {
+      const action = actions.actions["aerobic-dance_315220|A|aerobic-dance_315220"];
+      if (action) {
+        const targetFPS = 0.1; // 목표 프레임 속도
+        const clipDuration = action._clip.duration; // 애니메이션 클립의 총 길이(초 단위)
+
+        // timeScale을 목표 FPS에 맞게 설정
+        const timeScale = targetFPS / (1 / clipDuration);
+        action.reset().fadeIn(0.1).play();
+        action.timeScale = timeScale;
+
+        console.log("Calculated timeScale:", timeScale, "Action:", action);
+      } else {
+        console.error("애니메이션을 찾을 수 없습니다.");
+      }
+    }
+  }, [actions, name]);
   const clone = useMemo(() => SkeletonUtils.clone(scene), [scene]);
   const width = rotation === 1 || rotation === 3 ? size[1] : size[0];
   const height = rotation === 1 || rotation === 3 ? size[0] : size[1];
@@ -52,6 +73,7 @@ export const Item = ({
       onClick={onClickEvt}
     >
       <primitive
+        ref={objectRef}
         object={clone}
         rotation-y={((rotation || 0) * Math.PI) / 2}
       ></primitive>

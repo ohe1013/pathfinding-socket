@@ -10,6 +10,7 @@ export const socket = io(
     ? `${window.location.hostname}:3009`
     : "https://pathfinding-socket.onrender.com"
 );
+console.log(socket);
 
 export const SocketManager = () => {
   const setMapState = useMapStore((state) => state.setState);
@@ -31,11 +32,7 @@ export const SocketManager = () => {
     setMapLoadState("success");
   }, [mapState?.items, setMapLoadState]);
   useEffect(() => {
-    const onConn = (item: {
-      map: MapObj;
-      id: string;
-      characters: CharactersObj[];
-    }) => {
+    const onConn = (item: { map: MapObj; id: string; characters: CharactersObj[] }) => {
       setMapState(item.map);
       setUserState(item.id);
     };

@@ -77,14 +77,30 @@
         "size": [1, 1],
         "gridPosition": [8, 0],
         "rotation": 0,
-        "positionY": 0.3
+        "positionY": 0.3,
+        "light": {
+          "type": "pointLight",
+          "position": [0, 3, 0],
+          "intensity": 19,
+          "distance": 8,
+          "decay": 2,
+          "color": "#f9f2b4"
+        }
       },
       {
         "name": "woman",
         "size": [1, 1],
         "gridPosition": [9, 0],
         "rotation": 0,
-        "positionY": 0.3
+        "positionY": 0.3,
+        "light": {
+          "type": "pointLight",
+          "position": [0, 3, 0],
+          "intensity": 19,
+          "distance": 8,
+          "decay": 2,
+          "color": "#f9f2b4"
+        }
       },
       {
         "name": "virginRoad",
