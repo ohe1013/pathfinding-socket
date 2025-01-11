@@ -30,7 +30,7 @@ export const Item = ({
         actions.actions["aerobic-dance_315220|A|aerobic-dance_315220"];
       if (action) {
         const targetFPS = 0.1; // 목표 프레임 속도
-        const clipDuration = action._clip.duration; // 애니메이션 클립의 총 길이(초 단위)
+        const clipDuration = action.getClip().duration; // 애니메이션 클립의 총 길이(초 단위)
 
         // timeScale을 목표 FPS에 맞게 설정
         const timeScale = targetFPS / (1 / clipDuration);
