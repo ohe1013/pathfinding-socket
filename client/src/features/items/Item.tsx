@@ -19,13 +19,15 @@ export const Item = ({
 }) => {
   const { name, gridPosition, size, rotation } = item;
   const map = useMapStore((state) => state.state);
-  const { scene } = useGLTF(`/models/items/${name}.glb`, true);
+  const { scene, animations } = useGLTF(`/models/items/${name}.glb`, true);
   const objectRef = useRef(null);
   const animation = useGLTF(`/animations/aerobic.glb`);
   const actions = useAnimations(animation.animations, objectRef);
   useEffect(() => {
     if ((name === "woman" || name === "man") && actions) {
-      const action = actions.actions["aerobic-dance_315220|A|aerobic-dance_315220"];
+      console.log(animations);
+      const action =
+        actions.actions["aerobic-dance_315220|A|aerobic-dance_315220"];
       if (action) {
         const targetFPS = 0.1; // 목표 프레임 속도
         const clipDuration = action._clip.duration; // 애니메이션 클립의 총 길이(초 단위)
