@@ -6,6 +6,7 @@ import useUserStore from "@/store/user";
 import { Lobby } from "./rooms/Lobby";
 import Room from "./rooms/Room";
 import useInfo from "@/store/info";
+import GuestTablet from "./rooms/GuestTablet";
 
 export const Experience = ({ loaded }: { loaded: boolean }) => {
   const map = useMapStore((state) => state.state);
@@ -33,6 +34,12 @@ export const Experience = ({ loaded }: { loaded: boolean }) => {
       // controls.current?.setPosition(0, 6, 2);
       // controls.current?.setTarget(0, 6, 0);
       // controls.current?.setPosition(0, 0, 5, true);
+      // controls.current?.setTarget(0, 0, 0, true);
+      return;
+    }
+    if (info.situation === "guestbook") {
+      resetCamera();
+      // controls.current?.setPosition(0, 0, 2, true);
       // controls.current?.setTarget(0, 0, 0, true);
       return;
     }
@@ -88,10 +95,7 @@ export const Experience = ({ loaded }: { loaded: boolean }) => {
     };
 
     // 거리 계산 함수
-    const getDistance = (
-      touch1: TouchEvent["touches"][0],
-      touch2: TouchEvent["touches"][1]
-    ) => {
+    const getDistance = (touch1: TouchEvent["touches"][0], touch2: TouchEvent["touches"][1]) => {
       const dx = touch1.clientX - touch2.clientX;
       const dy = touch1.clientY - touch2.clientY;
       return Math.sqrt(dx * dx + dy * dy); // 피타고라스 계산
@@ -118,12 +122,7 @@ export const Experience = ({ loaded }: { loaded: boolean }) => {
     if (!character) {
       return;
     }
-    controls.current?.setTarget(
-      character.position.x,
-      0,
-      character.position.z,
-      true
-    );
+    controls.current?.setTarget(character.position.x, 0, character.position.z, true);
     controls.current?.setPosition(
       character.position.x + zoomLevel,
       character.position.y + zoomLevel,
@@ -153,11 +152,7 @@ export const Experience = ({ loaded }: { loaded: boolean }) => {
             intensity={0.35}
             shadow-mapSize={[1024, 1024]}
           >
-            <orthographicCamera
-              attach={"shadow-camera"}
-              args={[-10, 10, 10, -10]}
-              far={20 + 2}
-            />
+            <orthographicCamera attach={"shadow-camera"} args={[-10, 10, 10, -10]} far={20 + 2} />
           </directionalLight>
         </>
       ) : (
@@ -180,7 +175,9 @@ export const Experience = ({ loaded }: { loaded: boolean }) => {
           three: 0,
         }}
       />
-      {situation === "room" ? <Room /> : <Lobby />}
+      {situation === "room" && <Room />}
+      {situation === "lobby" && <Lobby />}
+      {situation === "guestbook" && <GuestTablet />}
     </>
   );
 };
