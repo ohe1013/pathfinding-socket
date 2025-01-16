@@ -15,7 +15,6 @@ export const Experience = ({ loaded }: { loaded: boolean }) => {
   const [zoomLevel, setZoomLevel] = useState(8); // 기본 줌 거리 설정
   const prevDistance = useRef(0); // 이전 두 손가락 사이의 거리
   const { situation } = useInfo((state) => state.state);
-  console.log(situation);
 
   const user = useUserStore((state) => state.state);
   const info = useInfo((state) => state.state);
@@ -31,16 +30,11 @@ export const Experience = ({ loaded }: { loaded: boolean }) => {
     }
     if (info.situation === "lobby") {
       resetCamera();
-      // controls.current?.setPosition(0, 6, 2);
-      // controls.current?.setTarget(0, 6, 0);
-      // controls.current?.setPosition(0, 0, 5, true);
-      // controls.current?.setTarget(0, 0, 0, true);
       return;
     }
     if (info.situation === "guestbook") {
-      resetCamera();
-      // controls.current?.setPosition(0, 0, 2, true);
-      // controls.current?.setTarget(0, 0, 0, true);
+      controls.current?.setPosition(0, 0, 2, true);
+      controls.current?.setTarget(0, 0.2, 0, true);
       return;
     }
     if (map?.roomId) {

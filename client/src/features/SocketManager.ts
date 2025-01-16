@@ -8,7 +8,13 @@ import { io } from "socket.io-client";
 export const socket = io(
   import.meta.env.DEV
     ? `${window.location.hostname}:3009`
-    : "https://pathfinding-socket.onrender.com"
+    : "https://pathfinding-socket.onrender.com",
+  {
+    transports: ["websocket"],
+    reconnection: true, // 재연결 활성화
+    reconnectionAttempts: 10, // 재연결 시도 횟수
+    reconnectionDelay: 1000, // 재연결 간 지연(ms)
+  }
 );
 console.log(socket);
 
@@ -29,10 +35,13 @@ export const SocketManager = () => {
     Object.values(mapState.items).forEach((item) => {
       useGLTF.preload(`/models/items/${item.name}.glb`);
     });
+    console.log("success");
     setMapLoadState("success");
   }, [mapState?.items, setMapLoadState]);
   useEffect(() => {
+    console.log("effect");
     const onConn = (item: { map: MapObj; id: string; characters: CharactersObj[] }) => {
+      console.log("conn");
       setMapState(item.map);
       setUserState(item.id);
     };
