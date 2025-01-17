@@ -16,7 +16,6 @@ export const socket = io(
     reconnectionDelay: 1000, // 재연결 간 지연(ms)
   }
 );
-console.log(socket);
 
 export const SocketManager = () => {
   const setMapState = useMapStore((state) => state.setState);
@@ -27,7 +26,6 @@ export const SocketManager = () => {
   // const cache = useRef<{ [key: string]: GLTF }>({});
 
   useEffect(() => {
-    console.log(mapState?.items);
     if (!mapState?.items) {
       return;
     }
@@ -35,13 +33,10 @@ export const SocketManager = () => {
     Object.values(mapState.items).forEach((item) => {
       useGLTF.preload(`/models/items/${item.name}.glb`);
     });
-    console.log("success");
     setMapLoadState("success");
   }, [mapState?.items, setMapLoadState]);
   useEffect(() => {
-    console.log("effect");
     const onConn = (item: { map: MapObj; id: string; characters: CharactersObj[] }) => {
-      console.log("conn");
       setMapState(item.map);
       setUserState(item.id);
     };

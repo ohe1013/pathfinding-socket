@@ -20,8 +20,12 @@ export const Experience = ({ loaded }: { loaded: boolean }) => {
   const info = useInfo((state) => state.state);
   useEffect(() => {
     const resetCamera = () => {
-      controls.current?.setPosition(0, 10, 5, true); // 위치 초기화
-      controls.current?.setTarget(0, 0, 0, true); // 타겟 초기화
+      controls.current?.setPosition(0, 8, 2);
+      controls.current?.setTarget(0, 8, 0);
+      controls.current?.setPosition(0, 0, 2, true);
+      controls.current?.setTarget(0, 0, 0, true);
+      // controls.current?.setPosition(0, 10, 5, true); // 위치 초기화
+      // controls.current?.setTarget(0, 0, 0, true); // 타겟 초기화
     };
     if (!loaded) {
       controls.current?.setPosition(0, 8, 2);
@@ -33,8 +37,9 @@ export const Experience = ({ loaded }: { loaded: boolean }) => {
       return;
     }
     if (info.situation === "guestbook") {
-      controls.current?.setPosition(0, 0, 2, true);
-      controls.current?.setTarget(0, 0.2, 0, true);
+      resetCamera();
+      // controls.current?.setPosition(0, 0, 2, true);
+      // controls.current?.setTarget(0, 0.2, 0, true);
       return;
     }
     if (map?.roomId) {
@@ -42,7 +47,7 @@ export const Experience = ({ loaded }: { loaded: boolean }) => {
       controls.current?.setTarget(0, 10, 0);
       return;
     }
-  }, [map?.roomId, info.situation]);
+  }, [map?.roomId, info.situation, loaded]);
   // 마우스 휠 핸들러
   useEffect(() => {
     const handleWheel = (event: WheelEvent) => {

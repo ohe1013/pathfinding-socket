@@ -1,8 +1,6 @@
 import { useFont, useTexture } from "@react-three/drei";
 import { motion } from "framer-motion-3d";
 import { Suspense, useRef } from "react";
-// import { LobbyAvatar } from "./LobbyAvatar";
-// import { Skyscraper } from "./Skyscraper";
 let firstLoad = true;
 export const Lobby = () => {
   const isMobile = window.innerWidth < 1024;
@@ -62,9 +60,12 @@ export const Lobby = () => {
           rotation-y={-Math.PI / 8}
         /> */}
         <mesh
-          position={[0, 0, -1]} // 위치 고정
+          // position={[0, 0, -1]} // 위치 고정
+          // rotation-x={-Math.PI / 2}
+          // scale={[5, 7, 1]} // 크기 고정
+          position={[0, 0, -1]} // 카메라 타겟과 동일하게 조정
           rotation-x={-Math.PI / 2}
-          scale={[5, 7, 1]} // 크기 고정
+          scale={[5, 7, 1]} // 크기는 유지
         >
           <planeGeometry args={[1, 1]} />
           <meshBasicMaterial transparent={true} map={backgroundTexture} />
