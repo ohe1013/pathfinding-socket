@@ -13,7 +13,7 @@ export const Lobby = () => {
   const backgroundTexture = useTexture("images/bg3.jpg"); // 경로를 적절히 변경
 
   return (
-    <group position-y={-1.5}>
+    <group position-y={0.5}>
       <motion.group
         ref={tablet}
         scale={isMobile ? 0.18 : 0.22}
@@ -33,39 +33,12 @@ export const Lobby = () => {
         onAnimationComplete={() => {
           firstLoad = false;
         }}
-      >
-        {/* <Tablet scale={0.03} rotation-x={Math.PI / 2} /> */}
-        {/* <Html position={[0, 5, 0.11]} transform={!isSafari} center scale={0.121}>
-          <div
-            className={`${
-              isSafari ? "w-[310px] h-[200px] lg:w-[390px] lg:h-[200px]" : "w-[390px] h-[200px]"
-            }  max-w-full  overflow-hidden p-5  place-items-center pointer-events-none select-none`}
-          >
-            <div className="w-full overflow-hidden flex flex-col space-y-2">
-              <h1 className="text-center text-white text-xl font-bold">결혼식 미리보기</h1>
-            </div>
-          </div>
-        </Html> */}
-      </motion.group>
+      ></motion.group>
 
-      {/* <Skyscraper scale={1.32} />
-        <Skyscraper scale={1} position-x={-3} position-z={-1} />
-        <Skyscraper scale={0.8} position-x={3} position-z={-0.5} /> */}
-      {/* {accumulativeShadows} */}
       <Suspense>
-        {/* <LobbyAvatar
-          position-z={-1}
-          position-x={0.5 * goldenRatio}
-          position-y={isMobile ? -0.4 : 0}
-          rotation-y={-Math.PI / 8}
-        /> */}
         <mesh
-          // position={[0, 0, -1]} // 위치 고정
-          // rotation-x={-Math.PI / 2}
-          // scale={[5, 7, 1]} // 크기 고정
-          position={[0, 0, -1]} // 카메라 타겟과 동일하게 조정
-          rotation-x={-Math.PI / 2}
-          scale={[5, 7, 1]} // 크기는 유지
+          position={[0, 0, -5]} // 카메라 타겟과 동일하게 조정
+          scale={3} // 크기는 유지
         >
           <planeGeometry args={[1, 1]} />
           <meshBasicMaterial transparent={true} map={backgroundTexture} />

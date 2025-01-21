@@ -53,7 +53,8 @@
         "rotation": 0,
         "positionY": 1.15,
         "touchEvt": {
-          "type": "watchGuestBook"
+          "type": "switchSituation",
+          "situation" : "guestBook"
         },
         "light": {
           "type": "pointLight",
@@ -102,6 +103,18 @@
           "color": "#f9f2b4"
         }
       },
+      
+      {
+        "name": "speaker",
+        "size": [1, 1],
+        "gridPosition": [9, 0],
+        "rotation": 0,
+        "positionY": 2,
+        "sound" : {
+
+        }
+      },
+
       {
         "name": "virginRoad",
         "size": [4, 20],

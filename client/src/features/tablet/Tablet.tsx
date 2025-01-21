@@ -68,32 +68,52 @@ export function Tablet(props: JSX.IntrinsicElements["group"]) {
       }
     });
   }, []);
+  useEffect(() => {
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        setInfoState({ situation: "room" });
+      }
+    });
+  });
   return (
     <group {...props} dispose={null}>
       <mesh geometry={nodes.ChamferBox003.geometry} material={materials["04___Default"]} />
       <mesh geometry={nodes.ChamferCyl001.geometry} material={materials["03___Default"]} />
-      <mesh geometry={nodes.ChamferBox001_1.geometry} material={materials["02___Default"]}>
+      <mesh geometry={nodes.ChamferBox001_1.geometry} material={materials["02___Default"]}></mesh>
+      <mesh geometry={nodes.ChamferBox001_1_1.geometry} material={materials["01___Default"]}></mesh>
+      <mesh geometry={nodes.ChamferBox001_1_2.geometry} material={materials["04___Default"]} />
+      <mesh
+        ref={meshRef}
+        onClick={onClick}
+        geometry={nodes.ChamferBox002_1.geometry}
+        material={materials["01___Default"]}
+      >
         <Html
           style={{
             width: "330px",
-            height: "406px",
+            height: "384px",
             borderRadius: "3px",
             overflowY: "auto",
             padding: "0",
+            left: "-165px",
+            top: "-233px",
+            overflowX: "hidden",
           }}
-          position={[0, 4, 0]}
+          position={[0, 4, -4]}
           rotation-x={Math.PI / -2}
           occlude
+          scale={5}
+          transform
         >
           <div
             style={{
-              padding: "10px",
               width: "330px",
-              height: "432px",
+              height: "384px",
             }}
             onPointerDown={(e) => e.stopPropagation()}
           >
             <h1 className="text-center text-white text-2xl font-bold">방명록</h1>
+            <button className="absolute right-5 top-0">글쓰기</button>
             <div
               className={` max-w-full  overflow-y-auto p-5  place-items-center pointer-events-none select-none`}
             >
@@ -112,14 +132,6 @@ export function Tablet(props: JSX.IntrinsicElements["group"]) {
           </div>
         </Html>
       </mesh>
-      <mesh geometry={nodes.ChamferBox001_1_1.geometry} material={materials["01___Default"]} />
-      <mesh geometry={nodes.ChamferBox001_1_2.geometry} material={materials["04___Default"]} />
-      <mesh
-        ref={meshRef}
-        onClick={onClick}
-        geometry={nodes.ChamferBox002_1.geometry}
-        material={materials["01___Default"]}
-      ></mesh>
       <mesh
         onClick={onClick}
         geometry={nodes.ChamferBox002_1_1.geometry}

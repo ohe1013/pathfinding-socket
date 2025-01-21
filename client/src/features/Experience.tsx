@@ -1,5 +1,5 @@
 import useMapStore from "@/store/map.ts";
-import { CameraControls, Environment, Sky } from "@react-three/drei";
+import { CameraControls, Environment, OrbitControls, Sky } from "@react-three/drei";
 import { useEffect, useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
 import useUserStore from "@/store/user";
@@ -141,7 +141,22 @@ export const Experience = ({ loaded }: { loaded: boolean }) => {
         azimuth={0.25}
         rayleigh={0.1}
       />
-      {map.roomId !== "weddingroom" ? (
+      {situation === "room" && map.roomId === "weddingroom" && <ambientLight intensity={0.5} />}
+      {situation === "guestbook" && (
+        <>
+          <Environment files={"/textures/venice_sunset_1k.hdr"} />
+          <ambientLight intensity={0.1} />
+          <directionalLight
+            position={[4, 4, -4]}
+            castShadow
+            intensity={0.35}
+            shadow-mapSize={[1024, 1024]}
+          >
+            <OrbitControls />
+          </directionalLight>
+        </>
+      )}
+      {situation !== "guestbook" && map.roomId !== "weddingroom" && (
         <>
           <Environment files={"/textures/venice_sunset_1k.hdr"} />
           <ambientLight intensity={0.1} />
@@ -154,8 +169,6 @@ export const Experience = ({ loaded }: { loaded: boolean }) => {
             <orthographicCamera attach={"shadow-camera"} args={[-10, 10, 10, -10]} far={20 + 2} />
           </directionalLight>
         </>
-      ) : (
-        <ambientLight intensity={0.5} />
       )}
       <CameraControls
         ref={controls}

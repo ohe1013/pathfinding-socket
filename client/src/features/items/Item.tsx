@@ -1,5 +1,5 @@
 import useMapStore from "@/store/map";
-import { useAnimations, useGLTF } from "@react-three/drei";
+import { PositionalAudio, useAnimations, useGLTF } from "@react-three/drei";
 import { useEffect, useMemo, useRef } from "react";
 import { SkeletonUtils } from "three-stdlib";
 import { socket } from "../SocketManager";
@@ -26,8 +26,7 @@ export const Item = ({
   useEffect(() => {
     if ((name === "woman" || name === "man") && actions) {
       console.log(animations);
-      const action =
-        actions.actions["aerobic-dance_315220|A|aerobic-dance_315220"];
+      const action = actions.actions["aerobic-dance_315220|A|aerobic-dance_315220"];
       if (action) {
         const targetFPS = 0.1; // 목표 프레임 속도
         const clipDuration = action.getClip().duration; // 애니메이션 클립의 총 길이(초 단위)
@@ -56,8 +55,8 @@ export const Item = ({
           position: item.touchEvt.position,
         });
       }
-      if (item.touchEvt.type === "watchGuestBook") {
-        setInfoState({ situation: "guestbook" });
+      if (item.touchEvt.type === "switchSituation") {
+        setInfoState({ situation: item.touchEvt.situation });
       }
     }
   };
@@ -118,4 +117,8 @@ const renderLight = (item: ItemProps) => {
     default:
       return null;
   }
+};
+
+const renderSound = (item : ItemProps) => {
+  if ( item.)
 };

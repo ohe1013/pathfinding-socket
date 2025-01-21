@@ -1,7 +1,9 @@
 import { create } from "zustand";
 
+export type Situation = "lobby" | "room" | "guestbook";
+
 type InfoObj = {
-  situation: "lobby" | "room" | "guestbook";
+  situation: Situation;
 };
 
 type InfoStore = {

@@ -1,12 +1,8 @@
 import { Coordinate, Size } from "@/types";
 import { create } from "zustand";
+import { Situation } from "./info";
 
-export type RoomId =
-  | "lobby"
-  | "cosyroom"
-  | "partyroom"
-  | "bathroom"
-  | "weddingroom";
+export type RoomId = "lobby" | "cosyroom" | "partyroom" | "bathroom" | "weddingroom";
 
 export type RoomObj = {
   id: RoomId;
@@ -32,6 +28,9 @@ export type Item = {
     decay: number;
     color: string;
   };
+  sound?: {
+    
+  }
   touchEvt?:
     | {
         type: "switchRoom";
@@ -42,7 +41,8 @@ export type Item = {
         type: "watchPhoto";
       }
     | {
-        type: "watchGuestBook";
+        type: "switchSituation";
+        situation: Situation;
       };
 };
 
