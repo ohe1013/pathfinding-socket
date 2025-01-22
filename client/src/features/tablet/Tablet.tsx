@@ -5,6 +5,7 @@ import { useThree } from "@react-three/fiber";
 import { onValue, orderByChild, query, ref } from "firebase/database";
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
+import Guestbook from "./Guestbook";
 type GLTFResult = {
   nodes: {
     [key: string]: THREE.Mesh; // 모든 노드가 THREE.Mesh라고 가정
@@ -95,8 +96,6 @@ export function Tablet(props: JSX.IntrinsicElements["group"]) {
             borderRadius: "3px",
             overflowY: "auto",
             padding: "0",
-            left: "-165px",
-            top: "-233px",
             overflowX: "hidden",
           }}
           position={[0, 4, -4]}
@@ -117,17 +116,7 @@ export function Tablet(props: JSX.IntrinsicElements["group"]) {
             <div
               className={` max-w-full  overflow-y-auto p-5  place-items-center pointer-events-none select-none`}
             >
-              <div className="w-full overflow-y-auto flex flex-col space-y-2">
-                {posts.map((post) => (
-                  <div
-                    key={post.id}
-                    className="p-4 rounded-lg bg-transparent bg-opacity-70 text-white hover:bg-slate-950 transition-colors cursor-pointer pointer-events-auto"
-                  >
-                    <p className="text-uppercase font-bold text-lg">{post.name}</p>
-                    <div className="flex items-center gap-2">{post.content}</div>
-                  </div>
-                ))}
-              </div>
+              <Guestbook posts={posts} />
             </div>
           </div>
         </Html>

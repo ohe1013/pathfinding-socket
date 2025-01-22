@@ -81,7 +81,7 @@ export const Fallguy = ({ id, ...props }: CharacterProps) => {
         setPath(path);
       }
     }
-    let chatMessageBubbleTimeOut: number;
+    let chatMessageBubbleTimeOut: NodeJS.Timeout;
     const TIME_OUT = 5000;
     function onChatMessage(value: { id: string | undefined; message: SetStateAction<string> }) {
       if (value.id === id) {

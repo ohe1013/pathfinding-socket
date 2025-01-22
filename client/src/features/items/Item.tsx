@@ -79,6 +79,7 @@ export const Item = ({
         rotation-y={((rotation || 0) * Math.PI) / 2}
       ></primitive>
       {renderLight(item)}
+      {renderSound(item)}
     </group>
   );
 };
@@ -119,6 +120,16 @@ const renderLight = (item: ItemProps) => {
   }
 };
 
-const renderSound = (item : ItemProps) => {
-  if ( item.)
+const renderSound = (item: ItemProps) => {
+  if (item.sound) {
+    console.log(item.sound);
+    return (
+      <PositionalAudio
+        url={"./fire_work.mp3"}
+        distance={20}
+        loop={true}
+        autoplay={true}
+      ></PositionalAudio>
+    );
+  }
 };

@@ -54,7 +54,7 @@
         "positionY": 1.15,
         "touchEvt": {
           "type": "switchSituation",
-          "situation" : "guestBook"
+          "situation": "guestbook"
         },
         "light": {
           "type": "pointLight",
@@ -103,15 +103,15 @@
           "color": "#f9f2b4"
         }
       },
-      
+
       {
         "name": "speaker",
         "size": [1, 1],
         "gridPosition": [9, 0],
         "rotation": 0,
-        "positionY": 2,
-        "sound" : {
-
+        "positionY": 4,
+        "sound": {
+          "src": "/fire_work.mp3"
         }
       },
 

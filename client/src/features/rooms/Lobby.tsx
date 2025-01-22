@@ -37,7 +37,7 @@ export const Lobby = () => {
 
       <Suspense>
         <mesh
-          position={[0, 0, -5]} // 카메라 타겟과 동일하게 조정
+          position={[0, -0.3, -3]} // 카메라 타겟과 동일하게 조정
           scale={3} // 크기는 유지
         >
           <planeGeometry args={[1, 1]} />

@@ -3,6 +3,9 @@ import { motion } from "framer-motion";
 import { socket } from "../SocketManager";
 import useMapStore from "@/store/map";
 import useInfo from "@/store/info";
+import { push, ref, set } from "firebase/database";
+import { realtimeDb } from "@/firebase/firebase";
+import { ToastContainer } from "react-toastify";
 
 export const UI = () => {
   const map = useMapStore((map) => map.state);
@@ -18,11 +21,23 @@ export const UI = () => {
     }
   };
 
-  const ref = useRef(null);
+  const motionRef = useRef(null);
   const [chatMessage, setChatMessage] = useState("");
+
+  const postChatMessage = (name: string, chatMessage: string) => {
+    const postRef = ref(realtimeDb, "chat");
+    const newPostRef = push(postRef);
+    set(newPostRef, {
+      name: name,
+      message: chatMessage,
+      timestamp: Date.now(),
+    });
+  };
+
   const sendChatMessage = () => {
     if (chatMessage.length > 0) {
       socket.emit("chatMessage", chatMessage);
+      postChatMessage(name, chatMessage);
       setChatMessage("");
     }
   };
@@ -34,7 +49,7 @@ export const UI = () => {
   return (
     <>
       <motion.div
-        ref={ref}
+        ref={motionRef}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5, delay: 0.5 }}
@@ -181,6 +196,7 @@ export const UI = () => {
             </div>
           )}
         </div>
+        <ToastContainer></ToastContainer>
       </motion.div>
     </>
   );
