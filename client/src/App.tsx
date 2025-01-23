@@ -85,7 +85,6 @@ function App() {
           // ✨ 디버깅용 텍스처 상태 체크
           console.log("Max Textures:", renderer.capabilities.maxTextures);
           console.log("Max Vertex Textures:", renderer.capabilities.maxVertexTextures);
-
           return renderer;
         }}
         shadows

@@ -6,6 +6,8 @@ import { onValue, orderByChild, query, ref } from "firebase/database";
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import Guestbook from "./Guestbook";
+import { PostFormModal } from "./GuestForm";
+import { postValidation } from "@/hooks/useForm";
 type GLTFResult = {
   nodes: {
     [key: string]: THREE.Mesh; // 모든 노드가 THREE.Mesh라고 가정
@@ -29,7 +31,8 @@ export function Tablet(props: JSX.IntrinsicElements["group"]) {
   };
   const meshRef = useRef<THREE.Mesh>(null);
   const { camera, gl } = useThree(); // 카메라와 렌더러 가져오기
-
+  const [isFormModalOpen, setIsFormModalOpen] = useState<boolean>(true);
+  const handleFormModalClose = () => setIsFormModalOpen(false);
   useEffect(() => {
     if (meshRef.current) {
       const worldPosition = new THREE.Vector3();
@@ -97,6 +100,7 @@ export function Tablet(props: JSX.IntrinsicElements["group"]) {
             overflowY: "auto",
             padding: "0",
             overflowX: "hidden",
+            // pointerEvents: "auto",
           }}
           position={[0, 4, -4]}
           rotation-x={Math.PI / -2}
@@ -112,12 +116,18 @@ export function Tablet(props: JSX.IntrinsicElements["group"]) {
             onPointerDown={(e) => e.stopPropagation()}
           >
             <h1 className="text-center text-white text-2xl font-bold">방명록</h1>
-            <button className="absolute right-5 top-0">글쓰기</button>
-            <div
-              className={` max-w-full  overflow-y-auto p-5  place-items-center pointer-events-none select-none`}
-            >
-              <Guestbook posts={posts} />
+            <button onClick={() => setIsFormModalOpen(true)} className="absolute right-5 top-0">
+              글쓰기
+            </button>
+            <div className={` max-w-full  overflow-y-auto p-5  place-items-center  select-none`}>
+              <PostFormModal
+                isOpen={isFormModalOpen}
+                onClose={handleFormModalClose}
+                onFormValid={postValidation}
+                type="insert"
+              />
             </div>
+            {!isFormModalOpen && <Guestbook posts={posts} />}
           </div>
         </Html>
       </mesh>

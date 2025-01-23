@@ -1,11 +1,9 @@
 import React, { useState } from "react";
-import nonPrivateImage from "@/assets/images/non-private-icon.png";
-import privateImage from "@/assets/images/private-icon.png";
 import { Heading } from "../components/Heading";
 import { Button } from "../components/Button";
 import useForm from "@/hooks/useForm";
 import { GuestBookPostForm } from "@/types";
-import { useAddPost, useRemovePost, useUpdatePost } from "@/hooks/useGuestBook";
+import { addPost, deletePost, updatePost } from "@/hooks/useGuestBook";
 
 interface PostFormModalProps {
   isOpen: boolean;
@@ -27,25 +25,26 @@ export const PostFormModal: React.FC<PostFormModalProps> = ({
     timestamp: 0,
   },
 }) => {
-  const addPostMutation = useAddPost();
-  const updatePostMutation = useUpdatePost();
-  const deletePostMutation = useRemovePost();
-  const mutation =
-    type === "insert"
-      ? addPostMutation
-      : type === "delete"
-      ? deletePostMutation
-      : updatePostMutation;
-
   const [showPassword, setShowPassword] = useState(true);
+  const [loading, setLoading] = useState(false); // 로딩 상태 관리
   const { handleChange, handleSubmit, values, errors, clear } = useForm<GuestBookPostForm>({
     initialValues,
-    onSubmit: (values: GuestBookPostForm) => {
-      mutation.mutate(values, {
-        onSuccess: () => {
-          onClose();
-        },
-      });
+    onSubmit: async (values: GuestBookPostForm) => {
+      setLoading(true);
+      try {
+        if (type === "insert") {
+          await addPost(values); // 새 게시글 추가
+        } else if (type === "update") {
+          await updatePost(values); // 게시글 수정
+        } else if (type === "delete") {
+          await deletePost(values.id!, values.password); // 게시글 삭제
+        }
+        onClose();
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
     },
     validate: onFormValid,
   });
@@ -54,18 +53,19 @@ export const PostFormModal: React.FC<PostFormModalProps> = ({
 
   return (
     <div
-      className={`fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 ${
+      className={`fixed inset-0 flex items-center justify-center  z-50 ${
         isOpen ? "block" : "hidden"
       }`}
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-lg shadow-lg p-6 w-full max-w-lg"
+        className="bg-transparent rounded-lg shadow-lg p-6 w-full max-w-lg"
         onClick={(e) => e.stopPropagation()}
       >
         <Heading>방명록 글 {typeText}</Heading>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <input
+            onClick={(e) => console.log(e)}
             onChange={handleChange}
             value={values.name}
             type="text"
@@ -90,11 +90,7 @@ export const PostFormModal: React.FC<PostFormModalProps> = ({
               type="button"
               className="absolute top-1/2 right-3 transform -translate-y-1/2"
             >
-              <img
-                src={showPassword ? privateImage : nonPrivateImage}
-                alt="Toggle password visibility"
-                className="w-6 h-6 opacity-70"
-              />
+              {/* 비밀번호 표시 토글 버튼 */}
             </button>
           </div>
           {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
@@ -111,7 +107,9 @@ export const PostFormModal: React.FC<PostFormModalProps> = ({
           {errors.content && <p className="text-red-500 text-sm">{errors.content}</p>}
 
           <div className="flex justify-end gap-2">
-            <Button type="submit">{typeText}</Button>
+            <Button type="submit" disabled={loading}>
+              {loading ? "처리 중..." : typeText}
+            </Button>
             <Button
               onClick={() => {
                 clear();
