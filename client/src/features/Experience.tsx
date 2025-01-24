@@ -24,8 +24,6 @@ export const Experience = ({ loaded }: { loaded: boolean }) => {
       controls.current?.setTarget(0, 8, 0);
       controls.current?.setPosition(0, 0, 2, true);
       controls.current?.setTarget(0, 0, 0, true);
-      // controls.current?.setPosition(0, 10, 5, true); // 위치 초기화
-      // controls.current?.setTarget(0, 0, 0, true); // 타겟 초기화
     };
     if (!loaded) {
       controls.current?.setPosition(0, 8, 2);
@@ -38,8 +36,6 @@ export const Experience = ({ loaded }: { loaded: boolean }) => {
     }
     if (info.situation === "guestbook") {
       resetCamera();
-      // controls.current?.setPosition(0, 0, 2, true);
-      // controls.current?.setTarget(0, 0.2, 0, true);
       return;
     }
     if (map?.roomId) {

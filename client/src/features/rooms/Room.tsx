@@ -24,20 +24,12 @@ const Room = () => {
   const onCharacterMove = (e: ThreeEvent<MouseEvent>) => {
     const character = scene.getObjectByName(`character-${user}`);
     if (!character) return;
-    socket.emit(
-      "move",
-      grid.vector3ToGrid(character.position),
-      grid.vector3ToGrid(e.point)
-    );
+    socket.emit("move", grid.vector3ToGrid(character.position), grid.vector3ToGrid(e.point));
   };
   const onCharacterMoveToItem = (position: Vector3) => {
     const character = scene.getObjectByName(`character-${user}`);
     if (!character) return;
-    socket.emit(
-      "move",
-      grid.vector3ToGrid(character.position),
-      grid.vector3ToGrid(position)
-    );
+    socket.emit("move", grid.vector3ToGrid(character.position), grid.vector3ToGrid(position));
   };
   if (!map) return null;
   if (!grid) return null;
