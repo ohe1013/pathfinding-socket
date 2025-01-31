@@ -8,6 +8,7 @@ import useMapStore from "./store/map";
 import { Loader } from "./features/Loader";
 import * as THREE from "three";
 import { RoomId } from "./store/rooms";
+import { Audio } from "./features/components/Audio";
 
 const roomPage = {
   weddingroom: 0,
@@ -52,6 +53,7 @@ function App() {
           <Experience loaded={loaded} />
         </ScrollControls>
       </Canvas>
+      <Audio />
       <Loader loaded={loaded} />
       {loaded && <UI />}
     </>

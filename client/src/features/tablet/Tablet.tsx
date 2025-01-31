@@ -8,6 +8,7 @@ import * as THREE from "three";
 import Guestbook from "./Guestbook";
 import { PostFormModal } from "./GuestForm";
 import { postValidation } from "@/hooks/useForm";
+import { CRUD } from "@/types";
 type GLTFResult = {
   nodes: {
     [key: string]: THREE.Mesh; // 모든 노드가 THREE.Mesh라고 가정
@@ -23,16 +24,39 @@ interface GuestBookPostForm {
   content: string;
   timestamp: number;
 }
+
+const initialPost = {
+  id: "",
+  password: "",
+  name: "",
+  content: "",
+  timestamp: 0,
+};
+
 export function Tablet(props: JSX.IntrinsicElements["group"]) {
   const { nodes, materials } = useGLTF("/models/Tablet2.glb") as unknown as GLTFResult;
   const setInfoState = useInfo((state) => state.setState);
+  const info = useInfo((state) => state.state);
   const onClick = () => {
-    setInfoState({ situation: "room" });
+    setInfoState({ ...info, situation: "room" });
   };
   const meshRef = useRef<THREE.Mesh>(null);
   const { camera, gl } = useThree(); // 카메라와 렌더러 가져오기
-  const [isFormModalOpen, setIsFormModalOpen] = useState<boolean>(true);
+  const [isFormModalOpen, setIsFormModalOpen] = useState<boolean>(false);
   const handleFormModalClose = () => setIsFormModalOpen(false);
+  const [selectedPost, setSelectedPost] = useState<GuestBookPostForm>(initialPost);
+  const [type, setType] = useState<CRUD>("insert");
+
+  const handleFormModal = (type: CRUD, post?: GuestBookPostForm) => {
+    if (type === "insert") {
+      setType(type);
+      setSelectedPost(initialPost);
+    } else if (type === "delete" || type === "update") {
+      setType(type);
+      setSelectedPost(post!);
+    }
+  };
+
   useEffect(() => {
     if (meshRef.current) {
       const worldPosition = new THREE.Vector3();
@@ -75,7 +99,7 @@ export function Tablet(props: JSX.IntrinsicElements["group"]) {
   useEffect(() => {
     window.addEventListener("keydown", (e) => {
       if (e.key === "Escape") {
-        setInfoState({ situation: "room" });
+        setInfoState({ ...info, situation: "room" });
       }
     });
   });
@@ -115,16 +139,27 @@ export function Tablet(props: JSX.IntrinsicElements["group"]) {
             }}
             onPointerDown={(e) => e.stopPropagation()}
           >
-            <h1 className="text-center text-white text-2xl font-bold">방명록</h1>
-            <button onClick={() => setIsFormModalOpen(true)} className="absolute right-5 top-0">
-              글쓰기
-            </button>
+            {!isFormModalOpen && (
+              <h1 className="text-center text-white text-2xl font-bold">방명록</h1>
+            )}
+            {!isFormModalOpen && (
+              <button
+                onClick={() => {
+                  setIsFormModalOpen(true);
+                  handleFormModal("insert");
+                }}
+                className="absolute right-5 top-0"
+              >
+                글쓰기
+              </button>
+            )}
             <div className={` max-w-full  overflow-y-auto p-5  place-items-center  select-none`}>
               <PostFormModal
                 isOpen={isFormModalOpen}
                 onClose={handleFormModalClose}
                 onFormValid={postValidation}
-                type="insert"
+                initialValues={selectedPost}
+                type={type}
               />
             </div>
             {!isFormModalOpen && <Guestbook posts={posts} />}

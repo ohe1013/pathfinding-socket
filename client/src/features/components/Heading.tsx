@@ -7,7 +7,7 @@ interface HeadingProps extends HTMLAttributes<HTMLParagraphElement> {
 export const Heading: FC<HeadingProps> = ({ children, ...props }) => {
   return (
     <p
-      className="font-serif text-2xl my-2.5 text-pink-400 whitespace-pre-line font-semibold"
+      className="font-serif text-2xl my-2.5 text-white whitespace-pre-line font-semibold"
       {...props}
     >
       {children}

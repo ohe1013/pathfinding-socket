@@ -12,3 +12,5 @@ export interface GuestBookPostForm {
   timestamp: number;
 }
 export type GuestBookPost = Omit<GuestBookPostForm, "password">;
+
+export type CRUD = "insert" | "update" | "delete";

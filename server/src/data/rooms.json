@@ -111,7 +111,7 @@
         "rotation": 0,
         "positionY": 4,
         "sound": {
-          "src": "/musics/fire_work.mp3"
+          "src": "./musics/fire_work.mp3"
         }
       },
 

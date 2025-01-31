@@ -1,5 +1,5 @@
 import useMapStore from "@/store/map";
-import { PositionalAudio, useAnimations, useGLTF } from "@react-three/drei";
+import { useAnimations, useGLTF } from "@react-three/drei";
 import { useEffect, useMemo, useRef } from "react";
 import { SkeletonUtils } from "three-stdlib";
 import { socket } from "../SocketManager";
@@ -9,21 +9,13 @@ import useInfo from "@/store/info";
 import { useGrid } from "@/hooks/useGrid";
 import * as THREE from "three";
 import useUserStore from "@/store/user";
+import { RenderSound } from "./Sound";
+import { RenderLight } from "./Light";
 
-export const Item = ({
-  item,
-  guardEvt,
-  setGuardEvt,
-  onCharacterMoveToItem,
-}: {
-  item: ItemProps;
-  guardEvt: boolean;
-  setGuardEvt: (item: boolean) => void;
-  onCharacterMoveToItem: (position: THREE.Vector3) => void;
-}) => {
+export const Item = ({ item }: { item: ItemProps }) => {
   const { name, gridPosition, size, rotation } = item;
   const map = useMapStore((state) => state.state);
-  const { scene, animations } = useGLTF(`/models/items/${name}.glb`, true);
+  const { scene } = useGLTF(`/models/items/${name}.glb`, true);
   const objectRef = useRef<THREE.Object3D>(null);
   const soundRef = useRef<THREE.PositionalAudio>(null); // PositionalAudio 참조
   const animation = useGLTF(`/animations/aerobic.glb`);
@@ -31,7 +23,6 @@ export const Item = ({
 
   useEffect(() => {
     if ((name === "woman" || name === "man") && actions) {
-      console.log(animations);
       const action = actions.actions["aerobic-dance_315220|A|aerobic-dance_315220"];
       if (action) {
         const targetFPS = 0.1; // 목표 프레임 속도
@@ -50,6 +41,7 @@ export const Item = ({
   const width = rotation === 1 || rotation === 3 ? size[1] : size[0];
   const height = rotation === 1 || rotation === 3 ? size[0] : size[1];
   const setInfoState = useInfo((state) => state.setState);
+  const info = useInfo((state) => state.state);
   const grid = useGrid();
   const user = useUserStore((state) => state.state);
 
@@ -62,7 +54,7 @@ export const Item = ({
         });
       }
       if (item.touchEvt.type === "switchSituation") {
-        setInfoState({ situation: item.touchEvt.situation });
+        setInfoState({ ...info, situation: item.touchEvt.situation });
       }
     }
   };
@@ -78,24 +70,26 @@ export const Item = ({
     if (!user || !soundRef.current) return;
 
     const character = scene.getObjectByName(`character-${user}`);
-    if (!character) return;
+    if (!character || !objectRef.current) return;
 
     const characterPosition = new THREE.Vector3();
     const itemPosition = new THREE.Vector3();
 
     character.getWorldPosition(characterPosition);
-    objectRef.current?.getWorldPosition(itemPosition);
+    objectRef.current.getWorldPosition(itemPosition);
+    if (info.useMusic) {
+      if (!soundRef.current.isPlaying) {
+        soundRef.current.play();
+      }
+      const distance = characterPosition.distanceTo(itemPosition);
+      const maxDistance = 20;
+      const minDistance = 2;
+      const volume = Math.max(0, 1 - (distance - minDistance) / (maxDistance - minDistance));
 
-    // 거리 계산
-    const distance = characterPosition.distanceTo(itemPosition);
-
-    // 볼륨 계산 (0 ~ 1)
-    const maxDistance = 20; // 소리가 완전히 사라지는 거리
-    const minDistance = 2; // 최대 볼륨이 유지되는 거리
-    const volume = Math.max(0, 1 - (distance - minDistance) / (maxDistance - minDistance));
-
-    // PositionalAudio 볼륨 조정
-    soundRef.current.setVolume(volume);
+      soundRef.current.setVolume(volume);
+    } else {
+      soundRef.current.pause();
+    }
   });
 
   if (!map) return null;
@@ -111,59 +105,8 @@ export const Item = ({
         object={clone}
         rotation-y={((rotation || 0) * Math.PI) / 2}
       ></primitive>
-      {renderLight(item)}
-      {renderSound(item, soundRef)}
+      <RenderLight light={item.light}></RenderLight>
+      <RenderSound sound={item.sound} soundRef={soundRef}></RenderSound>
     </group>
   );
-};
-
-const renderLight = (item: ItemProps) => {
-  const isLightConfigured = !!item.light;
-  if (!isLightConfigured) return null; // 조명 속성이 없으면 종료
-
-  const lightProps = item.light!;
-  switch (lightProps.type) {
-    case "spotLight":
-      return (
-        <spotLight
-          position={lightProps.position}
-          angle={lightProps.angle}
-          intensity={lightProps.intensity}
-          penumbra={lightProps.penumbra}
-          castShadow={false}
-          shadow-mapSize-width={256}
-          shadow-mapSize-height={256}
-          color={lightProps.color}
-        />
-      );
-    case "pointLight":
-      return (
-        <pointLight
-          position={lightProps.position}
-          intensity={lightProps.intensity}
-          distance={lightProps.distance}
-          decay={lightProps.decay}
-          color={lightProps.color}
-          castShadow={false}
-          shadow-mapSize-width={256}
-          shadow-mapSize-height={256}
-        />
-      );
-    default:
-      return null;
-  }
-};
-
-const renderSound = (item: ItemProps, soundRef: React.RefObject<THREE.PositionalAudio>) => {
-  if (item.sound) {
-    return (
-      <PositionalAudio
-        ref={soundRef}
-        url={"./musics/fire_work.mp3"}
-        distance={20}
-        loop={true}
-        autoplay={true}
-      />
-    );
-  }
 };

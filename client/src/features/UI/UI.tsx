@@ -5,19 +5,43 @@ import useMapStore from "@/store/map";
 import useInfo from "@/store/info";
 import { push, ref, set } from "firebase/database";
 import { realtimeDb } from "@/firebase/firebase";
-import { ToastContainer } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
+import ConfirmModal from "../components/Confirm";
 
 export const UI = () => {
   const map = useMapStore((map) => map.state);
   const info = useInfo((info) => info.state);
   const setInfo = useInfo((info) => info.setState);
   const [name, setName] = useState<string>(localStorage.getItem("name") || "");
+  const [useName, setUseName] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const handleConfirm = () => {
+    setInfo({ ...info, situation: "room" });
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
   const switchSituation = () => {
     if (info.situation === "lobby") {
-      setInfo({ situation: "room" });
+      if (useName === false) {
+        setIsModalOpen(true);
+      } else {
+        setInfo({ ...info, situation: "room" });
+      }
+    } else if (info.situation === "guestbook") {
+      setInfo({ ...info, situation: "room" });
     } else {
-      setInfo({ situation: "lobby" });
+      setInfo({ ...info, situation: "lobby" });
+    }
+  };
+  const switchMusic = () => {
+    if (info.useMusic) {
+      setInfo({ ...info, useMusic: false });
+    } else {
+      setInfo({ ...info, useMusic: true });
     }
   };
 
@@ -43,7 +67,11 @@ export const UI = () => {
   };
 
   const login = (value: string) => {
+    setUseName(true);
     localStorage.setItem("name", value);
+  };
+  const changeName = () => {
+    setUseName(false);
   };
 
   return (
@@ -101,32 +129,30 @@ export const UI = () => {
                     login(name);
                   }
                 }}
+                disabled={useName}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
               />
-              <button
-                className="p-4 rounded-full bg-slate-500 text-white drop-shadow-md cursor-pointer hover:bg-slate-800 transition-colors"
-                onClick={() => login(name)}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="w-6 h-6"
+              {useName && (
+                <button
+                  className="p-4 rounded-full bg-slate-500 text-white drop-shadow-md cursor-pointer hover:bg-slate-800 transition-colors"
+                  onClick={() => changeName()}
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5"
-                  />
-                </svg>
-              </button>
+                  🛠️
+                </button>
+              )}
+              {!useName && (
+                <button
+                  className="p-4 rounded-full bg-slate-500 text-white drop-shadow-md cursor-pointer hover:bg-slate-800 transition-colors"
+                  onClick={() => login(name)}
+                >
+                  🔑
+                </button>
+              )}
             </div>
           )}
 
-          {info.situation === "room" && (
+          {info.situation === "guestbook" && (
             <div className="flex items-center space-x-4 pointer-events-auto">
               {map?.roomId && (
                 <button
@@ -139,7 +165,7 @@ export const UI = () => {
               {map?.roomId && (
                 <button
                   className="p-4 rounded-full bg-slate-500 text-white drop-shadow-md cursor-pointer hover:bg-slate-800 transition-colors"
-                  onClick={() => socket.emit("dance")}
+                  onClick={switchMusic}
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -155,24 +181,30 @@ export const UI = () => {
                       d="M9 9l10.5-3m0 6.553v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 11-.99-3.467l2.31-.66a2.25 2.25 0 001.632-2.163zm0 0V2.25L9 5.25v10.303m0 0v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 01-.99-3.467l2.31-.66A2.25 2.25 0 009 15.553z"
                     />
                   </svg>
+                  {!info.useMusic && (
+                    <span className="absolute inset-0 flex items-center justify-center">
+                      <span className="absolute w-full h-0.5 bg-white rotate-45"></span>
+                    </span>
+                  )}
                 </button>
               )}
             </div>
           )}
-          {info.situation === "lobby" && (
+          {(info.situation === "lobby" || info.situation === "room") && map?.roomId && (
             <div className="flex items-center space-x-4 pointer-events-auto">
               {map?.roomId && (
                 <button
                   className="p-4 rounded-full bg-slate-500 text-white drop-shadow-md cursor-pointer hover:bg-slate-800 transition-colors"
                   onClick={switchSituation}
                 >
-                  놀러가기
+                  {info.situation === "lobby" && "구경가기"}
+                  {info.situation === "room" && "로비로가기"}
                 </button>
               )}
               {map?.roomId && (
                 <button
                   className="p-4 rounded-full bg-slate-500 text-white drop-shadow-md cursor-pointer hover:bg-slate-800 transition-colors"
-                  onClick={() => socket.emit("dance")}
+                  onClick={switchMusic}
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -188,15 +220,23 @@ export const UI = () => {
                       d="M9 9l10.5-3m0 6.553v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 11-.99-3.467l2.31-.66a2.25 2.25 0 001.632-2.163zm0 0V2.25L9 5.25v10.303m0 0v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 01-.99-3.467l2.31-.66A2.25 2.25 0 009 15.553z"
                     />
                   </svg>
-                  <span className="absolute inset-0 flex items-center justify-center">
-                    <span className="absolute w-full h-0.5 bg-white rotate-45"></span>
-                  </span>
+                  {!info.useMusic && (
+                    <span className="absolute inset-0 flex items-center justify-center">
+                      <span className="absolute w-full h-0.5 bg-white rotate-45"></span>
+                    </span>
+                  )}
                 </button>
               )}
             </div>
           )}
         </div>
         <ToastContainer></ToastContainer>
+        <ConfirmModal
+          isOpen={isModalOpen}
+          message={`${name}으로 입장하시겠습니까?`}
+          onConfirm={handleConfirm}
+          onCancel={handleCancel}
+        />
       </motion.div>
     </>
   );

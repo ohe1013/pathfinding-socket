@@ -29,8 +29,8 @@ export type Item = {
     color: string;
   };
   sound?: {
-    
-  }
+    src: string;
+  };
   touchEvt?:
     | {
         type: "switchRoom";

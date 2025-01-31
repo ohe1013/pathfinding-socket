@@ -4,6 +4,7 @@ export type Situation = "lobby" | "room" | "guestbook";
 
 type InfoObj = {
   situation: Situation;
+  useMusic: boolean;
 };
 
 type InfoStore = {
@@ -14,6 +15,7 @@ type InfoStore = {
 const useInfo = create<InfoStore>((set) => ({
   state: {
     situation: "lobby",
+    useMusic: false,
   },
   setState: (newState) => set({ state: newState }),
 }));
