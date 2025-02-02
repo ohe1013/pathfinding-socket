@@ -5,7 +5,7 @@ import { Suspense, useState } from "react";
 import { socket } from "../SocketManager";
 import useMapStore from "@/store/map";
 import { useGrid } from "@/hooks/useGrid";
-import { Vector3 } from "three";
+// import { Vector3 } from "three";
 import useUserStore from "@/store/user";
 import { Item } from "../items/Item";
 import { Fallguy } from "../characters/Fallguy";
@@ -18,32 +18,29 @@ const Room = () => {
   const grid = useGrid()!;
   const user = useUserStore((state) => state.state);
 
-  const [guardEvt, setGuardEvt] = useState(false);
+  // const [guardEvt, setGuardEvt] = useState(false);
   const [onFloor, setOnFloor] = useState(false);
   useCursor(onFloor);
   const onCharacterMove = (e: ThreeEvent<MouseEvent>) => {
     const character = scene.getObjectByName(`character-${user}`);
     if (!character) return;
-    socket.emit("move", grid.vector3ToGrid(character.position), grid.vector3ToGrid(e.point));
+    socket.emit(
+      "move",
+      grid.vector3ToGrid(character.position),
+      grid.vector3ToGrid(e.point)
+    );
   };
-  const onCharacterMoveToItem = (position: Vector3) => {
-    const character = scene.getObjectByName(`character-${user}`);
-    if (!character) return;
-    socket.emit("move", grid.vector3ToGrid(character.position), grid.vector3ToGrid(position));
-  };
-  if (!map) return null;
-  if (!grid) return null;
+  // const onCharacterMoveToItem = (position: Vector3) => {
+  //   const character = scene.getObjectByName(`character-${user}`);
+  //   if (!character) return;
+  //   socket.emit("move", grid.vector3ToGrid(character.position), grid.vector3ToGrid(position));
+  // };
+  if (!map || !grid) return null;
 
   return (
     <>
       {map.items.map((item, idx) => (
-        <Item
-          key={`${item.name}-${idx}`}
-          item={item}
-          guardEvt={guardEvt}
-          setGuardEvt={setGuardEvt}
-          onCharacterMoveToItem={onCharacterMoveToItem}
-        />
+        <Item key={`${item.name}-${idx}`} item={item} />
       ))}
       <mesh
         rotation-x={-Math.PI / 2}

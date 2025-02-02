@@ -34,7 +34,9 @@ const initialPost = {
 };
 
 export function Tablet(props: JSX.IntrinsicElements["group"]) {
-  const { nodes, materials } = useGLTF("/models/Tablet2.glb") as unknown as GLTFResult;
+  const { nodes, materials } = useGLTF(
+    "/models/Tablet2.glb"
+  ) as unknown as GLTFResult;
   const setInfoState = useInfo((state) => state.setState);
   const info = useInfo((state) => state.state);
   const onClick = () => {
@@ -44,7 +46,8 @@ export function Tablet(props: JSX.IntrinsicElements["group"]) {
   const { camera, gl } = useThree(); // 카메라와 렌더러 가져오기
   const [isFormModalOpen, setIsFormModalOpen] = useState<boolean>(false);
   const handleFormModalClose = () => setIsFormModalOpen(false);
-  const [selectedPost, setSelectedPost] = useState<GuestBookPostForm>(initialPost);
+  const [selectedPost, setSelectedPost] =
+    useState<GuestBookPostForm>(initialPost);
   const [type, setType] = useState<CRUD>("insert");
 
   const handleFormModal = (type: CRUD, post?: GuestBookPostForm) => {
@@ -105,11 +108,26 @@ export function Tablet(props: JSX.IntrinsicElements["group"]) {
   });
   return (
     <group {...props} dispose={null}>
-      <mesh geometry={nodes.ChamferBox003.geometry} material={materials["04___Default"]} />
-      <mesh geometry={nodes.ChamferCyl001.geometry} material={materials["03___Default"]} />
-      <mesh geometry={nodes.ChamferBox001_1.geometry} material={materials["02___Default"]}></mesh>
-      <mesh geometry={nodes.ChamferBox001_1_1.geometry} material={materials["01___Default"]}></mesh>
-      <mesh geometry={nodes.ChamferBox001_1_2.geometry} material={materials["04___Default"]} />
+      <mesh
+        geometry={nodes.ChamferBox003.geometry}
+        material={materials["04___Default"]}
+      />
+      <mesh
+        geometry={nodes.ChamferCyl001.geometry}
+        material={materials["03___Default"]}
+      />
+      <mesh
+        geometry={nodes.ChamferBox001_1.geometry}
+        material={materials["02___Default"]}
+      ></mesh>
+      <mesh
+        geometry={nodes.ChamferBox001_1_1.geometry}
+        material={materials["01___Default"]}
+      ></mesh>
+      <mesh
+        geometry={nodes.ChamferBox001_1_2.geometry}
+        material={materials["04___Default"]}
+      />
       <mesh
         ref={meshRef}
         onClick={onClick}
@@ -129,6 +147,7 @@ export function Tablet(props: JSX.IntrinsicElements["group"]) {
           position={[0, 4, -4]}
           rotation-x={Math.PI / -2}
           occlude
+          className="scrollbar-hide"
           scale={5}
           transform
         >
@@ -140,7 +159,9 @@ export function Tablet(props: JSX.IntrinsicElements["group"]) {
             onPointerDown={(e) => e.stopPropagation()}
           >
             {!isFormModalOpen && (
-              <h1 className="text-center text-white text-2xl font-bold">방명록</h1>
+              <h1 className="text-center text-white text-2xl font-bold">
+                방명록
+              </h1>
             )}
             {!isFormModalOpen && (
               <button
@@ -153,7 +174,9 @@ export function Tablet(props: JSX.IntrinsicElements["group"]) {
                 글쓰기
               </button>
             )}
-            <div className={` max-w-full  overflow-y-auto p-5  place-items-center  select-none`}>
+            <div
+              className={` max-w-full  overflow-y-auto p-5  place-items-center  select-none`}
+            >
               <PostFormModal
                 isOpen={isFormModalOpen}
                 onClose={handleFormModalClose}
@@ -171,12 +194,30 @@ export function Tablet(props: JSX.IntrinsicElements["group"]) {
         geometry={nodes.ChamferBox002_1_1.geometry}
         material={materials["04___Default"]}
       />
-      <mesh geometry={nodes.ChamferBox004_1.geometry} material={materials["01___Default"]} />
-      <mesh geometry={nodes.ChamferBox004_1_1.geometry} material={materials["04___Default"]} />
-      <mesh geometry={nodes.ChamferBox005_1.geometry} material={materials["01___Default"]} />
-      <mesh geometry={nodes.ChamferBox005_1_1.geometry} material={materials["04___Default"]} />
-      <mesh geometry={nodes.ChamferBox006_1.geometry} material={materials["03___Default"]} />
-      <mesh geometry={nodes.ChamferBox006_1_1.geometry} material={materials["04___Default"]} />
+      <mesh
+        geometry={nodes.ChamferBox004_1.geometry}
+        material={materials["01___Default"]}
+      />
+      <mesh
+        geometry={nodes.ChamferBox004_1_1.geometry}
+        material={materials["04___Default"]}
+      />
+      <mesh
+        geometry={nodes.ChamferBox005_1.geometry}
+        material={materials["01___Default"]}
+      />
+      <mesh
+        geometry={nodes.ChamferBox005_1_1.geometry}
+        material={materials["04___Default"]}
+      />
+      <mesh
+        geometry={nodes.ChamferBox006_1.geometry}
+        material={materials["03___Default"]}
+      />
+      <mesh
+        geometry={nodes.ChamferBox006_1_1.geometry}
+        material={materials["04___Default"]}
+      />
     </group>
   );
 }

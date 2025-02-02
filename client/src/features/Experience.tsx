@@ -1,5 +1,10 @@
 import useMapStore from "@/store/map.ts";
-import { CameraControls, Environment, OrbitControls, Sky } from "@react-three/drei";
+import {
+  CameraControls,
+  Environment,
+  OrbitControls,
+  Sky,
+} from "@react-three/drei";
 import { useEffect, useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
 import useUserStore from "@/store/user";
@@ -90,7 +95,10 @@ export const Experience = ({ loaded }: { loaded: boolean }) => {
     };
 
     // 거리 계산 함수
-    const getDistance = (touch1: TouchEvent["touches"][0], touch2: TouchEvent["touches"][1]) => {
+    const getDistance = (
+      touch1: TouchEvent["touches"][0],
+      touch2: TouchEvent["touches"][1]
+    ) => {
       const dx = touch1.clientX - touch2.clientX;
       const dy = touch1.clientY - touch2.clientY;
       return Math.sqrt(dx * dx + dy * dy); // 피타고라스 계산
@@ -117,7 +125,12 @@ export const Experience = ({ loaded }: { loaded: boolean }) => {
     if (!character) {
       return;
     }
-    controls.current?.setTarget(character.position.x, 0, character.position.z, true);
+    controls.current?.setTarget(
+      character.position.x,
+      0,
+      character.position.z,
+      true
+    );
     controls.current?.setPosition(
       character.position.x + zoomLevel,
       character.position.y + zoomLevel,
@@ -137,7 +150,9 @@ export const Experience = ({ loaded }: { loaded: boolean }) => {
         azimuth={0.25}
         rayleigh={0.1}
       />
-      {situation === "room" && map.roomId === "weddingroom" && <ambientLight intensity={0.5} />}
+      {situation === "room" && map.roomId === "weddingroom" && (
+        <ambientLight intensity={0.5} />
+      )}
       {situation === "guestbook" && (
         <>
           <Environment files={"/textures/venice_sunset_1k.hdr"} />
@@ -162,7 +177,11 @@ export const Experience = ({ loaded }: { loaded: boolean }) => {
             intensity={0.35}
             shadow-mapSize={[1024, 1024]}
           >
-            <orthographicCamera attach={"shadow-camera"} args={[-10, 10, 10, -10]} far={20 + 2} />
+            <orthographicCamera
+              attach={"shadow-camera"}
+              args={[-10, 10, 10, -10]}
+              far={20 + 2}
+            />
           </directionalLight>
         </>
       )}
