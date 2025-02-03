@@ -5,7 +5,6 @@ import { GLTF, SkeletonUtils } from "three-stdlib";
 import * as THREE from "three";
 import { useFrame, useGraph } from "@react-three/fiber";
 import { useGrid } from "@/hooks/useGrid";
-import useUserStore from "@/store/user";
 import useMapStore from "@/store/map";
 import { socket } from "../SocketManager";
 // GLTF 타입 정의
@@ -29,7 +28,6 @@ interface CharacterProps {
 }
 export const Fallguy = ({ id, ...props }: CharacterProps) => {
   const group = useRef<Group>(null);
-  // const htmlRef = useRef<typeof Html>();
   const map = useMapStore((state) => state.state);
   const [chatMessage, setChatMessage] = useState("");
   const [showChatBubble, setShowChatBubble] = useState(false);
@@ -40,17 +38,9 @@ export const Fallguy = ({ id, ...props }: CharacterProps) => {
   const clone = useMemo(() => SkeletonUtils.clone(scene), [scene]);
   const { nodes, materials } = useGraph(clone) as GLTFResult;
   const [path, setPath] = useState<Array<THREE.Vector3>>();
-  const user = useUserStore((state) => state.state);
   const grid = useGrid();
   const newMaterial = (materials.Material as THREE.MeshStandardMaterial).clone();
-
-  // function getRandomHexColor(): string {
-  //   const randomColor = Math.floor(Math.random() * 16777215).toString(16); // 16777215는 0xFFFFFF의 10진수 값
-  //   return `#${randomColor.padStart(6, "0")}`; // 6자리로 패딩하여 반환
-  // }
-
-  // newMaterial.color.set(getRandomHexColor());
-
+  console.log(actions);
   useEffect(() => {
     if (!grid) return;
     const path: Array<THREE.Vector3> = [];
@@ -71,7 +61,6 @@ export const Fallguy = ({ id, ...props }: CharacterProps) => {
   }, [animation, actions]);
 
   useEffect(() => {
-    console.log("current User:", user, "id:", id);
     function onPlayerMove(value: { id: string | undefined; path: [number, number, number][] }) {
       if (value.id === id) {
         const path: THREE.Vector3[] = [];
@@ -85,7 +74,6 @@ export const Fallguy = ({ id, ...props }: CharacterProps) => {
     const TIME_OUT = 5000;
     function onChatMessage(value: { id: string | undefined; message: SetStateAction<string> }) {
       if (value.id === id) {
-        console.log("current User:", user, "messageId:", value.id, "id:", id);
         const name = localStorage.getItem("name");
         setChatMessage(name + ": " + value.message);
         clearTimeout(chatMessageBubbleTimeOut);
@@ -95,10 +83,19 @@ export const Fallguy = ({ id, ...props }: CharacterProps) => {
         }, TIME_OUT);
       }
     }
-
+    function onPlayerAnimation(value: {
+      id: string | undefined;
+      animationName: SetStateAction<string>;
+    }) {
+      if (value.id === id) {
+        setAnimation(value.animationName);
+      }
+    }
+    socket.on("playerAnimation", onPlayerAnimation);
     socket.on("playerMove", onPlayerMove);
     socket.on("playerChatMessage", onChatMessage);
     return () => {
+      socket.off("playerAnimation", onPlayerAnimation);
       socket.off("playerMove", onPlayerMove);
       socket.off("playerChatMessage", onChatMessage);
     };

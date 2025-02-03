@@ -36,6 +36,7 @@ export type Item = {
         type: "switchRoom";
         position: string;
         roomId: RoomId;
+        message: string;
       }
     | {
         type: "watchPhoto";
@@ -43,6 +44,11 @@ export type Item = {
     | {
         type: "switchSituation";
         situation: Situation;
+        message: string;
+      }
+    | {
+        type: "message";
+        message: string;
       };
 };
 

@@ -21,7 +21,8 @@
         "touchEvt": {
           "type": "switchRoom",
           "roomId": "weddingroom",
-          "position": [15, 28]
+          "position": [15, 28],
+          "message": "결혼식장으로 이동하시겠습니까?"
         }
       }
     ]
@@ -43,7 +44,8 @@
         "touchEvt": {
           "type": "switchRoom",
           "roomId": "lobby",
-          "position": [12, 12]
+          "position": [12, 12],
+          "message": "로비로 이동하시겠습니까?"
         }
       },
       {
@@ -54,11 +56,12 @@
         "positionY": 1.15,
         "touchEvt": {
           "type": "switchSituation",
-          "situation": "guestbook"
+          "situation": "guestbook",
+          "message": "방명록을 보시겠습니까?"
         },
         "light": {
           "type": "pointLight",
-          "position": [0, 3, 0],
+          "position": [0, 0, 3],
           "intensity": 19,
           "distance": 8,
           "decay": 2,
@@ -76,7 +79,7 @@
       {
         "name": "man",
         "size": [1, 1],
-        "gridPosition": [8, 0],
+        "gridPosition": [8, 1],
         "rotation": 0,
         "positionY": 0.3,
         "light": {
@@ -86,12 +89,16 @@
           "distance": 8,
           "decay": 2,
           "color": "#f9f2b4"
+        },
+        "touchEvt": {
+          "type": "message",
+          "message": "결혼식에 와주셔서 감사합니다!"
         }
       },
       {
         "name": "woman",
         "size": [1, 1],
-        "gridPosition": [9, 0],
+        "gridPosition": [9, 1],
         "rotation": 0,
         "positionY": 0.3,
         "light": {
@@ -101,6 +108,10 @@
           "distance": 8,
           "decay": 2,
           "color": "#f9f2b4"
+        },
+        "touchEvt": {
+          "type": "message",
+          "message": "결혼식에 와주셔서 감사합니다!"
         }
       },
 
@@ -120,27 +131,43 @@
         "size": [4, 20],
         "gridPosition": [8, 0],
         "rotation": 0,
-        "positionY": 0.15
+        "positionY": 0.15,
+        "touchEvt": {
+          "type": "message",
+          "message": "여긴, 신랑신부만 올라갈 수 있어요"
+        }
       },
       {
         "name": "virginRoadWing",
         "size": [6, 4],
         "gridPosition": [2, 0],
         "rotation": 0,
-        "positionY": 0.15
+        "positionY": 0.15,
+        "touchEvt": {
+          "type": "message",
+          "message": "여긴, 신랑신부만 올라갈 수 있어요"
+        }
       },
       {
         "name": "virginRoadWing",
         "size": [6, 4],
         "gridPosition": [10, 0],
         "rotation": 0,
-        "positionY": 0.15
+        "positionY": 0.15,
+        "touchEvt": {
+          "type": "message",
+          "message": "여긴, 신랑신부만 올라갈 수 있어요"
+        }
       },
       {
         "name": "tableWithChair",
         "size": [2, 2],
         "gridPosition": [14, 8],
-        "rotation": 0
+        "rotation": 0,
+        "touchEvt": {
+          "type": "message",
+          "message": "여러분이 앉으실 자리입니다.\n 와주셔서 빛내주세요!"
+        }
       },
       {
         "name": "tableFlower",
@@ -153,7 +180,11 @@
         "name": "tableWithChair",
         "size": [2, 2],
         "gridPosition": [14, 13],
-        "rotation": 0
+        "rotation": 0,
+        "touchEvt": {
+          "type": "message",
+          "message": "여러분이 앉으실 자리입니다.\n 와주셔서 빛내주세요!"
+        }
       },
       {
         "name": "tableFlower",
@@ -166,7 +197,11 @@
         "name": "tableWithChair",
         "size": [2, 2],
         "gridPosition": [3, 8],
-        "rotation": 0
+        "rotation": 0,
+        "touchEvt": {
+          "type": "message",
+          "message": "여러분이 앉으실 자리입니다.\n 와주셔서 빛내주세요!"
+        }
       },
       {
         "name": "tableFlower",
@@ -179,7 +214,11 @@
         "name": "tableWithChair",
         "size": [2, 2],
         "gridPosition": [3, 13],
-        "rotation": 0
+        "rotation": 0,
+        "touchEvt": {
+          "type": "message",
+          "message": "여러분이 앉으실 자리입니다.\n 와주셔서 빛내주세요!"
+        }
       },
       {
         "name": "tableFlower",

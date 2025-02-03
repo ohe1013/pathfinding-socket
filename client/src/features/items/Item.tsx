@@ -1,6 +1,6 @@
 import useMapStore from "@/store/map";
-import { useAnimations, useGLTF } from "@react-three/drei";
-import { useEffect, useMemo, useRef } from "react";
+import { Html, useAnimations, useGLTF } from "@react-three/drei";
+import { SetStateAction, useEffect, useMemo, useRef, useState } from "react";
 import { SkeletonUtils } from "three-stdlib";
 import { socket } from "../SocketManager";
 import { Item as ItemProps } from "@/store/rooms";
@@ -11,6 +11,7 @@ import * as THREE from "three";
 import useUserStore from "@/store/user";
 import { RenderSound } from "./Sound";
 import { RenderLight } from "./Light";
+import useModalStore from "@/store/modal";
 
 export const Item = ({ item }: { item: ItemProps }) => {
   const { name, gridPosition, size, rotation } = item;
@@ -20,11 +21,10 @@ export const Item = ({ item }: { item: ItemProps }) => {
   const soundRef = useRef<THREE.PositionalAudio>(null); // PositionalAudio 참조
   const animation = useGLTF(`/animations/aerobic.glb`);
   const actions = useAnimations(animation.animations, objectRef);
-
+  const openModal = useModalStore((state) => state.openModal);
   useEffect(() => {
     if ((name === "woman" || name === "man") && actions) {
-      const action =
-        actions.actions["aerobic-dance_315220|A|aerobic-dance_315220"];
+      const action = actions.actions["aerobic-dance_315220|A|aerobic-dance_315220"];
       if (action) {
         const targetFPS = 0.1; // 목표 프레임 속도
         const clipDuration = action.getClip().duration; // 애니메이션 클립의 총 길이(초 단위)
@@ -45,18 +45,48 @@ export const Item = ({ item }: { item: ItemProps }) => {
   const info = useInfo((state) => state.state);
   const grid = useGrid();
   const user = useUserStore((state) => state.state);
-
+  const [chatMessage, setChatMessage] = useState("");
+  const [showChatBubble, setShowChatBubble] = useState(false);
+  let chatMessageBubbleTimeOut: NodeJS.Timeout;
+  const TIME_OUT = 1500;
+  function onChatMessage(value: { message: SetStateAction<string> }) {
+    setChatMessage(value.message);
+    clearTimeout(chatMessageBubbleTimeOut);
+    setShowChatBubble(true);
+    chatMessageBubbleTimeOut = setTimeout(() => {
+      setShowChatBubble(false);
+    }, TIME_OUT);
+  }
   const onClickEvt = (e: ThreeEvent<MouseEvent>) => {
     e.stopPropagation();
     if (item.touchEvt) {
-      if (item.touchEvt.type === "switchRoom") {
-        socket.emit("joinRoom", item.touchEvt.roomId, {
-          position: item.touchEvt.position,
-        });
+      const type = item.touchEvt.type;
+      if (type === "switchRoom") {
+        const roomId = item.touchEvt.roomId;
+        const position = item.touchEvt.position;
+        openModal(
+          item.touchEvt.message,
+          () =>
+            socket.emit("joinRoom", roomId, {
+              position,
+            }),
+          () => {}
+        );
       }
-      if (item.touchEvt.type === "switchSituation") {
-        setInfoState({ ...info, situation: item.touchEvt.situation });
+      if (type === "switchSituation") {
+        const situation = item.touchEvt.situation;
+        openModal(
+          item.touchEvt.message,
+          () => setInfoState({ ...info, situation }),
+          () => {}
+        );
       }
+      if (type === "message") {
+        onChatMessage({ message: item.touchEvt.message });
+      }
+    }
+    if (item.sound) {
+      setInfoState({ ...info, useMusic: !info.useMusic });
     }
   };
 
@@ -85,10 +115,7 @@ export const Item = ({ item }: { item: ItemProps }) => {
       const distance = characterPosition.distanceTo(itemPosition);
       const maxDistance = 20;
       const minDistance = 2;
-      const volume = Math.max(
-        0,
-        1 - (distance - minDistance) / (maxDistance - minDistance)
-      );
+      const volume = Math.max(0, 1 - (distance - minDistance) / (maxDistance - minDistance));
 
       soundRef.current.setVolume(volume);
     } else {
@@ -104,6 +131,18 @@ export const Item = ({ item }: { item: ItemProps }) => {
       position-y={item.positionY ?? 0}
       onClick={onClickEvt}
     >
+      {" "}
+      <Html position-y={4}>
+        <div className="w-60 max-w-full">
+          <p
+            className={`absolute max-w-full text-center break-words  p-2 px-4 -translate-x-1/2 rounded-lg bg-white bg-opacity-40 backdrop-blur-sm text-black transition-opacity duration-500 ${
+              showChatBubble ? "" : "opacity-0"
+            }`}
+          >
+            {chatMessage}
+          </p>
+        </div>
+      </Html>
       <primitive
         ref={objectRef}
         object={clone}

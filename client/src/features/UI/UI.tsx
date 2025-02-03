@@ -5,29 +5,33 @@ import useMapStore from "@/store/map";
 import useInfo from "@/store/info";
 import { push, ref, set } from "firebase/database";
 import { realtimeDb } from "@/firebase/firebase";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import ConfirmModal from "../components/Confirm";
-
+import useModalStore from "@/store/modal";
+const animations = [
+  { name: "wave", emoji: "👋", label: "인사하기" },
+  { name: "dive", emoji: "💃", label: "춤추기" },
+  { name: "jump_air", emoji: "🤸", label: "점프하기" },
+];
 export const UI = () => {
   const map = useMapStore((map) => map.state);
   const info = useInfo((info) => info.state);
   const setInfo = useInfo((info) => info.setState);
   const [name, setName] = useState<string>(localStorage.getItem("name") || "");
   const [useName, setUseName] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const openModal = useModalStore((state) => state.openModal);
 
   const handleConfirm = () => {
     setInfo({ ...info, situation: "room" });
-    setIsModalOpen(false);
   };
 
-  const handleCancel = () => {
-    setIsModalOpen(false);
+  const openConfirmModal = () => {
+    openModal(`${name}으로 입장하시겠습니까?`, handleConfirm);
   };
   const switchSituation = () => {
     if (info.situation === "lobby") {
       if (useName === false) {
-        setIsModalOpen(true);
+        openConfirmModal();
       } else {
         setInfo({ ...info, situation: "room" });
       }
@@ -227,17 +231,56 @@ export const UI = () => {
                   )}
                 </button>
               )}
+              <AnimationButton triggerAnimation={(name) => socket.emit("animation", name)} />
             </div>
           )}
         </div>
         <ToastContainer></ToastContainer>
-        <ConfirmModal
-          isOpen={isModalOpen}
-          message={`${name}으로 입장하시겠습니까?`}
-          onConfirm={handleConfirm}
-          onCancel={handleCancel}
-        />
+        <ConfirmModal />
       </motion.div>
     </>
+  );
+};
+export const AnimationButton = ({
+  triggerAnimation,
+}: {
+  triggerAnimation: (name: string) => void;
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  // 버튼 클릭 시 원형 배치되는 애니메이션
+  const toggleMenu = () => setIsOpen((prev) => !prev);
+
+  return (
+    <div className="p-1 rounded-full bg-slate-500 text-white drop-shadow-md cursor-pointer hover:bg-slate-800 transition-colors">
+      {/* 메인 버튼 (이모지 버튼) */}
+      <motion.button
+        onClick={toggleMenu}
+        className="w-12 h-12 rounded-full text-white flex items-center justify-center text-xl shadow-lg"
+        whileTap={{ scale: 0.9 }}
+      >
+        💡
+      </motion.button>
+
+      {/* 서브 버튼들 (애니메이션 버튼들) */}
+      {animations.map((anim, index) => {
+        const angle = (index / animations.length) * Math.PI; // 원형 배치
+        return (
+          <motion.button
+            key={anim.name}
+            className="absolute w-12 h-12 rounded-full bg-white shadow-lg flex items-center justify-center text-2xl"
+            style={{
+              left: isOpen ? `${Math.cos(angle) * 80}px` : "0px",
+              bottom: isOpen ? `${Math.sin(angle) * 80}px` : "0px",
+            }}
+            onClick={() => triggerAnimation(anim.name)}
+            animate={{ opacity: isOpen ? 1 : 0, scale: isOpen ? 1 : 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            {anim.emoji}
+          </motion.button>
+        );
+      })}
+    </div>
   );
 };

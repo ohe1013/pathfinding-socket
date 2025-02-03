@@ -1,7 +1,7 @@
 import { PositionalAudio } from "@react-three/drei";
 import { Item as ItemProps } from "@/store/rooms";
 import * as THREE from "three";
-import { RefObject } from "react";
+import { RefObject, useMemo } from "react";
 
 type SoundProps = {
   sound: ItemProps["sound"];
@@ -9,15 +9,19 @@ type SoundProps = {
 };
 
 export const RenderSound = (item: SoundProps) => {
-  if (item.sound) {
-    return (
-      <PositionalAudio
-        ref={item.soundRef}
-        url={item.sound.src}
-        distance={20}
-        loop={true}
-        autoplay={true}
-      />
-    );
-  }
+  return useMemo(() => {
+    if (item.sound) {
+      return (
+        <PositionalAudio
+          ref={item.soundRef}
+          url={item.sound.src}
+          distance={20}
+          loop={true}
+          autoplay={true}
+        />
+      );
+    } else {
+      return null;
+    }
+  }, [item.sound, item.soundRef]);
 };

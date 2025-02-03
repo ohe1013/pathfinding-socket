@@ -17,11 +17,7 @@ export async function setupSocketHandlers(io: Server, socket: Socket) {
   if (!room) {
     return;
   }
-  const newCharcter = characterService.createCharacter(
-    socket.id,
-    room,
-    [0, 20]
-  );
+  const newCharcter = characterService.createCharacter(socket.id, room, [0, 20]);
   roomService.addCharacterToRoom(defaultRoomId, newCharcter);
   socket.join(room.id);
   socket.emit("conn", {
@@ -97,10 +93,16 @@ export async function setupSocketHandlers(io: Server, socket: Socket) {
   });
 
   socket.on("chatMessage", (message) => {
-    console.log(room!.id, message, socket.id);
     io.to(room!.id).emit("playerChatMessage", {
       id: socket.id,
       message,
+    });
+  });
+
+  socket.on("animation", (animationName) => {
+    io.to(room!.id).emit("playerAnimation", {
+      id: socket.id,
+      animationName,
     });
   });
 
