@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-export type Situation = "lobby" | "room" | "guestbook";
+export type Situation = "lobby" | "room" | "guestbook" | "gallery";
 
 type InfoObj = {
   situation: Situation;

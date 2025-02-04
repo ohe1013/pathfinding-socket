@@ -7,6 +7,7 @@ import { Lobby } from "./rooms/Lobby";
 import Room from "./rooms/Room";
 import useInfo from "@/store/info";
 import GuestTablet from "./rooms/GuestTablet";
+import { Gallery } from "./gallery/Gallery";
 
 export const Experience = ({ loaded }: { loaded: boolean }) => {
   const map = useMapStore((state) => state.state);
@@ -183,9 +184,10 @@ export const Experience = ({ loaded }: { loaded: boolean }) => {
           three: 0,
         }}
       />
-      {situation === "room" && <Room />}
+      {situation === "room" && <Gallery />}
       {situation === "lobby" && <Lobby />}
       {situation === "guestbook" && <GuestTablet />}
+      {situation === "gallery" && <Gallery />}
     </>
   );
 };

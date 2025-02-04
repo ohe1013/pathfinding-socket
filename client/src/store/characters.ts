@@ -16,7 +16,6 @@ interface CharactersStore {
 const useCharactersStore = create<CharactersStore>((set) => ({
   state: undefined,
   setState: (newState: CharactersObj[]) => {
-    console.log(newState);
     set({ state: newState });
   },
   setStateWithFilter: (newState: CharactersObj) => {

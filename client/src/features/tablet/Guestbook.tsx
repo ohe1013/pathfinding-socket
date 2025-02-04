@@ -1,22 +1,109 @@
-interface GuestBookPostForm {
-  id?: string;
-  name: string;
-  password: string;
-  content: string;
-  timestamp: number;
-}
-export default function Guestbook(props: { posts: GuestBookPostForm[] }) {
+import { Html } from "@react-three/drei";
+import { PostFormModal } from "./GuestForm";
+import { useEffect, useState } from "react";
+import { CRUD, GuestBookPostForm } from "@/types";
+import { postValidation } from "@/hooks/useForm";
+import GuestBookItem from "./GuestBookItem";
+import { onValue, orderByChild, query, ref } from "firebase/database";
+import { realtimeDb } from "@/firebase/firebase";
+const initialPost = {
+  id: "",
+  password: "",
+  name: "",
+  content: "",
+  timestamp: 0,
+};
+
+type GuestBookProps = {
+  onClose: () => void;
+};
+
+const GuestBook = ({ onClose }: GuestBookProps) => {
+  const [isFormModalOpen, setIsFormModalOpen] = useState<boolean>(false);
+  const handleFormModalClose = () => setIsFormModalOpen(false);
+  const [selectedPost, setSelectedPost] = useState<GuestBookPostForm>(initialPost);
+  const [type, setType] = useState<CRUD>("insert");
+  const [posts, setPosts] = useState<GuestBookPostForm[]>([]);
+  useEffect(() => {
+    const guestBookRef = ref(realtimeDb, "guestbook");
+    const q = query(guestBookRef, orderByChild("timestamp"));
+    onValue(q, (snapshot) => {
+      if (snapshot.exists()) {
+        setPosts(
+          Object.entries(snapshot.val() as GuestBookPostForm[])
+            .map((item) => ({
+              id: item[0],
+              ...item[1],
+            }))
+            .reverse()
+        );
+      } else {
+        setPosts([]);
+      }
+    });
+  }, []);
+  const handleFormModal = (type: CRUD, post?: GuestBookPostForm) => {
+    if (type === "insert") {
+      setType(type);
+      setSelectedPost(initialPost);
+    } else if (type === "delete" || type === "update") {
+      setType(type);
+      setSelectedPost(post!);
+    }
+  };
   return (
-    <div className="w-full overflow-y-auto flex flex-col space-y-2">
-      {props.posts.map((post) => (
-        <div
-          key={post.id}
-          className="p-4 rounded-lg bg-transparent bg-opacity-70 text-white hover:bg-slate-950 transition-colors cursor-pointer pointer-events-auto"
-        >
-          <p className="text-uppercase font-bold text-lg">{post.name}</p>
-          <div className="flex items-center gap-2">{post.content}</div>
+    <Html
+      style={{
+        width: "330px",
+        height: "384px",
+        borderRadius: "3px",
+        overflowY: "auto",
+        padding: "0",
+        overflowX: "hidden",
+        // pointerEvents: "auto",
+      }}
+      position={[0, 4, -4]}
+      rotation-x={Math.PI / -2}
+      occlude
+      className="scrollbar-hide"
+      scale={5}
+      transform
+    >
+      <div
+        style={{
+          width: "330px",
+          height: "384px",
+        }}
+        onPointerDown={(e) => e.stopPropagation()}
+      >
+        {!isFormModalOpen && (
+          <div className="flex justify-between mx-4">
+            <button onClick={onClose}>❌</button>
+            <h1 className="text-center text-white text-2xl font-bold">방명록</h1>
+            <button
+              onClick={() => {
+                setIsFormModalOpen(true);
+                handleFormModal("insert");
+              }}
+              className="right-5 top-0"
+            >
+              📝
+            </button>
+          </div>
+        )}
+        <div className={` max-w-full  overflow-y-auto p-5  place-items-center  select-none`}>
+          <PostFormModal
+            isOpen={isFormModalOpen}
+            onClose={handleFormModalClose}
+            onFormValid={postValidation}
+            initialValues={selectedPost}
+            type={type}
+          />
         </div>
-      ))}
-    </div>
+        {!isFormModalOpen && <GuestBookItem posts={posts} />}
+      </div>
+    </Html>
   );
-}
+};
+
+export default GuestBook;

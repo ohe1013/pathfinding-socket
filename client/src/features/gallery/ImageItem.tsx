@@ -3,6 +3,7 @@ import { useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Image, useScroll } from "@react-three/drei";
 import { easing } from "maath";
+import { galleryImages } from "./Gallery";
 
 export const Item = ({ index, position, scale, url, clicked, setClicked }) => {
   const ref = useRef<THREE.Mesh>(null);
@@ -17,7 +18,10 @@ export const Item = ({ index, position, scale, url, clicked, setClicked }) => {
     if (!ref.current) return;
 
     const mesh = ref.current as THREE.Mesh; // ✅ 안전한 타입 단언
-    const y = scroll.curve(index / urls.length - 1.5 / urls.length, 4 / urls.length);
+    const y = scroll.curve(
+      index / galleryImages.length - 1.5 / galleryImages.length,
+      4 / galleryImages.length
+    );
 
     // ✅ scale은 Mesh에서만 조작해야 함
     easing.damp3(

@@ -4,19 +4,14 @@ import { useThree } from "@react-three/fiber";
 import { Minimap } from "./Minimap";
 import { Item } from "./ImageItem";
 
-const galleryImages = [
-  "/images/1.jpg",
-  "/images/2.jpg",
-  "/images/3.jpg",
-  "/images/4.jpg",
-  "/images/5.jpg",
-];
-
+export const galleryImages = Array.from(
+  { length: 19 },
+  (_, i) => `/images/${String(i + 1).padStart(2, "0")}.jpg`
+);
 export const Gallery = ({ w = 0.7, gap = 0.15 }) => {
   const { width } = useThree((state) => state.viewport);
   const xW = w + gap;
   const [clicked, setClicked] = useState<number | null>(null); // ✅ useState로 관리
-
   return (
     <ScrollControls
       horizontal

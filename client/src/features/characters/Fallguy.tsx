@@ -40,7 +40,6 @@ export const Fallguy = ({ id, ...props }: CharacterProps) => {
   const [path, setPath] = useState<Array<THREE.Vector3>>();
   const grid = useGrid();
   const newMaterial = (materials.Material as THREE.MeshStandardMaterial).clone();
-  console.log(actions);
   useEffect(() => {
     if (!grid) return;
     const path: Array<THREE.Vector3> = [];
