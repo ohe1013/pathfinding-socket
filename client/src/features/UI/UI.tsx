@@ -5,7 +5,7 @@ import useMapStore from "@/store/map";
 import useInfo from "@/store/info";
 import { push, ref, set } from "firebase/database";
 import { realtimeDb } from "@/firebase/firebase";
-import { ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import ConfirmModal from "../components/Confirm";
 import useModalStore from "@/store/modal";
 const animations = [
@@ -26,6 +26,10 @@ export const UI = () => {
   };
 
   const openConfirmModal = () => {
+    if (name === "") {
+      toast.warn("이름을 입력해주세요.");
+      return;
+    }
     openModal(`${name}으로 입장하시겠습니까?`, handleConfirm);
   };
   const switchSituation = () => {
@@ -71,6 +75,10 @@ export const UI = () => {
   };
 
   const login = (value: string) => {
+    if (value === "") {
+      toast.warn("이름이 없어요.😂");
+      return;
+    }
     setUseName(true);
     localStorage.setItem("name", value);
   };

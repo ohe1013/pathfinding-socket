@@ -5,54 +5,52 @@ import { Image, useScroll } from "@react-three/drei";
 import { easing } from "maath";
 import { galleryImages } from "./Gallery";
 
-export const Item = ({ index, position, scale, url, clicked, setClicked }) => {
-  const ref = useRef<THREE.Mesh>(null);
+interface ItemProps {
+  index: number;
+  position: [number, number, number];
+  scale: [number, number];
+  url: string;
+  clicked: number;
+  setClicked: (index: number) => void;
+}
+
+export const Item = ({ index, position, scale, url, clicked, setClicked }: ItemProps) => {
+  const ref = useRef<THREE.Mesh | null>(null);
   const scroll = useScroll();
-  const [hovered, hover] = useState(false);
+  const [hovered, setHovered] = useState(false);
 
-  const click = () => setClicked(index === clicked ? null : index);
-  const over = () => hover(true);
-  const out = () => hover(false);
+  const click = () => setClicked(index === clicked ? -1 : index);
+  const over = () => setHovered(true);
+  const out = () => setHovered(false);
 
-  useFrame((state, delta) => {
+  useFrame((_, delta) => {
     if (!ref.current) return;
+    const mesh = ref.current;
+    const material = mesh.material as THREE.MeshBasicMaterial;
 
-    const mesh = ref.current as THREE.Mesh; // ✅ 안전한 타입 단언
     const y = scroll.curve(
       index / galleryImages.length - 1.5 / galleryImages.length,
       4 / galleryImages.length
     );
 
-    // ✅ scale은 Mesh에서만 조작해야 함
-    easing.damp3(
-      mesh.scale,
-      [clicked === index ? 4.7 : scale[0], clicked === index ? 5 : 4 + y, 1],
-      0.15,
-      delta
-    );
+    const scaleFactor = clicked === index ? 1.2 : 1; // ✅ 확대 비율 1.2배로 조정 (1.5 → 1.2)
+    easing.damp3(mesh.scale, [scale[0] * scaleFactor, scale[1] * scaleFactor, 1 + y], 0.15, delta);
 
-    // ❌ mesh.material.scale 제거 (Material에는 scale 속성이 없음)
-
-    if (clicked !== null && index < clicked)
+    // ✅ 클릭된 이미지 위치 조정
+    if (clicked !== -1 && index < clicked)
       easing.damp(mesh.position, "x", position[0] - 2, 0.15, delta);
-    if (clicked !== null && index > clicked)
+    if (clicked !== -1 && index > clicked)
       easing.damp(mesh.position, "x", position[0] + 2, 0.15, delta);
-    if (clicked === null || clicked === index)
+    if (clicked === -1 || clicked === index)
       easing.damp(mesh.position, "x", position[0], 0.15, delta);
 
-    easing.damp(
-      mesh.material as any,
-      "grayscale",
-      hovered || clicked === index ? 0 : Math.max(0, 1 - y),
-      0.15,
-      delta
-    );
-    easing.dampC(
-      mesh.material.color,
-      hovered || clicked === index ? "white" : "#aaa",
-      hovered ? 0.3 : 0.15,
-      delta
-    );
+    // ✅ grayscale 값 조정 (완전히 0이 아닌, 원본 대비 10% 감소)
+    const grayscaleValue = hovered ? 0.2 : clicked === index ? 0.3 : Math.max(0, 1 - y);
+    easing.damp(material, "grayscale", grayscaleValue, 0.15, delta);
+
+    // ✅ 클릭된 이미지 색상 유지 (너무 밝아지지 않게)
+    const colorTarget = hovered ? "white" : clicked === index ? "#ddd" : "#aaa";
+    easing.dampC(material.color, colorTarget, 0.3, delta);
   });
 
   return (
@@ -61,6 +59,8 @@ export const Item = ({ index, position, scale, url, clicked, setClicked }) => {
       url={url}
       position={position}
       scale={scale}
+      transparent={true}
+      rotation={[0, 0, 0]}
       onClick={click}
       onPointerOver={over}
       onPointerOut={out}

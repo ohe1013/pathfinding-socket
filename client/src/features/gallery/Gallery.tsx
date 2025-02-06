@@ -8,10 +8,11 @@ export const galleryImages = Array.from(
   { length: 19 },
   (_, i) => `/images/${String(i + 1).padStart(2, "0")}.jpg`
 );
-export const Gallery = ({ w = 0.7, gap = 0.15 }) => {
+
+export const Gallery = ({ w = 4, h = 6, gap = 0.2 }) => {
   const { width } = useThree((state) => state.viewport);
   const xW = w + gap;
-  const [clicked, setClicked] = useState<number | null>(null); // ✅ useState로 관리
+  const [clicked, setClicked] = useState<number>(-1); // ✅ `null` 대신 `-1` 기본값
   return (
     <ScrollControls
       horizontal
@@ -24,8 +25,8 @@ export const Gallery = ({ w = 0.7, gap = 0.15 }) => {
           <Item
             key={i}
             index={i}
-            position={[i * xW, 0, 0]}
-            scale={[w, 4, 1]}
+            position={[i * (w + gap), 0, 0]} // ✅ X축으로 정렬
+            scale={[w, h]} // ✅ 원본 크기 유지 (비율 유지)
             url={url}
             clicked={clicked}
             setClicked={setClicked}

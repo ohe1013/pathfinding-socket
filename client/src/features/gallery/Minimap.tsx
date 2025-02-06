@@ -10,13 +10,14 @@ const geometry = new THREE.BufferGeometry().setFromPoints([
   new THREE.Vector3(0, 0.5, 0),
 ]);
 
-export const Minimap = ({ total }) => {
-  const ref = useRef<THREE.Group>(null);
+export const Minimap = ({ total }: { total: number }) => {
+  const ref = useRef<THREE.Group | null>(null);
   const scroll = useScroll();
   const { height } = useThree((state) => state.viewport);
 
-  useFrame((state, delta) => {
-    ref.current?.children.forEach((child, index) => {
+  useFrame((_, delta) => {
+    if (!ref.current) return;
+    ref.current.children.forEach((child, index) => {
       const y = scroll.curve(index / total - 1.5 / total, 4 / total);
       easing.damp(child.scale, "y", 0.15 + y / 6, 0.15, delta);
     });
