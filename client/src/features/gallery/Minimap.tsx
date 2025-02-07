@@ -1,8 +1,16 @@
 import * as THREE from "three";
 import { useRef } from "react";
-import { useFrame, useThree } from "@react-three/fiber";
+import { extend, Object3DNode, useFrame, useThree } from "@react-three/fiber";
 import { useScroll } from "@react-three/drei";
 import { easing } from "maath";
+
+extend({ Line_: THREE.Line });
+
+declare module "@react-three/fiber" {
+  interface ThreeElements {
+    line_: Object3DNode<THREE.Line, typeof THREE.Line>;
+  }
+}
 
 const material = new THREE.LineBasicMaterial({ color: "white" });
 const geometry = new THREE.BufferGeometry().setFromPoints([
@@ -26,7 +34,7 @@ export const Minimap = ({ total }: { total: number }) => {
   return (
     <group ref={ref}>
       {[...Array(total)].map((_, i) => (
-        <line
+        <line_
           key={i}
           geometry={geometry}
           material={material}

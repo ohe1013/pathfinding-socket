@@ -43,7 +43,7 @@ export const Experience = ({ loaded }: { loaded: boolean }) => {
         resetCamera([0, 0, 2], [0, 0, 0]);
         break;
       case "gallery":
-        resetCamera([0, 3, 5], [0, 3, 0]); // 🎯 갤러리 카메라 위치 추가
+        resetCamera([0, 10, 10], [0, 10, 0]); // 🎯 갤러리 카메라 위치 추가
         break;
       case "room":
         if (map?.roomId) {
@@ -129,14 +129,21 @@ export const Experience = ({ loaded }: { loaded: boolean }) => {
           </directionalLight>
         </>
       )}
-      {situation !== "guestbook" && map.roomId !== "weddingroom" && (
+      {situation !== "gallery" && situation !== "guestbook" && map.roomId !== "weddingroom" && (
+        <>
+          <Environment files={"/textures/venice_sunset_1k.hdr"} />
+          <ambientLight intensity={0.1} />
+
+          <directionalLight position={[4, 4, -4]} castShadow intensity={0.35}>
+            <orthographicCamera attach={"shadow-camera"} args={[-10, 10, 10, -10]} far={22} />
+          </directionalLight>
+        </>
+      )}
+      {situation === "gallery" && (
         <>
           <Environment files={"/textures/venice_sunset_1k.hdr"} />
           <ambientLight intensity={0.1} />
           <OrthographicCamera makeDefault position={[0, 0, 10]} zoom={50} />
-          {/* <directionalLight position={[4, 4, -4]} castShadow intensity={0.35}>
-            <orthographicCamera attach={"shadow-camera"} args={[-10, 10, 10, -10]} far={22} />
-          </directionalLight> */}
         </>
       )}
 
@@ -151,7 +158,7 @@ export const Experience = ({ loaded }: { loaded: boolean }) => {
       />
 
       {/* 각 상황별 렌더링 */}
-      {situation === "room" && <Gallery />}
+      {situation === "room" && <Room />}
       {situation === "lobby" && <Lobby />}
       {situation === "guestbook" && <GuestTablet />}
       {situation === "gallery" && <Gallery />}

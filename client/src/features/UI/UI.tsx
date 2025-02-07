@@ -110,7 +110,7 @@ export const UI = () => {
                 onChange={(e) => setChatMessage(e.target.value)}
               />
               <button
-                className="p-4 rounded-full bg-slate-500 text-white drop-shadow-md cursor-pointer hover:bg-slate-800 transition-colors"
+                className="p-4 rounded-full bg-pink-500 text-white drop-shadow-md cursor-pointer hover:bg-pink-800 transition-colors"
                 onClick={sendChatMessage}
               >
                 <svg
@@ -147,7 +147,7 @@ export const UI = () => {
               />
               {useName && (
                 <button
-                  className="p-4 rounded-full bg-slate-500 text-white drop-shadow-md cursor-pointer hover:bg-slate-800 transition-colors"
+                  className="p-4 rounded-full bg-pink-500 text-white drop-shadow-md cursor-pointer hover:bg-pink-800 transition-colors"
                   onClick={() => changeName()}
                 >
                   🛠️
@@ -155,7 +155,7 @@ export const UI = () => {
               )}
               {!useName && (
                 <button
-                  className="p-4 rounded-full bg-slate-500 text-white drop-shadow-md cursor-pointer hover:bg-slate-800 transition-colors"
+                  className="p-4 rounded-full bg-pink-500 text-white drop-shadow-md cursor-pointer hover:bg-pink-800 transition-colors"
                   onClick={() => login(name)}
                 >
                   🔑
@@ -164,11 +164,11 @@ export const UI = () => {
             </div>
           )}
 
-          {info.situation === "guestbook" && (
+          {(info.situation === "guestbook" || info.situation === "gallery") && (
             <div className="flex items-center space-x-4 pointer-events-auto">
               {map?.roomId && (
                 <button
-                  className="p-4 rounded-full bg-slate-500 text-white drop-shadow-md cursor-pointer hover:bg-slate-800 transition-colors"
+                  className="p-4 rounded-full bg-pink-500 text-white drop-shadow-md cursor-pointer hover:bg-pink-800 transition-colors"
                   onClick={switchSituation}
                 >
                   돌아가기
@@ -176,7 +176,9 @@ export const UI = () => {
               )}
               {map?.roomId && (
                 <button
-                  className="p-4 rounded-full bg-slate-500 text-white drop-shadow-md cursor-pointer hover:bg-slate-800 transition-colors"
+                  className={`p-4 rounded-full text-white drop-shadow-md cursor-pointer hover:bg-pink-800 transition-colors ${
+                    !info.useMusic ? "bg-pink-500 opacity-50" : "bg-pink-500"
+                  }`}
                   onClick={switchMusic}
                 >
                   <svg
@@ -193,11 +195,6 @@ export const UI = () => {
                       d="M9 9l10.5-3m0 6.553v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 11-.99-3.467l2.31-.66a2.25 2.25 0 001.632-2.163zm0 0V2.25L9 5.25v10.303m0 0v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 01-.99-3.467l2.31-.66A2.25 2.25 0 009 15.553z"
                     />
                   </svg>
-                  {!info.useMusic && (
-                    <span className="absolute inset-0 flex items-center justify-center">
-                      <span className="absolute w-full h-0.5 bg-white rotate-45"></span>
-                    </span>
-                  )}
                 </button>
               )}
             </div>
@@ -206,7 +203,7 @@ export const UI = () => {
             <div className="flex items-center space-x-4 pointer-events-auto">
               {map?.roomId && (
                 <button
-                  className="p-4 rounded-full bg-slate-500 text-white drop-shadow-md cursor-pointer hover:bg-slate-800 transition-colors"
+                  className="p-4 rounded-full bg-pink-500 text-white drop-shadow-md cursor-pointer hover:bg-pink-800 transition-colors"
                   onClick={switchSituation}
                 >
                   {info.situation === "lobby" && "구경가기"}
@@ -215,7 +212,9 @@ export const UI = () => {
               )}
               {map?.roomId && (
                 <button
-                  className="p-4 rounded-full bg-slate-500 text-white drop-shadow-md cursor-pointer hover:bg-slate-800 transition-colors"
+                  className={`p-4 rounded-full text-white drop-shadow-md cursor-pointer hover:bg-pink-800 transition-colors ${
+                    !info.useMusic ? "bg-pink-500 opacity-50" : "bg-pink-500"
+                  }`}
                   onClick={switchMusic}
                 >
                   <svg
@@ -232,11 +231,6 @@ export const UI = () => {
                       d="M9 9l10.5-3m0 6.553v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 11-.99-3.467l2.31-.66a2.25 2.25 0 001.632-2.163zm0 0V2.25L9 5.25v10.303m0 0v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 01-.99-3.467l2.31-.66A2.25 2.25 0 009 15.553z"
                     />
                   </svg>
-                  {!info.useMusic && (
-                    <span className="absolute inset-0 flex items-center justify-center">
-                      <span className="absolute w-full h-0.5 bg-white rotate-45"></span>
-                    </span>
-                  )}
                 </button>
               )}
               <AnimationButton triggerAnimation={(name) => socket.emit("animation", name)} />
@@ -260,7 +254,7 @@ export const AnimationButton = ({
   const toggleMenu = () => setIsOpen((prev) => !prev);
 
   return (
-    <div className="p-1 rounded-full bg-slate-500 text-white drop-shadow-md cursor-pointer hover:bg-slate-800 transition-colors">
+    <div className="p-1 rounded-full bg-pink-500 text-white drop-shadow-md cursor-pointer hover:bg-pink-800 transition-colors">
       {/* 메인 버튼 (이모지 버튼) */}
       <motion.button
         onClick={toggleMenu}
