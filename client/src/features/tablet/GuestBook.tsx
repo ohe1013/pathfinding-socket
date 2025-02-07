@@ -7,7 +7,6 @@ import GuestBookItem from "./GuestBookItem";
 import { onValue, orderByChild, query, ref } from "firebase/database";
 import { realtimeDb } from "@/firebase/firebase";
 const initialPost = {
-  id: "",
   password: "",
   name: "",
   content: "",
@@ -48,8 +47,11 @@ export const GuestBook = ({ onClose }: GuestBookProps) => {
       setSelectedPost(initialPost);
     } else if (type === "delete" || type === "update") {
       setType(type);
-      setSelectedPost(post!);
+      if (post) {
+        setSelectedPost({ ...post, password: "" });
+      }
     }
+    setIsFormModalOpen(true);
   };
   return (
     <Html
@@ -82,7 +84,6 @@ export const GuestBook = ({ onClose }: GuestBookProps) => {
             <h1 className="text-center text-white text-2xl font-bold">방명록</h1>
             <button
               onClick={() => {
-                setIsFormModalOpen(true);
                 handleFormModal("insert");
               }}
               className="right-5 top-0"
@@ -91,16 +92,20 @@ export const GuestBook = ({ onClose }: GuestBookProps) => {
             </button>
           </div>
         )}
-        <div className={` max-w-full  overflow-y-auto p-5  place-items-center  select-none`}>
-          <PostFormModal
-            isOpen={isFormModalOpen}
-            onClose={handleFormModalClose}
-            onFormValid={postValidation}
-            initialValues={selectedPost}
-            type={type}
-          />
-        </div>
-        {!isFormModalOpen && <GuestBookItem posts={posts} />}
+        {isFormModalOpen && (
+          <div className={` max-w-full  overflow-y-auto p-5  place-items-center  select-none`}>
+            <PostFormModal
+              isOpen={isFormModalOpen}
+              onClose={handleFormModalClose}
+              onFormValid={postValidation}
+              initialValues={selectedPost}
+              type={type}
+            />
+          </div>
+        )}
+        {!isFormModalOpen && (
+          <GuestBookItem posts={posts} onEdit={handleFormModal} onDelete={handleFormModal} />
+        )}
       </div>
     </Html>
   );

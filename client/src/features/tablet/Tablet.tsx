@@ -4,6 +4,7 @@ import { useThree } from "@react-three/fiber";
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { GuestBook } from "./GuestBook";
+import Game from "./Game";
 type GLTFResult = {
   nodes: {
     [key: string]: THREE.Mesh; // 모든 노드가 THREE.Mesh라고 가정
@@ -64,7 +65,8 @@ export function Tablet(props: JSX.IntrinsicElements["group"]) {
         geometry={nodes.ChamferBox002_1.geometry}
         material={materials["01___Default"]}
       >
-        <GuestBook onClose={onClick} />
+        <Game onClose={onClick} />
+        {/* <GuestBook onClose={onClick} /> */}
       </mesh>
       <mesh
         onClick={onClick}

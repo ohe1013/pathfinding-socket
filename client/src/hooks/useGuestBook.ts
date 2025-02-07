@@ -2,6 +2,7 @@ import { ref, push, get, set, remove, update } from "firebase/database";
 import bcrypt from "bcryptjs";
 import { realtimeDb } from "@/firebase/firebase";
 import { GuestBookPostForm } from "@/types";
+import { toast } from "react-toastify";
 
 // 게시글 추가
 export const addPost = async (newPost: GuestBookPostForm) => {
@@ -14,6 +15,7 @@ export const addPost = async (newPost: GuestBookPostForm) => {
     password: hashedPassword,
     timestamp: Date.now(),
   });
+  toast.success("작성되었어요.😁");
 };
 
 // 게시글 수정
@@ -32,6 +34,7 @@ export const updatePost = async (post: GuestBookPostForm) => {
         password: newHashedPassword,
         timestamp: Date.now(),
       });
+      toast.success("수정되었어요.😁");
     } else {
       throw new Error("비밀번호가 일치하지 않습니다.");
     }
@@ -47,10 +50,12 @@ export const deletePost = async (postId: string, inputPassword: string) => {
 
   if (snapshot.exists()) {
     const postData = snapshot.val() as GuestBookPostForm;
+    console.log(postData);
     const isMatch = await bcrypt.compare(inputPassword, postData.password);
 
     if (isMatch) {
       await remove(postRef);
+      toast.success("삭제되었어요.😁");
     } else {
       throw new Error("비밀번호가 일치하지 않습니다.");
     }

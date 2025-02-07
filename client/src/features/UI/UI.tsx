@@ -233,7 +233,9 @@ export const UI = () => {
                   </svg>
                 </button>
               )}
-              <AnimationButton triggerAnimation={(name) => socket.emit("animation", name)} />
+              {info.situation === "room" && (
+                <AnimationButton triggerAnimation={(name) => socket.emit("animation", name)} />
+              )}
             </div>
           )}
         </div>

@@ -65,7 +65,6 @@ export const PostFormModal: React.FC<PostFormModalProps> = ({
         <Heading>방명록 글 {typeText}</Heading>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <input
-            onClick={(e) => console.log(e)}
             onChange={handleChange}
             value={values.name}
             type="text"

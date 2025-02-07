@@ -117,7 +117,9 @@ export const Fallguy = ({ id, ...props }: CharacterProps) => {
     } else if (path?.length) {
       path.shift();
     } else {
-      setAnimation("idle");
+      if (animation === "run") {
+        setAnimation("idle");
+      }
     }
   });
 

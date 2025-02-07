@@ -34,21 +34,21 @@ export const ConfirmModal = () => {
         <div className="flex justify-center gap-4">
           <button
             onClick={() => {
-              onConfirm();
-              closeModal();
-            }}
-            className="px-4 py-2 bg-pink-500 text-white rounded hover:bg-pink-600"
-          >
-            확인
-          </button>
-          <button
-            onClick={() => {
               onCancel();
               closeModal();
             }}
             className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
           >
             취소
+          </button>
+          <button
+            onClick={() => {
+              onConfirm();
+              closeModal();
+            }}
+            className="px-4 py-2 bg-pink-500 text-white rounded hover:bg-pink-600"
+          >
+            확인
           </button>
         </div>
       </div>

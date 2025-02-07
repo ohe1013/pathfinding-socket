@@ -1,151 +1,211 @@
-// import { Html } from "@react-three/drei";
-// import { useEffect, useRef, useState } from "react";
-// import clsx from "clsx";
+import { Html } from "@react-three/drei";
+import { useEffect, useLayoutEffect, useRef } from "react";
+import "./game.css";
 
-// type GuestBookProps = {
-//   onClose: () => void;
-// };
+const scale = 10;
+const rows = 20;
+const columns = 20;
 
-// const Game = ({ onClose }: GuestBookProps) => {
-//   const [playerX, setPlayerX] = useState(150);
-//   const [playerY, setPlayerY] = useState(354);
-//   const [score, setScore] = useState(0);
-//   const [spawnInterval, setSpawnInterval] = useState(1000);
-//   const [isGameOver, setIsGameOver] = useState(false);
-//   const gameRef = useRef<HTMLDivElement>(null);
-//   const bulletsRef = useRef<{ id: number; x: number; y: number }[]>([]);
-//   let bulletId = 0;
+const Game = ({ onClose }: { onClose: () => void }) => {
+  const scoreRef = useRef(0);
+  const snakeRef = useRef([{ x: 0, y: 0 }]);
+  const directionRef = useRef({ x: scale, y: 0 }); // 최신 방향 저장
+  const fruitRef = useRef({ x: 0, y: 0 });
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const ctxRef = useRef<CanvasRenderingContext2D>();
+  const gameIntervalRef = useRef<NodeJS.Timeout>();
+  const highScoresRef = useRef([1]);
+  const speedRef = useRef(250); // 초기 속도 설정
+  useEffect(() => {
+    fruitRef.current = pickLocation();
+    const canvas = canvasRef.current;
+    if (canvas) ctxRef.current = canvas.getContext("2d")!;
+  }, []);
 
-//   const movePlayer = (dx: number, dy: number) => {
-//     setPlayerX((prevX) => Math.max(0, Math.min(300, prevX + dx)));
-//     setPlayerY((prevY) => Math.max(0, Math.min(354, prevY + dy)));
-//   };
+  const drawGame = () => {
+    if (!ctxRef.current) return;
+    ctxRef.current.clearRect(0, 0, columns * scale, rows * scale);
 
-//   useEffect(() => {
-//     if (isGameOver) return;
+    // 과일 그리기
+    ctxRef.current.fillStyle = "#FF4136";
+    ctxRef.current.fillRect(fruitRef.current.x, fruitRef.current.y, scale, scale);
 
-//     const spawnBullet = () => {
-//       bulletId++;
-//       const side = Math.floor(Math.random() * 4);
-//       let posX = 0,
-//         posY = 0,
-//         speedX = 0,
-//         speedY = 0;
+    // 뱀 그리기
+    ctxRef.current.fillStyle = "#4CAF50";
+    snakeRef.current.forEach((segment) => {
+      ctxRef.current!.fillRect(segment.x, segment.y, scale, scale);
+    });
+  };
 
-//       if (side === 0) {
-//         posX = Math.random() * 315;
-//         posY = -15;
-//         speedY = 2;
-//       } else if (side === 1) {
-//         posX = Math.random() * 315;
-//         posY = 384;
-//         speedY = -2;
-//       } else if (side === 2) {
-//         posX = -15;
-//         posY = Math.random() * 369;
-//         speedX = 2;
-//       } else {
-//         posX = 330;
-//         posY = Math.random() * 369;
-//         speedX = -2;
-//       }
+  useLayoutEffect(() => {
+    setTimeout(() => {
+      const canvas = canvasRef.current;
+      if (canvas) {
+        ctxRef.current = canvas.getContext("2d")!;
+        fruitRef.current = pickLocation(); // 과일 위치 설정
+        console.log(fruitRef.current);
+        drawGame(); // 초기 상태 그리기
+      }
+    }, 0);
+  }, []);
+  const startGame = () => {
+    resetGame(); // 게임 초기화 및 초기 상태 그리기
+    if (!gameIntervalRef.current) {
+      gameIntervalRef.current = setInterval(updateGame, speedRef.current);
+    }
+  };
 
-//       bulletsRef.current.push({ id: bulletId, x: posX, y: posY });
+  const stopGame = () => {
+    clearInterval(gameIntervalRef.current);
+    gameIntervalRef.current = undefined;
+  };
 
-//       const moveBullet = () => {
-//         bulletsRef.current = bulletsRef.current
-//           .map((bullet) => {
-//             if (bullet.id === bulletId) {
-//               const newX = bullet.x + speedX;
-//               const newY = bullet.y + speedY;
-//               if (newX < -15 || newX > 345 || newY < -15 || newY > 399) {
-//                 return null;
-//               }
-//               return { id: bullet.id, x: newX, y: newY };
-//             }
-//             return bullet;
-//           })
-//           .filter(Boolean);
+  const updateGame = () => {
+    const newSnake = [...snakeRef.current];
+    const head = {
+      x: newSnake[newSnake.length - 1].x + directionRef.current.x,
+      y: newSnake[newSnake.length - 1].y + directionRef.current.y,
+    };
+    newSnake.push(head);
 
-//         bulletsRef.current.forEach((bullet) => {
-//           if (
-//             bullet.x < playerX + 30 &&
-//             bullet.x + 15 > playerX &&
-//             bullet.y < playerY + 30 &&
-//             bullet.y + 15 > playerY
-//           ) {
-//             setIsGameOver(true);
-//           }
-//         });
+    if (head.x === fruitRef.current.x && head.y === fruitRef.current.y) {
+      scoreRef.current += 1;
+      fruitRef.current = pickLocation();
+      speedRef.current = Math.max(speedRef.current - 10, 50); // 최소 속도 설정
+      restartGameInterval(); // 속도 변경 후 인터벌 재시작
+    } else {
+      newSnake.shift();
+    }
 
-//         if (!isGameOver) {
-//           requestAnimationFrame(moveBullet);
-//         }
-//       };
-//       moveBullet();
-//     };
+    if (checkCollision(head, newSnake)) {
+      alert("Game Over! Score: " + scoreRef.current);
+      resetGame();
+    }
 
-//     const interval = setInterval(spawnBullet, spawnInterval);
-//     return () => clearInterval(interval);
-//   }, [spawnInterval, isGameOver]);
+    snakeRef.current = newSnake;
+    drawGame();
+  };
+  const restartGameInterval = () => {
+    stopGame(); // 기존 인터벌 중지
+    gameIntervalRef.current = setInterval(updateGame, speedRef.current); // 새로운 속도로 인터벌 설정
+  };
+  const checkCollision = (
+    head: { x: number; y: number },
+    snakeBody: Array<{ x: number; y: number }>
+  ) => {
+    return (
+      head.x < 0 ||
+      head.y < 0 ||
+      head.x >= columns * scale ||
+      head.y >= rows * scale ||
+      snakeBody.slice(0, -1).some((segment) => segment.x === head.x && segment.y === head.y)
+    );
+  };
 
-//   useEffect(() => {
-//     if (score % 5 === 0 && score > 0) {
-//       setSpawnInterval((prev) => Math.max(300, prev - 100));
-//     }
-//   }, [score]);
+  const reverse = () => {
+    snakeRef.current = snakeRef.current.reverse();
+  };
 
-//   return (
-//     <Html
-//       style={{
-//         width: "330px",
-//         height: "384px",
-//         borderRadius: "3px",
-//         padding: "0",
-//         overflowX: "hidden",
-//       }}
-//       position={[0, 4, -4]}
-//       rotation-x={Math.PI / -2}
-//       occlude
-//       className="scrollbar-hide"
-//       scale={5}
-//       transform
-//     >
-//       <div className="relative w-[330px] h-[384px] border border-black" ref={gameRef}>
-//         {bulletsRef.current.map((bullet) => (
-//           <div
-//             key={bullet.id}
-//             className="absolute w-[15px] h-[15px] bg-red-500"
-//             style={{ left: `${bullet.x}px`, top: `${bullet.y}px` }}
-//           />
-//         ))}
-//         <div
-//           className={clsx("absolute w-[30px] h-[30px] bg-blue-500", { hidden: isGameOver })}
-//           style={{ left: `${playerX}px`, top: `${playerY}px` }}
-//         />
-//         {isGameOver && (
-//           <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white text-2xl">
-//             Game Over
-//           </div>
-//         )}
-//       </div>
-//       <div className="text-center mt-2 text-lg">Score: {score}</div>
-//       <div className="flex justify-center gap-2 mt-2">
-//         <button className="btn" onClick={() => movePlayer(-10, 0)}>
-//           ⬅
-//         </button>
-//         <button className="btn" onClick={() => movePlayer(10, 0)}>
-//           ➡
-//         </button>
-//         <button className="btn" onClick={() => movePlayer(0, -10)}>
-//           ⬆
-//         </button>
-//         <button className="btn" onClick={() => movePlayer(0, 10)}>
-//           ⬇
-//         </button>
-//       </div>
-//     </Html>
-//   );
-// };
+  const pickLocation = () => {
+    return {
+      x: Math.floor(Math.random() * columns) * scale,
+      y: Math.floor(Math.random() * rows) * scale,
+    };
+  };
 
-// export default Game;
+  const resetGame = () => {
+    stopGame();
+    snakeRef.current = [{ x: 0, y: 0 }];
+    directionRef.current = { x: scale, y: 0 }; // 초기 방향 설정
+    scoreRef.current = 0;
+    fruitRef.current = pickLocation();
+    speedRef.current = 250;
+    drawGame();
+  };
+
+  const showHighScores = () => {
+    if (!ctxRef.current) return;
+
+    ctxRef.current.clearRect(0, 0, columns * scale, rows * scale);
+    ctxRef.current.fillStyle = "#000";
+    ctxRef.current.font = "16px Arial";
+    ctxRef.current.fillText("🏆 High Scores:", 10, 20);
+
+    highScoresRef.current.forEach((score, index) => {
+      ctxRef.current!.fillText(`${index + 1}. ${score}`, 10, 40 + index * 20);
+    });
+  };
+
+  const handleButton = (type: "up" | "down" | "left" | "right") => {
+    switch (type) {
+      case "up":
+        directionRef.current = { x: 0, y: -scale };
+        break;
+      case "down":
+        directionRef.current = { x: 0, y: scale };
+        break;
+      case "left":
+        directionRef.current = { x: -scale, y: 0 };
+        break;
+      case "right":
+        directionRef.current = { x: scale, y: 0 };
+        break;
+    }
+  };
+
+  return (
+    <Html
+      style={{
+        width: "300px",
+        height: "404px",
+        borderRadius: "3px",
+        padding: "0",
+        overflowX: "hidden",
+        marginLeft: "10px",
+      }}
+      position={[0, 4, -4]}
+      rotation-x={Math.PI / -2}
+      occlude
+      className="scrollbar-hide"
+      scale={5}
+      transform
+    >
+      <div className="flex justify-between mx-4">
+        <button onClick={onClose}>◀</button>
+        <h1 className="text-center text-white text-2xl font-bold">🐍</h1>
+        <button className="right-5 top-0" onClick={showHighScores}>
+          🏇
+        </button>
+      </div>
+      <canvas
+        ref={canvasRef}
+        width={columns * scale}
+        height={rows * scale}
+        className="m-auto border border-black"
+      />
+      <div className="controls">
+        <div className="dpad">
+          <div onClick={() => handleButton("up")} className="up"></div>
+          <div onClick={() => handleButton("right")} className="right"></div>
+          <div onClick={() => handleButton("down")} className="down"></div>
+          <div onClick={() => handleButton("left")} className="left"></div>
+          <div className="middle"></div>
+        </div>
+        <div className="a-b">
+          <div className="b">B</div>
+          <div onClick={reverse} className="a">
+            A
+          </div>
+        </div>
+      </div>
+      <div className="start-select">
+        <div className="select">SELECT</div>
+        <div onClick={startGame} className="start">
+          START
+        </div>
+      </div>
+    </Html>
+  );
+};
+
+export default Game;
