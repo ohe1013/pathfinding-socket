@@ -7,8 +7,8 @@
     position: relative;
     display: inline-block;
     margin-left: 30px;
-    width: 60px;
-    height: 60px;
+    width: 80px;
+    height: 80px;
     z-index: 5;
 
     > * {
@@ -82,7 +82,13 @@
         left: 20%;
         display: inline-block;
         border: 1px solid #6e737a;
-        background: linear-gradient(to bottom, #6d7075 0%, #6d7075 30%, #23272f 70%, #23272f 100%);
+        background: linear-gradient(
+          to bottom,
+          #6d7075 0%,
+          #6d7075 30%,
+          #23272f 70%,
+          #23272f 100%
+        );
         border-radius: 50%;
         height: 60%;
         width: 60%;
@@ -107,7 +113,7 @@
   .a-b {
     position: relative;
     display: inline-block;
-    width: 80px;
+    width: 100px;
     height: 45px;
     margin-right: 20px;
 
@@ -115,10 +121,10 @@
     .b {
       position: absolute;
       display: inline-block;
-      font-size: 11px;
-      width: 20px;
-      height: 20px;
-      line-height: 20px;
+      font-size: 15px;
+      width: 30px;
+      height: 30px;
+      line-height: 30px;
       border-radius: 50%;
       background-color: #2c313e;
       border-bottom: 1px solid #888;
@@ -128,7 +134,8 @@
       text-align: center;
       -webkit-user-select: none;
       cursor: pointer;
-      transition: box-shadow 0.1s ease-out, border 0.1s ease-out, line-height 0.2s ease-out;
+      transition: box-shadow 0.1s ease-out, border 0.1s ease-out,
+        line-height 0.2s ease-out;
 
       &:active {
         box-shadow: -0.5px 0.5px 0.5px black, 0px 0px 2.5px black inset;
@@ -162,7 +169,7 @@
     width: 55px;
     font-size: 12px;
     text-align: center;
-    margin-top: 30px;
+    margin-top: 20px;
 
     &::before {
       content: "";
@@ -172,14 +179,25 @@
       height: 10px;
       margin-bottom: 3px;
       border-radius: 40%;
-      background: linear-gradient(to bottom, #0b0a1c 0%, #0b0a1c 30%, #62636c 70%, #62636c 100%);
+      background: linear-gradient(
+        to bottom,
+        #0b0a1c 0%,
+        #0b0a1c 30%,
+        #62636c 70%,
+        #62636c 100%
+      );
       background-repeat: no-repeat;
       border: 2px solid #050505;
       box-shadow: 0px -2px 1px #849ec7;
       cursor: pointer;
     }
     &:active::before {
-      background: linear-gradient(to bottom, #0b0a1c 0%, #0b0a1c 50%, #62636c 100%);
+      background: linear-gradient(
+        to bottom,
+        #0b0a1c 0%,
+        #0b0a1c 50%,
+        #62636c 100%
+      );
     }
   }
 }

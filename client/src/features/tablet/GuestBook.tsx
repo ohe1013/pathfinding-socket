@@ -20,7 +20,8 @@ type GuestBookProps = {
 export const GuestBook = ({ onClose }: GuestBookProps) => {
   const [isFormModalOpen, setIsFormModalOpen] = useState<boolean>(false);
   const handleFormModalClose = () => setIsFormModalOpen(false);
-  const [selectedPost, setSelectedPost] = useState<GuestBookPostForm>(initialPost);
+  const [selectedPost, setSelectedPost] =
+    useState<GuestBookPostForm>(initialPost);
   const [type, setType] = useState<CRUD>("insert");
   const [posts, setPosts] = useState<GuestBookPostForm[]>([]);
   useEffect(() => {
@@ -80,8 +81,10 @@ export const GuestBook = ({ onClose }: GuestBookProps) => {
       >
         {!isFormModalOpen && (
           <div className="flex justify-between mx-4">
-            <button onClick={onClose}>❌</button>
-            <h1 className="text-center text-white text-2xl font-bold">방명록</h1>
+            <button onClick={onClose}>◀</button>
+            <h1 className="text-center text-white text-2xl font-bold">
+              방명록
+            </h1>
             <button
               onClick={() => {
                 handleFormModal("insert");
@@ -93,7 +96,9 @@ export const GuestBook = ({ onClose }: GuestBookProps) => {
           </div>
         )}
         {isFormModalOpen && (
-          <div className={` max-w-full  overflow-y-auto p-5  place-items-center  select-none`}>
+          <div
+            className={` max-w-full  overflow-y-auto p-5  place-items-center  select-none`}
+          >
             <PostFormModal
               isOpen={isFormModalOpen}
               onClose={handleFormModalClose}
@@ -104,7 +109,11 @@ export const GuestBook = ({ onClose }: GuestBookProps) => {
           </div>
         )}
         {!isFormModalOpen && (
-          <GuestBookItem posts={posts} onEdit={handleFormModal} onDelete={handleFormModal} />
+          <GuestBookItem
+            posts={posts}
+            onEdit={handleFormModal}
+            onDelete={handleFormModal}
+          />
         )}
       </div>
     </Html>

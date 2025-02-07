@@ -27,7 +27,10 @@ export const Experience = ({ loaded }: { loaded: boolean }) => {
     if (!controls.current) return;
 
     // 📌 카메라 위치 초기화 함수
-    const resetCamera = (position: [number, number, number], target: [number, number, number]) => {
+    const resetCamera = (
+      position: [number, number, number],
+      target: [number, number, number]
+    ) => {
       controls.current?.setPosition(...position, true);
       controls.current?.setTarget(...target, true);
     };
@@ -56,7 +59,9 @@ export const Experience = ({ loaded }: { loaded: boolean }) => {
   // 마우스 휠 핸들러 (줌 기능)
   useEffect(() => {
     const handleWheel = (event: WheelEvent) => {
-      setZoomLevel((prev) => Math.min(Math.max(prev + event.deltaY * 0.01, 5), 50));
+      setZoomLevel((prev) =>
+        Math.min(Math.max(prev + event.deltaY * 0.01, 5), 50)
+      );
     };
     window.addEventListener("wheel", handleWheel);
     return () => window.removeEventListener("wheel", handleWheel);
@@ -80,7 +85,10 @@ export const Experience = ({ loaded }: { loaded: boolean }) => {
     };
 
     const getDistance = (touch1: Touch, touch2: Touch) => {
-      return Math.hypot(touch1.clientX - touch2.clientX, touch1.clientY - touch2.clientY);
+      return Math.hypot(
+        touch1.clientX - touch2.clientX,
+        touch1.clientY - touch2.clientY
+      );
     };
 
     window.addEventListener("touchstart", onTouchStart);
@@ -97,7 +105,12 @@ export const Experience = ({ loaded }: { loaded: boolean }) => {
     const character = scene.getObjectByName(`character-${user}`);
     if (!character) return;
 
-    controls.current.setTarget(character.position.x, 0, character.position.z, true);
+    controls.current.setTarget(
+      character.position.x,
+      0,
+      character.position.z,
+      true
+    );
     controls.current.setPosition(
       character.position.x + zoomLevel,
       character.position.y + zoomLevel,
@@ -110,16 +123,20 @@ export const Experience = ({ loaded }: { loaded: boolean }) => {
 
   return (
     <>
-      <Sky
-        distance={450000}
-        sunPosition={[5, 8, 20]}
-        inclination={0}
-        azimuth={0.25}
-        rayleigh={0.1}
-      />
+      {situation === "lobby" && (
+        <Sky
+          distance={450000}
+          sunPosition={[5, 8, 20]}
+          inclination={0}
+          azimuth={0.25}
+          rayleigh={0.1}
+        />
+      )}
 
       {/* 환경 조명 */}
-      {situation === "room" && map.roomId === "weddingroom" && <ambientLight intensity={0.5} />}
+      {situation === "room" && map.roomId === "weddingroom" && (
+        <ambientLight intensity={0.5} />
+      )}
       {situation === "guestbook" && (
         <>
           <Environment files={"/textures/venice_sunset_1k.hdr"} />
@@ -129,16 +146,22 @@ export const Experience = ({ loaded }: { loaded: boolean }) => {
           </directionalLight>
         </>
       )}
-      {situation !== "gallery" && situation !== "guestbook" && map.roomId !== "weddingroom" && (
-        <>
-          <Environment files={"/textures/venice_sunset_1k.hdr"} />
-          <ambientLight intensity={0.1} />
+      {situation !== "gallery" &&
+        situation !== "guestbook" &&
+        map.roomId !== "weddingroom" && (
+          <>
+            <Environment files={"/textures/venice_sunset_1k.hdr"} />
+            <ambientLight intensity={0.1} />
 
-          <directionalLight position={[4, 4, -4]} castShadow intensity={0.35}>
-            <orthographicCamera attach={"shadow-camera"} args={[-10, 10, 10, -10]} far={22} />
-          </directionalLight>
-        </>
-      )}
+            <directionalLight position={[4, 4, -4]} castShadow intensity={0.35}>
+              <orthographicCamera
+                attach={"shadow-camera"}
+                args={[-10, 10, 10, -10]}
+                far={22}
+              />
+            </directionalLight>
+          </>
+        )}
       {situation === "gallery" && (
         <>
           <Environment files={"/textures/venice_sunset_1k.hdr"} />

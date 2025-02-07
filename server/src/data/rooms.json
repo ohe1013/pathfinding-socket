@@ -57,7 +57,7 @@
         "touchEvt": {
           "type": "switchSituation",
           "situation": "gallery",
-          "message": "사진첩을 볼까요??"
+          "message": "사진첩을 볼까요? 투표도 할 수 있어요☺️"
         },
         "light": {
           "type": "pointLight",
@@ -77,7 +77,7 @@
         "touchEvt": {
           "type": "switchSituation",
           "situation": "guestbook",
-          "message": "방명록을 볼까요?"
+          "message": "방명록을 볼까요? \n 게임도 있어요..🤣"
         },
         "light": {
           "type": "pointLight",

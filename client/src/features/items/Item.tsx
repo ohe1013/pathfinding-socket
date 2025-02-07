@@ -22,9 +22,11 @@ export const Item = ({ item }: { item: ItemProps }) => {
   const animation = useGLTF(`/animations/aerobic.glb`);
   const actions = useAnimations(animation.animations, objectRef);
   const openModal = useModalStore((state) => state.openModal);
+
   useEffect(() => {
     if ((name === "woman" || name === "man") && actions) {
-      const action = actions.actions["aerobic-dance_315220|A|aerobic-dance_315220"];
+      const action =
+        actions.actions["aerobic-dance_315220|A|aerobic-dance_315220"];
       if (action) {
         const targetFPS = 0.1; // 목표 프레임 속도
         const clipDuration = action.getClip().duration; // 애니메이션 클립의 총 길이(초 단위)
@@ -115,7 +117,10 @@ export const Item = ({ item }: { item: ItemProps }) => {
       const distance = characterPosition.distanceTo(itemPosition);
       const maxDistance = 20;
       const minDistance = 2;
-      const volume = Math.max(0, 1 - (distance - minDistance) / (maxDistance - minDistance));
+      const volume = Math.max(
+        0,
+        1 - (distance - minDistance) / (maxDistance - minDistance)
+      );
 
       soundRef.current.setVolume(volume);
     } else {
@@ -132,7 +137,7 @@ export const Item = ({ item }: { item: ItemProps }) => {
       onClick={onClickEvt}
     >
       {" "}
-      <Html position-y={4}>
+      <Html position-y={name === "man" || name === "woman" ? 3 : 2}>
         <div className="w-60 max-w-full">
           <p
             className={`absolute max-w-full text-center break-words  p-2 px-4 -translate-x-1/2 rounded-lg bg-white bg-opacity-40 backdrop-blur-sm text-black transition-opacity duration-500 ${

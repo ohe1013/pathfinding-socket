@@ -8,6 +8,8 @@ import { realtimeDb } from "@/firebase/firebase";
 import { toast, ToastContainer } from "react-toastify";
 import ConfirmModal from "../components/Confirm";
 import useModalStore from "@/store/modal";
+import useGalleryStore from "@/store/galleryImage";
+import { addVote } from "@/hooks/useVote";
 const animations = [
   { name: "wave", emoji: "👋", label: "인사하기" },
   { name: "dive", emoji: "💃", label: "춤추기" },
@@ -20,7 +22,7 @@ export const UI = () => {
   const [name, setName] = useState<string>(localStorage.getItem("name") || "");
   const [useName, setUseName] = useState(false);
   const openModal = useModalStore((state) => state.openModal);
-
+  const { clickedIdx, isClicked, setClickedIdx } = useGalleryStore();
   const handleConfirm = () => {
     setInfo({ ...info, situation: "room" });
   };
@@ -39,10 +41,19 @@ export const UI = () => {
       } else {
         setInfo({ ...info, situation: "room" });
       }
-    } else if (info.situation === "guestbook") {
+    } else if (info.situation === "guestbook" || info.situation === "gallery") {
       setInfo({ ...info, situation: "room" });
     } else {
       setInfo({ ...info, situation: "lobby" });
+    }
+  };
+  const vote = () => {
+    if (info.situation === "gallery") {
+      openModal("투표하시겠어요?", () => {
+        setClickedIdx(false, null);
+        setInfo({ ...info, situation: "room" });
+        addVote({ idx: clickedIdx!, name });
+      });
     }
   };
   const switchMusic = () => {
@@ -163,16 +174,36 @@ export const UI = () => {
               )}
             </div>
           )}
+          {info.situation === "gallery" && map?.roomId && (
+            <div className="pointer-events-auto p-4 text-white flex items-center space-x-4">
+              <div className="w-80 border px-5 p-4 h-full rounded-full">
+                <p>Best사진에 투표해주세요. [🗳️ 클릭] </p>
+                <p>액자사진 뽑는데 반영할게요☺️</p>
+              </div>
+            </div>
+          )}
 
           {(info.situation === "guestbook" || info.situation === "gallery") && (
             <div className="flex items-center space-x-4 pointer-events-auto">
               {map?.roomId && (
-                <button
-                  className="p-4 rounded-full bg-pink-500 text-white drop-shadow-md cursor-pointer hover:bg-pink-800 transition-colors"
-                  onClick={switchSituation}
-                >
-                  돌아가기
-                </button>
+                <>
+                  <button
+                    className="p-4 rounded-full bg-pink-500 text-white drop-shadow-md cursor-pointer hover:bg-pink-800 transition-colors"
+                    onClick={switchSituation}
+                  >
+                    돌아가기
+                  </button>
+                  {info.situation === "gallery" && (
+                    <button
+                      className={`p-4 text-xl rounded-full bg-pink-500 text-white drop-shadow-md cursor-pointer hover:bg-pink-800 transition-colors 
+                        ${!isClicked ? "bg-pink-500 opacity-50" : "bg-pink-500"}
+                        `}
+                      onClick={vote}
+                    >
+                      🗳️
+                    </button>
+                  )}
+                </>
               )}
               {map?.roomId && (
                 <button
@@ -199,45 +230,48 @@ export const UI = () => {
               )}
             </div>
           )}
-          {(info.situation === "lobby" || info.situation === "room") && map?.roomId && (
-            <div className="flex items-center space-x-4 pointer-events-auto">
-              {map?.roomId && (
-                <button
-                  className="p-4 rounded-full bg-pink-500 text-white drop-shadow-md cursor-pointer hover:bg-pink-800 transition-colors"
-                  onClick={switchSituation}
-                >
-                  {info.situation === "lobby" && "구경가기"}
-                  {info.situation === "room" && "로비로가기"}
-                </button>
-              )}
-              {map?.roomId && (
-                <button
-                  className={`p-4 rounded-full text-white drop-shadow-md cursor-pointer hover:bg-pink-800 transition-colors ${
-                    !info.useMusic ? "bg-pink-500 opacity-50" : "bg-pink-500"
-                  }`}
-                  onClick={switchMusic}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                    stroke="currentColor"
-                    className="w-6 h-6"
+          {(info.situation === "lobby" || info.situation === "room") &&
+            map?.roomId && (
+              <div className="flex items-center space-x-4 pointer-events-auto">
+                {map?.roomId && (
+                  <button
+                    className="p-4 rounded-full bg-pink-500 text-white drop-shadow-md cursor-pointer hover:bg-pink-800 transition-colors"
+                    onClick={switchSituation}
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M9 9l10.5-3m0 6.553v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 11-.99-3.467l2.31-.66a2.25 2.25 0 001.632-2.163zm0 0V2.25L9 5.25v10.303m0 0v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 01-.99-3.467l2.31-.66A2.25 2.25 0 009 15.553z"
-                    />
-                  </svg>
-                </button>
-              )}
-              {info.situation === "room" && (
-                <AnimationButton triggerAnimation={(name) => socket.emit("animation", name)} />
-              )}
-            </div>
-          )}
+                    {info.situation === "lobby" && "구경가기"}
+                    {info.situation === "room" && "로비로가기"}
+                  </button>
+                )}
+                {map?.roomId && (
+                  <button
+                    className={`p-4 rounded-full text-white drop-shadow-md cursor-pointer hover:bg-pink-800 transition-colors ${
+                      !info.useMusic ? "bg-pink-500 opacity-50" : "bg-pink-500"
+                    }`}
+                    onClick={switchMusic}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                      className="w-6 h-6"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M9 9l10.5-3m0 6.553v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 11-.99-3.467l2.31-.66a2.25 2.25 0 001.632-2.163zm0 0V2.25L9 5.25v10.303m0 0v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 01-.99-3.467l2.31-.66A2.25 2.25 0 009 15.553z"
+                      />
+                    </svg>
+                  </button>
+                )}
+                {info.situation === "room" && (
+                  <AnimationButton
+                    triggerAnimation={(name) => socket.emit("animation", name)}
+                  />
+                )}
+              </div>
+            )}
         </div>
         <ToastContainer></ToastContainer>
         <ConfirmModal />

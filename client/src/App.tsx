@@ -41,13 +41,16 @@ function App() {
           renderer.shadowMap.type = THREE.PCFSoftShadowMap;
           // ✨ 디버깅용 텍스처 상태 체크
           console.log("Max Textures:", renderer.capabilities.maxTextures);
-          console.log("Max Vertex Textures:", renderer.capabilities.maxVertexTextures);
+          console.log(
+            "Max Vertex Textures:",
+            renderer.capabilities.maxVertexTextures
+          );
           return renderer;
         }}
         shadows
         camera={{ position: [0, 8, 2], fov: 30 }}
       >
-        <color attach="background" args={["#ffffff"]} />
+        <color attach="background" args={["#252525"]} />
         <ScrollControls pages={roomPage[map?.roomId ?? "weddingroom"]}>
           <Experience loaded={loaded} />
         </ScrollControls>

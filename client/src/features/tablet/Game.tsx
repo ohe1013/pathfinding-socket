@@ -1,6 +1,9 @@
 import { Html } from "@react-three/drei";
 import { useEffect, useLayoutEffect, useRef } from "react";
 import "./game.css";
+import { onValue, orderByChild, query, ref } from "firebase/database";
+import { realtimeDb } from "@/firebase/firebase";
+import { addRank } from "@/hooks/useVote";
 
 const scale = 10;
 const rows = 20;
@@ -14,12 +17,30 @@ const Game = ({ onClose }: { onClose: () => void }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const ctxRef = useRef<CanvasRenderingContext2D>();
   const gameIntervalRef = useRef<NodeJS.Timeout>();
-  const highScoresRef = useRef([1]);
+  const highScoresRef = useRef<{ name: string; score: number }[]>([]);
   const speedRef = useRef(250); // 초기 속도 설정
   useEffect(() => {
     fruitRef.current = pickLocation();
     const canvas = canvasRef.current;
     if (canvas) ctxRef.current = canvas.getContext("2d")!;
+  }, []);
+  useEffect(() => {
+    const guestBookRef = ref(realtimeDb, "rank");
+    const q = query(guestBookRef, orderByChild("score"));
+
+    onValue(q, (snapshot) => {
+      const scores: { id: string; name: string; score: number }[] = [];
+
+      snapshot.forEach((childSnapshot) => {
+        scores.push({
+          id: childSnapshot.key!,
+          ...childSnapshot.val(),
+        });
+      });
+
+      // 점수가 낮은 순으로 정렬되므로, 높은 점수가 먼저 나오도록 뒤집음
+      highScoresRef.current = scores.reverse();
+    });
   }, []);
 
   const drawGame = () => {
@@ -28,7 +49,12 @@ const Game = ({ onClose }: { onClose: () => void }) => {
 
     // 과일 그리기
     ctxRef.current.fillStyle = "#FF4136";
-    ctxRef.current.fillRect(fruitRef.current.x, fruitRef.current.y, scale, scale);
+    ctxRef.current.fillRect(
+      fruitRef.current.x,
+      fruitRef.current.y,
+      scale,
+      scale
+    );
 
     // 뱀 그리기
     ctxRef.current.fillStyle = "#4CAF50";
@@ -43,7 +69,6 @@ const Game = ({ onClose }: { onClose: () => void }) => {
       if (canvas) {
         ctxRef.current = canvas.getContext("2d")!;
         fruitRef.current = pickLocation(); // 과일 위치 설정
-        console.log(fruitRef.current);
         drawGame(); // 초기 상태 그리기
       }
     }, 0);
@@ -71,7 +96,7 @@ const Game = ({ onClose }: { onClose: () => void }) => {
     if (head.x === fruitRef.current.x && head.y === fruitRef.current.y) {
       scoreRef.current += 1;
       fruitRef.current = pickLocation();
-      speedRef.current = Math.max(speedRef.current - 10, 50); // 최소 속도 설정
+      speedRef.current = Math.max(speedRef.current - 20, 50); // 최소 속도 설정
       restartGameInterval(); // 속도 변경 후 인터벌 재시작
     } else {
       newSnake.shift();
@@ -79,6 +104,7 @@ const Game = ({ onClose }: { onClose: () => void }) => {
 
     if (checkCollision(head, newSnake)) {
       alert("Game Over! Score: " + scoreRef.current);
+      addRank({ name: localStorage.getItem("name")!, score: scoreRef.current });
       resetGame();
     }
 
@@ -98,12 +124,16 @@ const Game = ({ onClose }: { onClose: () => void }) => {
       head.y < 0 ||
       head.x >= columns * scale ||
       head.y >= rows * scale ||
-      snakeBody.slice(0, -1).some((segment) => segment.x === head.x && segment.y === head.y)
+      snakeBody
+        .slice(0, -1)
+        .some((segment) => segment.x === head.x && segment.y === head.y)
     );
   };
 
   const reverse = () => {
     snakeRef.current = snakeRef.current.reverse();
+    directionRef.current.x = directionRef.current.x * -1;
+    directionRef.current.y = directionRef.current.y * -1;
   };
 
   const pickLocation = () => {
@@ -129,10 +159,16 @@ const Game = ({ onClose }: { onClose: () => void }) => {
     ctxRef.current.clearRect(0, 0, columns * scale, rows * scale);
     ctxRef.current.fillStyle = "#000";
     ctxRef.current.font = "16px Arial";
-    ctxRef.current.fillText("🏆 High Scores:", 10, 20);
+    ctxRef.current.fillText("High Scores:", 10, 20);
 
     highScoresRef.current.forEach((score, index) => {
-      ctxRef.current!.fillText(`${index + 1}. ${score}`, 10, 40 + index * 20);
+      ctxRef.current!.fillText(
+        `${index + 1 === 1 ? "🏆" : index + 1 + "등"} ${score.name}: ${
+          score.score
+        }`,
+        10,
+        40 + index * 20
+      );
     });
   };
 
@@ -174,7 +210,7 @@ const Game = ({ onClose }: { onClose: () => void }) => {
         <button onClick={onClose}>◀</button>
         <h1 className="text-center text-white text-2xl font-bold">🐍</h1>
         <button className="right-5 top-0" onClick={showHighScores}>
-          🏇
+          🏆
         </button>
       </div>
       <canvas
