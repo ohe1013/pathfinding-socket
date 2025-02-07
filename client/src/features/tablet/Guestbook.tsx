@@ -18,7 +18,7 @@ type GuestBookProps = {
   onClose: () => void;
 };
 
-const GuestBook = ({ onClose }: GuestBookProps) => {
+export const GuestBook = ({ onClose }: GuestBookProps) => {
   const [isFormModalOpen, setIsFormModalOpen] = useState<boolean>(false);
   const handleFormModalClose = () => setIsFormModalOpen(false);
   const [selectedPost, setSelectedPost] = useState<GuestBookPostForm>(initialPost);
@@ -105,5 +105,3 @@ const GuestBook = ({ onClose }: GuestBookProps) => {
     </Html>
   );
 };
-
-export default GuestBook;

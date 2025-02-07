@@ -3,7 +3,7 @@ import { useGLTF } from "@react-three/drei";
 import { useThree } from "@react-three/fiber";
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
-import GuestBook from "./GuestBook";
+import { GuestBook } from "./GuestBook";
 type GLTFResult = {
   nodes: {
     [key: string]: THREE.Mesh; // 모든 노드가 THREE.Mesh라고 가정
