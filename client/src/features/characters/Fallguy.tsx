@@ -7,6 +7,8 @@ import { useFrame, useGraph } from "@react-three/fiber";
 import { useGrid } from "@/hooks/useGrid";
 import useMapStore from "@/store/map";
 import { socket } from "../SocketManager";
+import { push, ref, set } from "firebase/database";
+import { realtimeDb } from "@/firebase/firebase";
 // GLTF 타입 정의
 type GLTFResult = GLTF & {
   nodes: {
@@ -58,7 +60,15 @@ export const Fallguy = ({ id, ...props }: CharacterProps) => {
       };
     }
   }, [animation, actions]);
-
+  const postChatMessage = (name: string, chatMessage: string) => {
+    const postRef = ref(realtimeDb, "chat");
+    const newPostRef = push(postRef);
+    set(newPostRef, {
+      name: name,
+      message: chatMessage,
+      timestamp: Date.now(),
+    });
+  };
   useEffect(() => {
     function onPlayerMove(value: { id: string | undefined; path: [number, number, number][] }) {
       if (value.id === id) {
@@ -71,11 +81,15 @@ export const Fallguy = ({ id, ...props }: CharacterProps) => {
     }
     let chatMessageBubbleTimeOut: NodeJS.Timeout;
     const TIME_OUT = 5000;
-    function onChatMessage(value: { id: string | undefined; message: SetStateAction<string> }) {
+    function onChatMessage(value: {
+      id: string | undefined;
+      name: string | undefined;
+      message: string;
+    }) {
       if (value.id === id) {
-        const name = localStorage.getItem("name");
-        setChatMessage(name + ": " + value.message);
+        setChatMessage(value.name + ": " + value.message);
         clearTimeout(chatMessageBubbleTimeOut);
+        postChatMessage(value.name || "", value.message);
         setShowChatBubble(true);
         chatMessageBubbleTimeOut = setTimeout(() => {
           setShowChatBubble(false);

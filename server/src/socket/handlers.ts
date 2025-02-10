@@ -17,11 +17,7 @@ export async function setupSocketHandlers(io: Server, socket: Socket) {
   if (!room) {
     return;
   }
-  const newCharcter = characterService.createCharacter(
-    socket.id,
-    room,
-    [0, 20]
-  );
+  const newCharcter = characterService.createCharacter(socket.id, room, [0, 20]);
   roomService.addCharacterToRoom(defaultRoomId, newCharcter);
   socket.join(room.id);
   socket.emit("conn", {
@@ -89,16 +85,31 @@ export async function setupSocketHandlers(io: Server, socket: Socket) {
     if (!path || !character) {
       return;
     }
-    console.log(room!.id, character);
 
     character.position = from;
     character.path = path;
     io.to(room!.id).emit("playerMove", character);
   });
+  socket.on("rank", (score) => {
+    const character = room?.characters.find((char) => char.id === socket.id);
+    if (!character) return;
+    io.to(room!.id).emit("playerRank", {
+      name: character.name,
+      score,
+    });
+  });
+
+  socket.on("name", (name) => {
+    const character = room?.characters.find((char) => char.id === socket.id);
+    character?.setProperty("name", name);
+  });
 
   socket.on("chatMessage", (message) => {
+    const character = room?.characters.find((char) => char.id === socket.id);
+    if (!character) return;
     io.to(room!.id).emit("playerChatMessage", {
       id: socket.id,
+      name: character.name,
       message,
     });
   });

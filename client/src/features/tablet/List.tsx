@@ -1,16 +1,16 @@
 import { Html } from "@react-three/drei";
-
+type Item = "" | "guestbook" | "game";
 type ListProps = {
   onClose: () => void;
-  onSelect: (id: string) => void;
+  onSelect: (id: Item) => void;
 };
 
 export const List = ({ onSelect, onClose }: ListProps) => {
   const menuList = [
     { id: "guestbook", name: "방명록" },
     { id: "game", name: "snake게임" },
-  ];
-  const handleClick = (item: { id: string; name: string }) => {
+  ] as const;
+  const handleClick = (item: { id: Item; name: string }) => {
     onSelect(item.id);
   };
   return (
@@ -43,16 +43,13 @@ export const List = ({ onSelect, onClose }: ListProps) => {
           <h1 className="text-center text-white text-2xl font-bold"></h1>
           <button onClick={() => {}} className="right-5 top-0"></button>
         </div>
-        <div className="w-full overflow-y-auto flex flex-col space-y-2">
+        <div className="w-full overflow-y-auto flex flex-col">
           {menuList.map((menu) => (
             <div
               key={menu.id}
-              className="m-4 ml-3 p-4 rounded-lg bg-gray-800 bg-opacity-70 text-white hover:bg-gray-900 transition-colors cursor-pointer pointer-events-auto shadow-md"
+              className="mr-4 my-2 ml-3 p-4 rounded-lg bg-gray-800 bg-opacity-70 text-white hover:bg-gray-900 transition-colors cursor-pointer pointer-events-auto shadow-md"
             >
-              <div
-                onClick={() => handleClick(menu)}
-                className="flex justify-between items-center"
-              >
+              <div onClick={() => handleClick(menu)} className="flex justify-between items-center">
                 <p className="font-bold text-lg">{menu.name}</p>
               </div>
             </div>

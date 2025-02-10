@@ -3,8 +3,6 @@ import { motion } from "framer-motion";
 import { socket } from "../SocketManager";
 import useMapStore from "@/store/map";
 import useInfo from "@/store/info";
-import { push, ref, set } from "firebase/database";
-import { realtimeDb } from "@/firebase/firebase";
 import { toast, ToastContainer } from "react-toastify";
 import ConfirmModal from "../components/Confirm";
 import useModalStore from "@/store/modal";
@@ -19,12 +17,13 @@ export const UI = () => {
   const map = useMapStore((map) => map.state);
   const info = useInfo((info) => info.state);
   const setInfo = useInfo((info) => info.setState);
-  const [name, setName] = useState<string>(localStorage.getItem("name") || "");
+  const [name, setName] = useState<string>("");
   const [useName, setUseName] = useState(false);
   const openModal = useModalStore((state) => state.openModal);
   const { clickedIdx, isClicked, setClickedIdx } = useGalleryStore();
   const handleConfirm = () => {
     setInfo({ ...info, situation: "room" });
+    login(name);
   };
 
   const openConfirmModal = () => {
@@ -67,20 +66,9 @@ export const UI = () => {
   const motionRef = useRef(null);
   const [chatMessage, setChatMessage] = useState("");
 
-  const postChatMessage = (name: string, chatMessage: string) => {
-    const postRef = ref(realtimeDb, "chat");
-    const newPostRef = push(postRef);
-    set(newPostRef, {
-      name: name,
-      message: chatMessage,
-      timestamp: Date.now(),
-    });
-  };
-
   const sendChatMessage = () => {
     if (chatMessage.length > 0) {
       socket.emit("chatMessage", chatMessage);
-      postChatMessage(name, chatMessage);
       setChatMessage("");
     }
   };
@@ -91,7 +79,7 @@ export const UI = () => {
       return;
     }
     setUseName(true);
-    localStorage.setItem("name", value);
+    socket.emit("name", name);
   };
   const changeName = () => {
     setUseName(false);
@@ -147,11 +135,6 @@ export const UI = () => {
                 type="text"
                 className="w-56 border px-5 p-4 h-full rounded-full"
                 placeholder="이름"
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    login(name);
-                  }
-                }}
                 disabled={useName}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
@@ -230,48 +213,45 @@ export const UI = () => {
               )}
             </div>
           )}
-          {(info.situation === "lobby" || info.situation === "room") &&
-            map?.roomId && (
-              <div className="flex items-center space-x-4 pointer-events-auto">
-                {map?.roomId && (
-                  <button
-                    className="p-4 rounded-full bg-pink-500 text-white drop-shadow-md cursor-pointer hover:bg-pink-800 transition-colors"
-                    onClick={switchSituation}
+          {(info.situation === "lobby" || info.situation === "room") && map?.roomId && (
+            <div className="flex items-center space-x-4 pointer-events-auto">
+              {map?.roomId && (
+                <button
+                  className="p-4 rounded-full bg-pink-500 text-white drop-shadow-md cursor-pointer hover:bg-pink-800 transition-colors"
+                  onClick={switchSituation}
+                >
+                  {info.situation === "lobby" && "구경가기"}
+                  {info.situation === "room" && "로비로가기"}
+                </button>
+              )}
+              {map?.roomId && (
+                <button
+                  className={`p-4 rounded-full text-white drop-shadow-md cursor-pointer hover:bg-pink-800 transition-colors ${
+                    !info.useMusic ? "bg-pink-500 opacity-50" : "bg-pink-500"
+                  }`}
+                  onClick={switchMusic}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="w-6 h-6"
                   >
-                    {info.situation === "lobby" && "구경가기"}
-                    {info.situation === "room" && "로비로가기"}
-                  </button>
-                )}
-                {map?.roomId && (
-                  <button
-                    className={`p-4 rounded-full text-white drop-shadow-md cursor-pointer hover:bg-pink-800 transition-colors ${
-                      !info.useMusic ? "bg-pink-500 opacity-50" : "bg-pink-500"
-                    }`}
-                    onClick={switchMusic}
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth={1.5}
-                      stroke="currentColor"
-                      className="w-6 h-6"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M9 9l10.5-3m0 6.553v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 11-.99-3.467l2.31-.66a2.25 2.25 0 001.632-2.163zm0 0V2.25L9 5.25v10.303m0 0v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 01-.99-3.467l2.31-.66A2.25 2.25 0 009 15.553z"
-                      />
-                    </svg>
-                  </button>
-                )}
-                {info.situation === "room" && (
-                  <AnimationButton
-                    triggerAnimation={(name) => socket.emit("animation", name)}
-                  />
-                )}
-              </div>
-            )}
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M9 9l10.5-3m0 6.553v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 11-.99-3.467l2.31-.66a2.25 2.25 0 001.632-2.163zm0 0V2.25L9 5.25v10.303m0 0v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 01-.99-3.467l2.31-.66A2.25 2.25 0 009 15.553z"
+                    />
+                  </svg>
+                </button>
+              )}
+              {info.situation === "room" && (
+                <AnimationButton triggerAnimation={(name) => socket.emit("animation", name)} />
+              )}
+            </div>
+          )}
         </div>
         <ToastContainer></ToastContainer>
         <ConfirmModal />

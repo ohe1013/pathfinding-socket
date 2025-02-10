@@ -3,7 +3,7 @@ import { useEffect, useLayoutEffect, useRef } from "react";
 import "./game.css";
 import { onValue, orderByChild, query, ref } from "firebase/database";
 import { realtimeDb } from "@/firebase/firebase";
-import { addRank } from "@/hooks/useVote";
+import { socket } from "../SocketManager";
 
 const scale = 10;
 const rows = 20;
@@ -49,12 +49,7 @@ const Game = ({ onClose }: { onClose: () => void }) => {
 
     // 과일 그리기
     ctxRef.current.fillStyle = "#FF4136";
-    ctxRef.current.fillRect(
-      fruitRef.current.x,
-      fruitRef.current.y,
-      scale,
-      scale
-    );
+    ctxRef.current.fillRect(fruitRef.current.x, fruitRef.current.y, scale, scale);
 
     // 뱀 그리기
     ctxRef.current.fillStyle = "#4CAF50";
@@ -104,7 +99,8 @@ const Game = ({ onClose }: { onClose: () => void }) => {
 
     if (checkCollision(head, newSnake)) {
       alert("Game Over! Score: " + scoreRef.current);
-      addRank({ name: localStorage.getItem("name")!, score: scoreRef.current });
+      socket.emit("rank", scoreRef.current);
+
       resetGame();
     }
 
@@ -124,9 +120,7 @@ const Game = ({ onClose }: { onClose: () => void }) => {
       head.y < 0 ||
       head.x >= columns * scale ||
       head.y >= rows * scale ||
-      snakeBody
-        .slice(0, -1)
-        .some((segment) => segment.x === head.x && segment.y === head.y)
+      snakeBody.slice(0, -1).some((segment) => segment.x === head.x && segment.y === head.y)
     );
   };
 
@@ -163,9 +157,7 @@ const Game = ({ onClose }: { onClose: () => void }) => {
 
     highScoresRef.current.forEach((score, index) => {
       ctxRef.current!.fillText(
-        `${index + 1 === 1 ? "🏆" : index + 1 + "등"} ${score.name}: ${
-          score.score
-        }`,
+        `${index + 1 === 1 ? "🏆" : index + 1 + "등"} ${score.name}: ${score.score}`,
         10,
         40 + index * 20
       );

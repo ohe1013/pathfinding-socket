@@ -455,8 +455,8 @@
         "walkable": true,
         "light": {
           "type": "pointLight",
-          "position": [0, 5, 0],
-          "intensity": 19,
+          "position": [0, 0, 0],
+          "intensity": 12,
           "distance": 8,
           "decay": 2,
           "color": "#f9f2b4"
@@ -471,8 +471,8 @@
         "walkable": true,
         "light": {
           "type": "pointLight",
-          "position": [0, 5, 0],
-          "intensity": 19,
+          "position": [0, 0, 0],
+          "intensity": 12,
           "distance": 8,
           "decay": 2,
           "color": "#f9f2b4"
@@ -487,8 +487,8 @@
         "walkable": true,
         "light": {
           "type": "pointLight",
-          "position": [0, 5, 0],
-          "intensity": 19,
+          "position": [0, 0, 0],
+          "intensity": 12,
           "distance": 8,
           "decay": 2,
           "color": "#f9f2b4"

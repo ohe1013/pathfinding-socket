@@ -1,3 +1,4 @@
+import { addRank } from "@/hooks/useVote";
 import useCharactersStore, { CharactersObj } from "@/store/characters";
 import useMapStore, { MapObj } from "@/store/map";
 import { RoomId } from "@/store/rooms";
@@ -50,6 +51,9 @@ export const SocketManager = () => {
       setUserState(item.id);
       setCharState(item.characters);
     };
+    function onPlayerRank(name: string, score: number) {
+      addRank({ name, score });
+    }
 
     const setCharacters = (item: CharactersObj[]) => {
       setCharState(item);
@@ -64,12 +68,14 @@ export const SocketManager = () => {
     socket.on("conn", onConn);
     socket.on("roomJoined", onRoomJoined);
     socket.on("characters", setCharacters);
+    socket.on("playerRank", onPlayerRank);
     socket.on("disconnect", onDisconnect);
     return () => {
       socket.off("connect", onConnect);
       socket.off("conn", onConn);
       socket.off("roomJoined", onRoomJoined);
       socket.off("characters", setCharacters);
+      socket.off("playerRank", onPlayerRank);
       socket.off("disconnect", onDisconnect);
     };
   }, [setCharState, setMapState, setUserState]);

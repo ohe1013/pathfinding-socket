@@ -1,9 +1,9 @@
 import * as THREE from "three";
 import { useRef, useState } from "react";
-import { useFrame } from "@react-three/fiber";
-import { Image, useScroll } from "@react-three/drei";
+import { ThreeEvent, useFrame } from "@react-three/fiber";
+import { Image } from "@react-three/drei";
 import { easing } from "maath";
-import { galleryImages } from "./Gallery";
+import { galleryImages } from "./data";
 
 interface ItemProps {
   index: number;
@@ -11,6 +11,7 @@ interface ItemProps {
   scale: [number, number];
   url: string;
   clicked: number;
+  scrollProgress: number;
   setClicked: (index: number) => void;
 }
 
@@ -21,34 +22,39 @@ export const Item = ({
   url,
   clicked,
   setClicked,
+  scrollProgress,
 }: ItemProps) => {
   const ref = useRef<THREE.Mesh | null>(null);
-  const scroll = useScroll();
+  const materialRef = useRef<THREE.MeshBasicMaterial | null>(null); // ✅ Material 참조 추가
+  const xOffset = useRef(0); // ✅ useRef로 상태 유지
   const [hovered, setHovered] = useState(false);
 
-  const click = () => setClicked(index === clicked ? -1 : index);
+  const click = (e: ThreeEvent<MouseEvent>) => {
+    e.stopPropagation();
+    setClicked(index === clicked ? -1 : index);
+  };
   const over = () => setHovered(true);
   const out = () => setHovered(false);
 
   useFrame((_, delta) => {
     if (!ref.current) return;
     const mesh = ref.current;
-    const material = mesh.material as THREE.MeshBasicMaterial;
+    if (!materialRef.current) materialRef.current = mesh.material as THREE.MeshBasicMaterial;
+    const material = materialRef.current;
 
-    const y = scroll.curve(
-      index / galleryImages.length - 1.5 / galleryImages.length,
-      4 / galleryImages.length
-    );
+    // ✅ xOffset을 useRef로 업데이트
+    easing.damp(xOffset, "current", scrollProgress * 4 - index / galleryImages.length, 0.15, delta);
 
-    const scaleFactor = clicked === index ? 1.5 : 1; // ✅ 확대 비율 1.2배로 조정 (1.5 → 1.2)
+    // ✅ 애니메이션 적용
+    const scaleFactor = clicked === index ? 1.5 : 1;
     easing.damp3(
       mesh.scale,
-      [scale[0] * scaleFactor, scale[1] * scaleFactor, 1 + y],
+      [scale[0] * scaleFactor, scale[1] * scaleFactor, 1 + xOffset.current],
       0.15,
       delta
     );
 
-    // ✅ 클릭된 이미지 위치 조정
+    // ✅ 위치 조정
     if (clicked !== -1 && index < clicked)
       easing.damp(mesh.position, "x", position[0] - 2, 0.15, delta);
     if (clicked !== -1 && index > clicked)
@@ -56,12 +62,12 @@ export const Item = ({
     if (clicked === -1 || clicked === index)
       easing.damp(mesh.position, "x", position[0], 0.15, delta);
 
-    // ✅ grayscale 값 조정 (완전히 0이 아닌, 원본 대비 10% 감소)
+    // ✅ grayscale 값 조정
     const grayscaleValue = hovered
       ? 0.2
       : clicked === index
       ? 0.3
-      : Math.max(0, 1 - y);
+      : Math.max(0, 1 - xOffset.current);
     easing.damp(material, "grayscale", grayscaleValue, 0.15, delta);
 
     // ✅ 클릭된 이미지 색상 유지 (너무 밝아지지 않게)

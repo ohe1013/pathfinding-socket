@@ -11,6 +11,7 @@ class Character {
   session: number;
   position: Coordinate;
   path?: Coordinate[];
+  name?: string;
 
   constructor(props: CharacterProps) {
     this.id = props.id;
@@ -23,6 +24,10 @@ class Character {
   }
   getPosition() {
     return this.position;
+  }
+
+  setProperty<K extends keyof Character>(key: K, value: Character[K]) {
+    (this as Character)[key] = value;
   }
 }
 export default Character;

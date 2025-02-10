@@ -14,11 +14,11 @@ export default function GuestBookItem(props: {
   onDelete?: (type: CRUD, post: GuestBookPostForm) => void;
 }) {
   return (
-    <div className="w-full overflow-y-auto flex flex-col space-y-2">
+    <div className="w-full overflow-y-auto flex flex-col">
       {props.posts.map((post) => (
         <div
           key={post.id}
-          className="m-4 ml-3 p-4 rounded-lg bg-gray-800 bg-opacity-70 text-white hover:bg-gray-900 transition-colors cursor-pointer pointer-events-auto shadow-md"
+          className="mr-4 my-2 ml-3 p-4 rounded-lg bg-gray-800 bg-opacity-70 text-white hover:bg-gray-900 transition-colors cursor-pointer pointer-events-auto shadow-md"
         >
           <div className="flex justify-between items-center">
             <p className="font-bold text-lg">{post.name}</p>
