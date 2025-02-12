@@ -1,14 +1,19 @@
 import { create } from "zustand";
 
 interface Avatar {
-  useUrl : boolean;
-  url : string
-  setUrl : 
+  useUrl: boolean;
+  url: string;
+  setUrl: (url: string) => void;
 }
 
-
-const useAvatar = create<Avatar>(set =>({
+export const useAvatar = create<Avatar>((set) => ({
   useUrl: false,
-  url :''
-
-}))
+  url: "",
+  setUrl: (url: string) => {
+    if (url === "") {
+      set({ useUrl: false, url: "" });
+    } else {
+      set({ useUrl: true, url });
+    }
+  },
+}));

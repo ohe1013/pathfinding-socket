@@ -17,7 +17,11 @@ export async function setupSocketHandlers(io: Server, socket: Socket) {
   if (!room) {
     return;
   }
-  const newCharcter = characterService.createCharacter(socket.id, room, [0, 20]);
+  const newCharcter = characterService.createCharacter(
+    socket.id,
+    room,
+    [0, 20]
+  );
   roomService.addCharacterToRoom(defaultRoomId, newCharcter);
   socket.join(room.id);
   socket.emit("conn", {
@@ -103,7 +107,10 @@ export async function setupSocketHandlers(io: Server, socket: Socket) {
     const character = room?.characters.find((char) => char.id === socket.id);
     character?.setProperty("name", name);
   });
-
+  socket.on("characterAvatarUpdate", (avatarUrl) => {
+    newCharcter.avatarUrl = avatarUrl;
+    io.to(room!.id).emit("characters", room!.characters);
+  });
   socket.on("chatMessage", (message) => {
     const character = room?.characters.find((char) => char.id === socket.id);
     if (!character) return;
