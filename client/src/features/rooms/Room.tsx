@@ -8,7 +8,8 @@ import { useGrid } from "@/hooks/useGrid";
 // import { Vector3 } from "three";
 import useUserStore from "@/store/user";
 import { Item } from "../items/Item";
-import { Fallguy } from "../characters/Fallguy";
+// import { Fallguy } from "../characters/Fallguy";
+import { Avatar } from "../characters/Avatar";
 
 const Room = () => {
   const map = useMapStore((state) => state.state);
@@ -24,11 +25,7 @@ const Room = () => {
   const onCharacterMove = (e: ThreeEvent<MouseEvent>) => {
     const character = scene.getObjectByName(`character-${user}`);
     if (!character) return;
-    socket.emit(
-      "move",
-      grid.vector3ToGrid(character.position),
-      grid.vector3ToGrid(e.point)
-    );
+    socket.emit("move", grid.vector3ToGrid(character.position), grid.vector3ToGrid(e.point));
   };
   // const onCharacterMoveToItem = (position: Vector3) => {
   //   const character = scene.getObjectByName(`character-${user}`);
@@ -58,7 +55,13 @@ const Room = () => {
       <Grid infiniteGrid fadeDistance={50} fadeStrength={5} />
       {characterList?.map((character) => (
         <Suspense key={character.session + "-" + character.id}>
-          <Fallguy
+          {/* <Fallguy
+            key={character.id}
+            position={grid.gridToVector3(character.position)}
+            id={character.id}
+            path={character.path}
+          /> */}
+          <Avatar
             key={character.id}
             position={grid.gridToVector3(character.position)}
             id={character.id}

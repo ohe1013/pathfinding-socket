@@ -17,11 +17,7 @@ export async function setupSocketHandlers(io: Server, socket: Socket) {
   if (!room) {
     return;
   }
-  const newCharcter = characterService.createCharacter(
-    socket.id,
-    room,
-    [0, 20]
-  );
+  const newCharcter = characterService.createCharacter(socket.id, room, [0, 20]);
   roomService.addCharacterToRoom(defaultRoomId, newCharcter);
   socket.join(room.id);
   socket.emit("conn", {
@@ -34,7 +30,7 @@ export async function setupSocketHandlers(io: Server, socket: Socket) {
     characters: room.characters,
     id: socket.id,
   });
-  const switchRoom = (newRoomId: string, opts: { position: Coordinate }) => {
+  const switchRoom = (newRoomId: string, opts: { position: Coordinate; avatarUrl?: string }) => {
     const newRoom = rooms.find((room) => room.id === newRoomId);
     if (!newRoom || room?.id === newRoomId) {
       return;

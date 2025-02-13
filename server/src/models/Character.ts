@@ -12,6 +12,7 @@ class Character {
   position: Coordinate;
   path?: Coordinate[];
   name?: string;
+  avatarUrl?: string;
 
   constructor(props: CharacterProps) {
     this.id = props.id;
