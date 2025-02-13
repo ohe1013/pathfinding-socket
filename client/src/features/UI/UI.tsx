@@ -6,59 +6,22 @@ import useInfo from "@/store/info";
 import { toast, ToastContainer } from "react-toastify";
 import ConfirmModal from "../components/Confirm";
 import useModalStore from "@/store/modal";
-import useGalleryStore from "@/store/galleryImage";
-import { addVote } from "@/hooks/useVote";
 import { AvatarCreator } from "@readyplayerme/react-avatar-creator";
 import { useAvatar } from "@/store/avatar";
-const animations = [
-  { name: "wave", emoji: "👋", label: "인사하기" },
-  { name: "dive", emoji: "💃", label: "춤추기" },
-  { name: "jump_air", emoji: "🤸", label: "점프하기" },
-];
+import { LobbyUI } from "./LobbyUI";
+import { GalleryUI } from "./GalleryUI";
+import { GuestBookUI } from "./GuestBookUI";
+import { RoomUI } from "./RoomUI";
+
 export const UI = () => {
   const map = useMapStore((map) => map.state);
   const info = useInfo((info) => info.state);
   const setInfo = useInfo((info) => info.setState);
-  const [name, setName] = useState<string>("");
+  const [name, setName] = useState<string>(localStorage.getItem("name") || "");
   const [useName, setUseName] = useState(false);
   const openModal = useModalStore((state) => state.openModal);
-  const { clickedIdx, isClicked, setClickedIdx } = useGalleryStore();
   const { url, setUrl } = useAvatar();
   const [avatarMode, setAvatarMode] = useState(false);
-  const handleConfirm = () => {
-    setInfo({ ...info, situation: "room" });
-    login(name);
-  };
-
-  const openConfirmModal = () => {
-    if (name === "") {
-      toast.warn("이름을 입력해주세요.");
-      return;
-    }
-    openModal(`${name}으로 입장하시겠습니까?`, handleConfirm);
-  };
-  const switchSituation = () => {
-    if (info.situation === "lobby") {
-      if (useName === false) {
-        openConfirmModal();
-      } else {
-        setInfo({ ...info, situation: "room" });
-      }
-    } else if (info.situation === "guestbook" || info.situation === "gallery") {
-      setInfo({ ...info, situation: "room" });
-    } else {
-      setInfo({ ...info, situation: "lobby" });
-    }
-  };
-  const vote = () => {
-    if (info.situation === "gallery") {
-      openModal("투표하시겠어요?", () => {
-        setClickedIdx(false, null);
-        setInfo({ ...info, situation: "room" });
-        addVote({ idx: clickedIdx!, name });
-      });
-    }
-  };
   const switchMusic = () => {
     if (info.useMusic) {
       setInfo({ ...info, useMusic: false });
@@ -68,21 +31,14 @@ export const UI = () => {
   };
 
   const motionRef = useRef(null);
-  const [chatMessage, setChatMessage] = useState("");
 
-  const sendChatMessage = () => {
-    if (chatMessage.length > 0) {
-      socket.emit("chatMessage", chatMessage);
-      setChatMessage("");
-    }
-  };
-
-  const login = (value: string) => {
-    if (value === "") {
+  const fixName = () => {
+    if (name === "") {
       toast.warn("이름이 없어요.😂");
       return;
     }
     setUseName(true);
+    localStorage.setItem("name", name);
     socket.emit("name", name);
   };
   const changeName = () => {
@@ -106,246 +62,34 @@ export const UI = () => {
                 event.data.url === url.split("?")[0]
                   ? event.data.url.split("?")[0] + "?" + new Date().getTime()
                   : event.data.url;
-              newAvatarUrl +=
-                (newAvatarUrl.includes("?") ? "&" : "?") +
-                "meshlod=1&quality=medium";
+              newAvatarUrl += (newAvatarUrl.includes("?") ? "&" : "?") + "meshlod=1&quality=medium";
               setUrl(newAvatarUrl);
               localStorage.setItem("avatarURL", newAvatarUrl);
-
               setAvatarMode(false);
             }}
+            config={{ language: "kr" }}
           />
         )}
-        <div className="fixed inset-4 flex items-center justify-end flex-col pointer-events-none select-none">
-          {info.situation === "room" && map?.roomId && (
-            <div className="pointer-events-auto p-4 flex items-center space-x-4">
-              <input
-                type="text"
-                className="w-56 border px-5 p-4 h-full rounded-full"
-                placeholder="채팅창"
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    sendChatMessage();
-                  }
-                }}
-                value={chatMessage}
-                onChange={(e) => setChatMessage(e.target.value)}
+        {map?.roomId && (
+          <div className="fixed inset-4 flex items-center justify-end flex-col pointer-events-none select-none">
+            {info.situation === "gallery" && <GalleryUI name={name} openModal={openModal} />}
+            {info.situation === "guestbook" && <GuestBookUI switchMusic={switchMusic} />}
+            {info.situation === "lobby" && (
+              <LobbyUI
+                fixName={fixName}
+                name={name}
+                setName={setName}
+                unFixName={changeName}
+                useName={useName}
               />
-              <button
-                className="p-4 rounded-full bg-pink-500 text-white drop-shadow-md cursor-pointer hover:bg-pink-800 transition-colors"
-                onClick={sendChatMessage}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="w-6 h-6"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5"
-                  />
-                </svg>
-              </button>
-            </div>
-          )}
-          {info.situation === "lobby" && map?.roomId && (
-            <div className="pointer-events-auto p-4 flex items-center space-x-4">
-              <input
-                type="text"
-                className="w-56 border px-5 p-4 h-full rounded-full"
-                placeholder="이름"
-                disabled={useName}
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
-              {useName && (
-                <button
-                  className="p-4 rounded-full bg-pink-500 text-white drop-shadow-md cursor-pointer hover:bg-pink-800 transition-colors"
-                  onClick={() => changeName()}
-                >
-                  🛠️
-                </button>
-              )}
-              {!useName && (
-                <button
-                  className="p-4 rounded-full bg-pink-500 text-white drop-shadow-md cursor-pointer hover:bg-pink-800 transition-colors"
-                  onClick={() => login(name)}
-                >
-                  🔑
-                </button>
-              )}
-            </div>
-          )}
-          {info.situation === "gallery" && map?.roomId && (
-            <div className="pointer-events-auto p-4 text-white flex items-center space-x-4">
-              <div className="w-80 border px-5 p-4 h-full rounded-full">
-                <p>Best사진에 투표해주세요. [🗳️ 클릭] </p>
-                <p>액자사진 뽑는데 반영할게요☺️</p>
-              </div>
-            </div>
-          )}
-
-          {(info.situation === "guestbook" || info.situation === "gallery") && (
-            <div className="flex items-center space-x-4 pointer-events-auto">
-              {map?.roomId && (
-                <>
-                  <button
-                    className="p-4 rounded-full bg-pink-500 text-white drop-shadow-md cursor-pointer hover:bg-pink-800 transition-colors"
-                    onClick={switchSituation}
-                  >
-                    돌아가기
-                  </button>
-                  {info.situation === "gallery" && (
-                    <button
-                      className={`p-4 text-xl rounded-full bg-pink-500 text-white drop-shadow-md cursor-pointer hover:bg-pink-800 transition-colors 
-                        ${!isClicked ? "bg-pink-500 opacity-50" : "bg-pink-500"}
-                        `}
-                      onClick={vote}
-                    >
-                      🗳️
-                    </button>
-                  )}
-                </>
-              )}
-              {map?.roomId && (
-                <button
-                  className={`p-4 rounded-full text-white drop-shadow-md cursor-pointer hover:bg-pink-800 transition-colors ${
-                    !info.useMusic ? "bg-pink-500 opacity-50" : "bg-pink-500"
-                  }`}
-                  onClick={switchMusic}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                    stroke="currentColor"
-                    className="w-6 h-6"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M9 9l10.5-3m0 6.553v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 11-.99-3.467l2.31-.66a2.25 2.25 0 001.632-2.163zm0 0V2.25L9 5.25v10.303m0 0v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 01-.99-3.467l2.31-.66A2.25 2.25 0 009 15.553z"
-                    />
-                  </svg>
-                </button>
-              )}
-            </div>
-          )}
-          {(info.situation === "lobby" || info.situation === "room") &&
-            map?.roomId && (
-              <div className="flex items-center space-x-4 pointer-events-auto">
-                {map?.roomId && (
-                  <button
-                    className="p-4 rounded-full bg-pink-500 text-white drop-shadow-md cursor-pointer hover:bg-pink-800 transition-colors"
-                    onClick={switchSituation}
-                  >
-                    {info.situation === "lobby" && "구경가기"}
-                    {info.situation === "room" && "로비로가기"}
-                  </button>
-                )}
-                {map?.roomId && (
-                  <button
-                    className={`p-4 rounded-full text-white drop-shadow-md cursor-pointer hover:bg-pink-800 transition-colors ${
-                      !info.useMusic ? "bg-pink-500 opacity-50" : "bg-pink-500"
-                    }`}
-                    onClick={switchMusic}
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth={1.5}
-                      stroke="currentColor"
-                      className="w-6 h-6"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M9 9l10.5-3m0 6.553v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 11-.99-3.467l2.31-.66a2.25 2.25 0 001.632-2.163zm0 0V2.25L9 5.25v10.303m0 0v3.75a2.25 2.25 0 01-1.632 2.163l-1.32.377a1.803 1.803 0 01-.99-3.467l2.31-.66A2.25 2.25 0 009 15.553z"
-                      />
-                    </svg>
-                  </button>
-                )}
-                {
-                  <button
-                    className="p-4 rounded-full bg-slate-500 text-white drop-shadow-md cursor-pointer hover:bg-slate-800 transition-colors"
-                    onClick={() => setAvatarMode(true)}
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth={1.5}
-                      stroke="currentColor"
-                      className="w-6 h-6"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
-                      />
-                    </svg>
-                  </button>
-                }
-                {info.situation === "room" && (
-                  <AnimationButton
-                    triggerAnimation={(name) => socket.emit("animation", name)}
-                  />
-                )}
-              </div>
             )}
-        </div>
-        <ToastContainer></ToastContainer>
+            {info.situation === "room" && <RoomUI setAvatarMode={setAvatarMode} />}
+          </div>
+        )}
+
+        <ToastContainer />
         <ConfirmModal />
       </motion.div>
     </>
-  );
-};
-export const AnimationButton = ({
-  triggerAnimation,
-}: {
-  triggerAnimation: (name: string) => void;
-}) => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  // 버튼 클릭 시 원형 배치되는 애니메이션
-  const toggleMenu = () => setIsOpen((prev) => !prev);
-
-  return (
-    <div className="p-1 rounded-full bg-pink-500 text-white drop-shadow-md cursor-pointer hover:bg-pink-800 transition-colors">
-      {/* 메인 버튼 (이모지 버튼) */}
-      <motion.button
-        onClick={toggleMenu}
-        className="w-12 h-12 rounded-full text-white flex items-center justify-center text-xl shadow-lg"
-        whileTap={{ scale: 0.9 }}
-      >
-        💡
-      </motion.button>
-
-      {/* 서브 버튼들 (애니메이션 버튼들) */}
-      {animations.map((anim, index) => {
-        const angle = (index / animations.length) * Math.PI; // 원형 배치
-        return (
-          <motion.button
-            key={anim.name}
-            className="absolute w-12 h-12 rounded-full bg-white shadow-lg flex items-center justify-center text-2xl"
-            style={{
-              left: isOpen ? `${Math.cos(angle) * 80}px` : "0px",
-              bottom: isOpen ? `${Math.sin(angle) * 80}px` : "0px",
-            }}
-            onClick={() => triggerAnimation(anim.name)}
-            animate={{ opacity: isOpen ? 1 : 0, scale: isOpen ? 1 : 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            {anim.emoji}
-          </motion.button>
-        );
-      })}
-    </div>
   );
 };
