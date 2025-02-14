@@ -183,53 +183,57 @@ const Game = ({ onClose }: { onClose: () => void }) => {
 
   return (
     <Html
-      style={{
-        width: "300px",
-        height: "404px",
-        borderRadius: "3px",
-        padding: "0",
-        overflowX: "hidden",
-        marginLeft: "10px",
-      }}
-      position={[0, 4, -4]}
-      rotation-x={Math.PI / -2}
-      occlude
-      className="scrollbar-hide"
+      position={[0, 4, -4]} // ✅ 정확한 위치
       scale={5}
-      transform
+      rotation-x={Math.PI / -2} // ✅ 올바른 방향으로 회전
+      style={{
+        position: "absolute",
+        pointerEvents: "auto",
+      }}
     >
-      <div className="flex justify-between mx-4">
-        <button onClick={onClose}>◀</button>
-        <h1 className="text-center text-white text-2xl font-bold">🐍</h1>
-        <button className="right-5 top-0" onClick={showHighScores}>
-          🏆
-        </button>
-      </div>
-      <canvas
-        ref={canvasRef}
-        width={columns * scale}
-        height={rows * scale}
-        className="m-auto border border-black"
-      />
-      <div className="controls">
-        <div className="dpad">
-          <div onClick={() => handleButton("up")} className="up"></div>
-          <div onClick={() => handleButton("right")} className="right"></div>
-          <div onClick={() => handleButton("down")} className="down"></div>
-          <div onClick={() => handleButton("left")} className="left"></div>
-          <div className="middle"></div>
+      <div
+        style={{
+          width: "330px",
+          height: "384px",
+          borderRadius: "3px",
+          overflowY: "auto",
+          transform: "translate(-50%, -53%)", // ✅ 중앙 정렬
+          position: "relative", // ✅ 내부 요소 위치 보정
+        }}
+      >
+        <div className="flex justify-between mx-4">
+          <button onClick={onClose}>◀</button>
+          <h1 className="text-center text-white text-2xl font-bold">🐍</h1>
+          <button className="right-5 top-0" onClick={showHighScores}>
+            🏆
+          </button>
         </div>
-        <div className="a-b">
-          <div className="b">B</div>
-          <div onClick={reverse} className="a">
-            A
+        <canvas
+          ref={canvasRef}
+          width={columns * scale}
+          height={rows * scale}
+          className="m-auto border border-black"
+        />
+        <div className="controls">
+          <div className="dpad">
+            <div onClick={() => handleButton("up")} className="up"></div>
+            <div onClick={() => handleButton("right")} className="right"></div>
+            <div onClick={() => handleButton("down")} className="down"></div>
+            <div onClick={() => handleButton("left")} className="left"></div>
+            <div className="middle"></div>
+          </div>
+          <div className="a-b">
+            <div className="b">B</div>
+            <div onClick={reverse} className="a">
+              A
+            </div>
           </div>
         </div>
-      </div>
-      <div className="start-select">
-        <div className="select">SELECT</div>
-        <div onClick={startGame} className="start">
-          START
+        <div className="start-select">
+          <div className="select">SELECT</div>
+          <div onClick={startGame} className="start">
+            START
+          </div>
         </div>
       </div>
     </Html>

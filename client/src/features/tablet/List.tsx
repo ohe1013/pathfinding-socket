@@ -15,28 +15,23 @@ export const List = ({ onSelect, onClose }: ListProps) => {
   };
   return (
     <Html
-      style={{
-        width: "330px",
-        height: "384px",
-        borderRadius: "3px",
-        overflowY: "auto",
-        padding: "0",
-        overflowX: "hidden",
-        // pointerEvents: "auto",
-      }}
-      position={[0, 4, -4]}
-      rotation-x={Math.PI / -2}
-      occlude
-      className="scrollbar-hide"
+      position={[0, 4, -4]} // ✅ 정확한 위치
       scale={5}
-      transform
+      rotation-x={Math.PI / -2} // ✅ 올바른 방향으로 회전
+      style={{
+        position: "absolute",
+        pointerEvents: "auto",
+      }}
     >
       <div
         style={{
           width: "330px",
           height: "384px",
+          borderRadius: "3px",
+          overflowY: "auto",
+          transform: "translate(-50%, -53%)", // ✅ 중앙 정렬
+          position: "relative", // ✅ 내부 요소 위치 보정
         }}
-        onPointerDown={(e) => e.stopPropagation()}
       >
         <div className="flex justify-between mx-4">
           <button onClick={onClose}>❌</button>

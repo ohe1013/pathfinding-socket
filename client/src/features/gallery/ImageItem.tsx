@@ -35,7 +35,6 @@ export const Item = ({
   };
   const over = () => setHovered(true);
   const out = () => setHovered(false);
-
   useFrame((_, delta) => {
     if (!ref.current) return;
     const mesh = ref.current;
@@ -43,7 +42,7 @@ export const Item = ({
     const material = materialRef.current;
 
     // ✅ xOffset을 useRef로 업데이트
-    easing.damp(xOffset, "current", scrollProgress * 4 - index / galleryImages.length, 0.15, delta);
+    easing.damp(xOffset, "current", scrollProgress * 2 - index / galleryImages.length, 0.15, delta);
 
     // ✅ 애니메이션 적용
     const scaleFactor = clicked === index ? 1.5 : 1;

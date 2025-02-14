@@ -20,8 +20,7 @@ type GuestBookProps = {
 export const GuestBook = ({ onClose }: GuestBookProps) => {
   const [isFormModalOpen, setIsFormModalOpen] = useState<boolean>(false);
   const handleFormModalClose = () => setIsFormModalOpen(false);
-  const [selectedPost, setSelectedPost] =
-    useState<GuestBookPostForm>(initialPost);
+  const [selectedPost, setSelectedPost] = useState<GuestBookPostForm>(initialPost);
   const [type, setType] = useState<CRUD>("insert");
   const [posts, setPosts] = useState<GuestBookPostForm[]>([]);
   useEffect(() => {
@@ -55,36 +54,53 @@ export const GuestBook = ({ onClose }: GuestBookProps) => {
     setIsFormModalOpen(true);
   };
   return (
+    // <Html
+    //   style={{
+    //     width: "330px",
+    //     height: "384px",
+    //     borderRadius: "3px",
+    //     overflowY: "auto",
+    //     padding: "0",
+    //     overflowX: "hidden",
+    //     // pointerEvents: "auto",
+    //   }}
+    //   position={[0, 4, -4]}
+    //   rotation-x={Math.PI / -2}
+    //   occlude
+    //   className="scrollbar-hide"
+    //   scale={5}
+    //   transform
+    // >
+    //   <div
+    //     style={{
+    //       width: "330px",
+    //       height: "384px",
+    //     }}
+    //     onPointerDown={(e) => e.stopPropagation()}
+    //   >
     <Html
-      style={{
-        width: "330px",
-        height: "384px",
-        borderRadius: "3px",
-        overflowY: "auto",
-        padding: "0",
-        overflowX: "hidden",
-        // pointerEvents: "auto",
-      }}
-      position={[0, 4, -4]}
-      rotation-x={Math.PI / -2}
-      occlude
-      className="scrollbar-hide"
+      position={[0, 4, -4]} // ✅ 정확한 위치
       scale={5}
-      transform
+      rotation-x={Math.PI / -2} // ✅ 올바른 방향으로 회전
+      style={{
+        position: "absolute",
+        pointerEvents: "auto",
+      }}
     >
       <div
         style={{
           width: "330px",
           height: "384px",
+          borderRadius: "3px",
+          overflowY: "auto",
+          transform: "translate(-50%, -53%)", // ✅ 중앙 정렬
+          position: "relative", // ✅ 내부 요소 위치 보정
         }}
-        onPointerDown={(e) => e.stopPropagation()}
       >
         {!isFormModalOpen && (
           <div className="flex justify-between mx-4">
             <button onClick={onClose}>◀</button>
-            <h1 className="text-center text-white text-2xl font-bold">
-              방명록
-            </h1>
+            <h1 className="text-center text-white text-2xl font-bold">방명록</h1>
             <button
               onClick={() => {
                 handleFormModal("insert");
@@ -96,9 +112,7 @@ export const GuestBook = ({ onClose }: GuestBookProps) => {
           </div>
         )}
         {isFormModalOpen && (
-          <div
-            className={` max-w-full  overflow-y-auto p-5  place-items-center  select-none`}
-          >
+          <div className={` max-w-full  overflow-y-auto p-5  place-items-center  select-none`}>
             <PostFormModal
               isOpen={isFormModalOpen}
               onClose={handleFormModalClose}
@@ -109,11 +123,7 @@ export const GuestBook = ({ onClose }: GuestBookProps) => {
           </div>
         )}
         {!isFormModalOpen && (
-          <GuestBookItem
-            posts={posts}
-            onEdit={handleFormModal}
-            onDelete={handleFormModal}
-          />
+          <GuestBookItem posts={posts} onEdit={handleFormModal} onDelete={handleFormModal} />
         )}
       </div>
     </Html>

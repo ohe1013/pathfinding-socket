@@ -15,11 +15,11 @@ export const AnimationButton = ({
   const toggleMenu = () => setIsOpen((prev) => !prev);
 
   return (
-    <div className="p-1 rounded-full bg-pink-500 text-white drop-shadow-md cursor-pointer hover:bg-pink-800 transition-colors">
+    <div className="relative p-1 rounded-full bg-pink-500 text-white drop-shadow-md cursor-pointer hover:bg-pink-800 transition-colors">
       {/* 메인 버튼 (이모지 버튼) */}
       <motion.button
         onClick={toggleMenu}
-        className="w-12 h-12 rounded-full text-white flex items-center justify-center text-xl shadow-lg"
+        className=" w-12 h-12 rounded-full text-white flex items-center justify-center text-xl shadow-lg"
         whileTap={{ scale: 0.9 }}
       >
         💡
@@ -27,18 +27,26 @@ export const AnimationButton = ({
 
       {/* 서브 버튼들 (애니메이션 버튼들) */}
       {animations.map((anim, index) => {
-        const angle = (index / animations.length) * Math.PI; // 원형 배치
+        const angle = -(index / animations.length) * Math.PI; // 원형 배치
+        const radius = 60; // 버튼이 퍼질 거리
         return (
           <motion.button
             key={anim.name}
             className="absolute w-12 h-12 rounded-full bg-white shadow-lg flex items-center justify-center text-2xl"
             style={{
-              left: isOpen ? `${Math.cos(angle) * 80}px` : "0px",
-              bottom: isOpen ? `${Math.sin(angle) * 80}px` : "0px",
+              top: "0", // 💡 버튼과 동일한 위치에서 시작
+              left: "0",
+              transform: "translate(-100%, -100%)", // 중앙 정렬
             }}
-            onClick={() => triggerAnimation(anim.name)}
-            animate={{ opacity: isOpen ? 1 : 0, scale: isOpen ? 1 : 0 }}
+            initial={{ x: 0, y: 0, opacity: 0, scale: 0 }} // 초기 상태
+            animate={{
+              x: isOpen ? Math.cos(angle) * radius : 0,
+              y: isOpen ? Math.sin(angle) * radius : 0,
+              opacity: isOpen ? 1 : 0,
+              scale: isOpen ? 1 : 0,
+            }}
             transition={{ duration: 0.3 }}
+            onClick={() => triggerAnimation(anim.name)}
           >
             {anim.emoji}
           </motion.button>
