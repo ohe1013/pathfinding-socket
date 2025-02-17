@@ -53,7 +53,7 @@ export const RoomUI = (props: RoomUIProps) => {
           onClick={switchSituation}
         >
           {info.situation === "lobby" && "구경가기"}
-          {info.situation === "room" && "로비로가기"}
+          {info.situation === "room" && "Lobby"}
         </button>
         <MusicButton />
         {

@@ -23,7 +23,7 @@ interface CharacterProps {
 }
 export function Avatar({
   id,
-  avatarUrl = "https://models.readyplayer.me/64f0265b1db75f90dcfd9e2c.glb",
+  avatarUrl = "https://models.readyplayer.me/67ad903068175dabd3009ab8.glb?meshlod=1&quality=medium",
   ...props
 }: CharacterProps) {
   const [chatMessage, setChatMessage] = useState("");
@@ -48,7 +48,6 @@ export function Avatar({
     avatar
   );
   const [animation, setAnimation] = useState("M_Standing_Idle_001");
-  const [isDancing, setIsDancing] = useState(false);
   const [showChatBubble, setShowChatBubble] = useState(false);
   const postChatMessage = (name: string, chatMessage: string) => {
     const postRef = ref(realtimeDb, "chat");
@@ -124,26 +123,48 @@ export function Avatar({
     };
   }, [id]);
 
-  useFrame((_state, delta) => {
-    if (!avatar.current || !group.current) return;
-    const hips = avatar.current.getObjectByName("Hips");
-    hips?.position.set(0, hips.position.y, 0);
+  // useFrame((_state, delta) => {
+  //   if (!avatar.current || !group.current) return;
+  //   const hips = avatar.current.getObjectByName("Hips");
+  //   hips?.position.set(0, hips.position.y, 0);
+  //   if (path?.length && group.current.position.distanceTo(path[0]) > 0.1) {
+  //     const direction = group.current.position
+  //       .clone()
+  //       .sub(path[0])
+  //       .normalize()
+  //       .multiplyScalar(MOVEMENT_SPEED * delta);
+  //     group.current.position.sub(direction);
+  //     group.current.lookAt(path[0]);
+  //     setAnimation("M_Walk_001");
+  //     setIsDancing(false);
+  //   } else if (path?.length) {
+  //     path.shift();
+  //   } else {
+  //     if (isDancing) {
+  //       setAnimation("M_Dances_001");
+  //     } else {
+  //       setAnimation("M_Standing_Idle_001");
+  //     }
+  //   }
+  // });
+  useFrame((_, delta) => {
+    if (!group.current) return;
+
     if (path?.length && group.current.position.distanceTo(path[0]) > 0.1) {
+      // 🌟 Delta 적용하여 속도 일정화
       const direction = group.current.position
         .clone()
         .sub(path[0])
         .normalize()
-        .multiplyScalar(MOVEMENT_SPEED * delta);
+        .multiplyScalar(MOVEMENT_SPEED * delta); // delta 적용!
+
       group.current.position.sub(direction);
       group.current.lookAt(path[0]);
       setAnimation("M_Walk_001");
-      setIsDancing(false);
     } else if (path?.length) {
       path.shift();
     } else {
-      if (isDancing) {
-        setAnimation("M_Dances_001");
-      } else {
+      if (animation === "M_Walk_001") {
         setAnimation("M_Standing_Idle_001");
       }
     }

@@ -14,12 +14,22 @@ export class CharacterService {
     return this.characters;
   }
 
-  createCharacter(socketId: string, room: Room, position?: Coordinate) {
+  createCharacter(
+    socketId: string,
+    room: Room,
+    opt?: {
+      position?: Coordinate;
+      avatarUrl?: string;
+    }
+  ) {
     const newCharacter = new Character({
       id: socketId,
-      position: position || generateRandomPosition(room.size, room.gridDivision, room.grid),
+      position: opt?.position || generateRandomPosition(room.size, room.gridDivision, room.grid),
       session: Math.round(Math.random() * 1000),
     });
+    if (opt?.avatarUrl) {
+      newCharacter.setProperty("avatarUrl", opt.avatarUrl);
+    }
     return newCharacter;
   }
 

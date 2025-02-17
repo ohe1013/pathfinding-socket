@@ -10,6 +10,7 @@ import useUserStore from "@/store/user";
 import { Item } from "../items/Item";
 // import { Fallguy } from "../characters/Fallguy";
 import { Avatar } from "../characters/Avatar";
+import { Fallguy } from "../characters/Fallguy";
 
 const Room = () => {
   const map = useMapStore((state) => state.state);
@@ -55,18 +56,34 @@ const Room = () => {
       <Grid infiniteGrid fadeDistance={50} fadeStrength={5} />
       {characterList?.map((character) => (
         <Suspense key={character.session + "-" + character.id}>
+          {character.avatarUrl ? (
+            <Avatar
+              key={character.id}
+              position={grid.gridToVector3(character.position)}
+              id={character.id}
+              path={character.path}
+              avatarUrl={character.avatarUrl}
+            />
+          ) : (
+            <Fallguy
+              key={character.id}
+              position={grid.gridToVector3(character.position)}
+              id={character.id}
+              path={character.path}
+            />
+          )}
           {/* <Fallguy
             key={character.id}
             position={grid.gridToVector3(character.position)}
             id={character.id}
             path={character.path}
           /> */}
-          <Avatar
+          {/* <Avatar
             key={character.id}
             position={grid.gridToVector3(character.position)}
             id={character.id}
             path={character.path}
-          />
+          /> */}
         </Suspense>
       ))}
     </>

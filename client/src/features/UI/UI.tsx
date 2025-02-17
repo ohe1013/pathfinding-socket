@@ -65,6 +65,7 @@ export const UI = () => {
               newAvatarUrl += (newAvatarUrl.includes("?") ? "&" : "?") + "meshlod=1&quality=medium";
               setUrl(newAvatarUrl);
               localStorage.setItem("avatarURL", newAvatarUrl);
+
               setAvatarMode(false);
             }}
             config={{ language: "kr" }}

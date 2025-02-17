@@ -1,8 +1,12 @@
 import { useFont, useTexture } from "@react-three/drei";
 import { motion } from "framer-motion-3d";
-import { Suspense, useRef } from "react";
+import { Suspense, useEffect, useRef } from "react";
+import { FrontalAvatar } from "../characters/FrontalAvatar";
+import { useAvatar } from "@/store/avatar";
+import { FrontalFallguy } from "../characters/FrontalFallguy";
 let firstLoad = true;
 export const Lobby = () => {
+  const { useUrl, setUrl } = useAvatar();
   const isMobile = window.innerWidth < 1024;
 
   const tablet = useRef(null);
@@ -11,6 +15,13 @@ export const Lobby = () => {
 
   const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent); // ugly safari fix as transform position is buggy on it
   const backgroundTexture = useTexture("images/bg3.jpg"); // 경로를 적절히 변경
+
+  useEffect(() => {
+    const url = localStorage.getItem("avatarURL");
+    if (url) {
+      setUrl(url);
+    }
+  }, []);
 
   return (
     <group position-y={0.5}>
@@ -43,6 +54,23 @@ export const Lobby = () => {
           <planeGeometry args={[1, 1]} />
           <meshBasicMaterial transparent={true} map={backgroundTexture} />
         </mesh>
+      </Suspense>
+      <Suspense>
+        {useUrl ? (
+          <FrontalAvatar
+            position-z={-8}
+            position-x={-1}
+            position-y={-3}
+            rotation-y={Math.PI / 1.3}
+          />
+        ) : (
+          <FrontalFallguy
+            position-z={-10}
+            position-x={-1}
+            position-y={-3}
+            rotation-y={Math.PI / 1.3}
+          />
+        )}
       </Suspense>
     </group>
   );

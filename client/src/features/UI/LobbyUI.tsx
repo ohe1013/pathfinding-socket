@@ -67,7 +67,7 @@ export const LobbyUI = (props: LobbyUIProps) => {
           className="p-4 rounded-full bg-pink-500 text-white drop-shadow-md cursor-pointer hover:bg-pink-800 transition-colors"
           onClick={switchSituation}
         >
-          로비로가기
+          놀러가기
         </button>
         <MusicButton />
       </div>

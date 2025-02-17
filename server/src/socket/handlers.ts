@@ -17,7 +17,7 @@ export async function setupSocketHandlers(io: Server, socket: Socket) {
   if (!room) {
     return;
   }
-  const newCharcter = characterService.createCharacter(socket.id, room, [0, 20]);
+  const newCharcter = characterService.createCharacter(socket.id, room, { position: [0, 20] });
   roomService.addCharacterToRoom(defaultRoomId, newCharcter);
   socket.join(room.id);
   socket.emit("conn", {
@@ -45,11 +45,10 @@ export async function setupSocketHandlers(io: Server, socket: Socket) {
 
     // Join new room
     socket.join(newRoom.id);
-    const newCharcter = characterService.createCharacter(
-      socket.id,
-      newRoom,
-      opts.position || [0, 0]
-    );
+    const newCharcter = characterService.createCharacter(socket.id, newRoom, {
+      position: opts.position || [0, 0],
+      avatarUrl: opts.avatarUrl,
+    });
     roomService.addCharacterToRoom(newRoom.id, newCharcter);
     room = newRoom;
 
@@ -90,6 +89,12 @@ export async function setupSocketHandlers(io: Server, socket: Socket) {
     character.path = path;
     io.to(room!.id).emit("playerMove", character);
   });
+  socket.on("avatar", (url) => {
+    const character = room?.characters.find((char) => char.id === socket.id);
+    character?.setProperty("avatarUrl", url);
+    if (!character || !room) return;
+    io.to(room.id).emit("characters", room.characters);
+  });
   socket.on("rank", (score) => {
     const character = room?.characters.find((char) => char.id === socket.id);
     if (!character) return;
@@ -102,10 +107,6 @@ export async function setupSocketHandlers(io: Server, socket: Socket) {
   socket.on("name", (name) => {
     const character = room?.characters.find((char) => char.id === socket.id);
     character?.setProperty("name", name);
-  });
-  socket.on("characterAvatarUpdate", (avatarUrl) => {
-    newCharcter.avatarUrl = avatarUrl;
-    io.to(room!.id).emit("characters", room!.characters);
   });
   socket.on("chatMessage", (message) => {
     const character = room?.characters.find((char) => char.id === socket.id);

@@ -5,6 +5,7 @@ export type CharactersObj = {
   position: [number, number, number];
   path: [number, number, number][];
   session: string;
+  avatarUrl?: string;
 };
 
 interface CharactersStore {
