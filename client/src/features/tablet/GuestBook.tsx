@@ -15,9 +15,10 @@ const initialPost = {
 
 type GuestBookProps = {
   onClose: () => void;
+  fullyExpanded: boolean;
 };
 
-export const GuestBook = ({ onClose }: GuestBookProps) => {
+export const GuestBook = ({ onClose, fullyExpanded }: GuestBookProps) => {
   const [isFormModalOpen, setIsFormModalOpen] = useState<boolean>(false);
   const handleFormModalClose = () => setIsFormModalOpen(false);
   const [selectedPost, setSelectedPost] = useState<GuestBookPostForm>(initialPost);
@@ -83,9 +84,10 @@ export const GuestBook = ({ onClose }: GuestBookProps) => {
       scale={5}
       rotation-x={Math.PI / -2} // ✅ 올바른 방향으로 회전
       style={{
-        position: "absolute",
         pointerEvents: "auto",
       }}
+      transform={!fullyExpanded}
+      occlude={!fullyExpanded}
     >
       <div
         style={{
@@ -93,7 +95,7 @@ export const GuestBook = ({ onClose }: GuestBookProps) => {
           height: "384px",
           borderRadius: "3px",
           overflowY: "auto",
-          transform: "translate(-50%, -53%)", // ✅ 중앙 정렬
+          transform: !fullyExpanded ? "none" : "translate(-50%, -53%)", // ✅ 중앙 정렬
           position: "relative", // ✅ 내부 요소 위치 보정
         }}
       >

@@ -1,5 +1,5 @@
 import useModalStore from "@/store/modal";
-import { useEffect, useRef } from "react";
+import { Fragment, useEffect, useRef } from "react";
 
 export const ConfirmModal = () => {
   const { isOpen, message, onConfirm, onCancel, closeModal } = useModalStore();
@@ -30,7 +30,14 @@ export const ConfirmModal = () => {
         ref={modalRef}
         className="bg-white p-6 w-10/12 rounded-lg shadow-lg max-w-md text-center"
       >
-        <p className="mb-4 text-lg">{message}</p>
+        <p className="mb-4 text-lg">
+          {message.split("\n").map((line, index) => (
+            <Fragment key={index}>
+              {line}
+              <br />
+            </Fragment>
+          ))}
+        </p>
         <div className="flex justify-center gap-4">
           <button
             onClick={() => {

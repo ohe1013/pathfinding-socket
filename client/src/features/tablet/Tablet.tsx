@@ -1,6 +1,6 @@
 import useInfo from "@/store/info";
 import { useGLTF } from "@react-three/drei";
-import { useThree } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { GuestBook } from "./GuestBook";
@@ -50,7 +50,17 @@ export function Tablet(props: JSX.IntrinsicElements["group"]) {
       console.log("Screen Position:", { x: screenX, y: screenY });
     }
   }, [camera, gl]);
-
+  const [fullyExpanded, setFullyExpanded] = useState(false);
+  useFrame(() => {
+    if (meshRef.current) {
+      const scaleY = meshRef.current.scale.y; // 📌 Mesh의 Y축 크기 감지
+      if (scaleY >= 1 && !fullyExpanded) {
+        setTimeout(() => {
+          setFullyExpanded(true); // 🔥 크기가 1 이상이면 transform 제거
+        }, 1000);
+      }
+    }
+  });
   return (
     <group {...props} dispose={null}>
       <mesh geometry={nodes.ChamferBox003.geometry} material={materials["04___Default"]} />
@@ -65,7 +75,7 @@ export function Tablet(props: JSX.IntrinsicElements["group"]) {
         material={materials["01___Default"]}
       >
         {item === "game" && <Game onClose={onBack} />}
-        {item === "guestbook" && <GuestBook onClose={onBack} />}
+        {item === "guestbook" && <GuestBook fullyExpanded={fullyExpanded} onClose={onBack} />}
         {item === "" && <List onSelect={setItem} onClose={onClose} />}
       </mesh>
       <mesh

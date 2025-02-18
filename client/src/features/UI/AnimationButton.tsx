@@ -9,13 +9,12 @@ export const AnimationButton = ({
   const animations = [
     { name: "wave", emoji: "👋", label: "인사하기" },
     { name: "dive", emoji: "💃", label: "춤추기" },
-    { name: "jump_air", emoji: "🤸", label: "점프하기" },
   ];
   // 버튼 클릭 시 원형 배치되는 애니메이션
   const toggleMenu = () => setIsOpen((prev) => !prev);
 
   return (
-    <div className="relative p-1 rounded-full bg-pink-500 text-white drop-shadow-md cursor-pointer hover:bg-pink-800 transition-colors">
+    <div className="relative z-10 p-1 rounded-full bg-pink-500 text-white drop-shadow-md cursor-pointer hover:bg-pink-800 transition-colors">
       {/* 메인 버튼 (이모지 버튼) */}
       <motion.button
         onClick={toggleMenu}

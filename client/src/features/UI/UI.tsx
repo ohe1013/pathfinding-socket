@@ -64,7 +64,7 @@ export const UI = () => {
                   : event.data.url;
               newAvatarUrl += (newAvatarUrl.includes("?") ? "&" : "?") + "meshlod=1&quality=medium";
               setUrl(newAvatarUrl);
-              localStorage.setItem("avatarURL", newAvatarUrl);
+              localStorage.setItem("avatarUrl", newAvatarUrl);
 
               setAvatarMode(false);
             }}

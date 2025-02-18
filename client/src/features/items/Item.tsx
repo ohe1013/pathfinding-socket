@@ -12,6 +12,7 @@ import useUserStore from "@/store/user";
 import { RenderSound } from "./Sound";
 import { RenderLight } from "./Light";
 import useModalStore from "@/store/modal";
+import { useAvatar } from "@/store/avatar";
 
 export const Item = ({ item }: { item: ItemProps }) => {
   const { name, gridPosition, size, rotation } = item;
@@ -22,6 +23,7 @@ export const Item = ({ item }: { item: ItemProps }) => {
   const animation = useGLTF(`/animations/aerobic.glb`);
   const actions = useAnimations(animation.animations, objectRef);
   const openModal = useModalStore((state) => state.openModal);
+  const { url } = useAvatar();
 
   useEffect(() => {
     if ((name === "woman" || name === "man") && actions) {
@@ -70,6 +72,7 @@ export const Item = ({ item }: { item: ItemProps }) => {
           () =>
             socket.emit("joinRoom", roomId, {
               position,
+              avatarUrl: url,
             }),
           () => {}
         );

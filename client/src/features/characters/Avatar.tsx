@@ -5,7 +5,7 @@ Command: npx gltfjsx@6.2.3 public/models/Animated Woman.glb -o src/components/An
 
 import { Html, useAnimations, useGLTF } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
-import { SetStateAction, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { SkeletonUtils } from "three-stdlib";
 import * as THREE from "three";
 import { motion } from "framer-motion-3d";
@@ -21,6 +21,15 @@ interface CharacterProps {
   id?: string;
   avatarUrl?: string;
 }
+
+const animationData = {
+  wave: {
+    name: "M_Standing_Expressions_001",
+  },
+  dive: {
+    name: "M_Dances_001",
+  },
+};
 export function Avatar({
   id,
   avatarUrl = "https://models.readyplayer.me/67ad903068175dabd3009ab8.glb?meshlod=1&quality=medium",
@@ -42,9 +51,10 @@ export function Avatar({
   const { animations: walkAnimation } = useGLTF("/animations/M_Walk_001.glb");
   const { animations: danceAnimation } = useGLTF("/animations/M_Dances_001.glb");
   const { animations: idleAnimation } = useGLTF("/animations/M_Standing_Idle_001.glb");
+  const { animations: waveAnimation } = useGLTF("/animations/M_Standing_Expressions_001.glb");
 
   const { actions } = useAnimations(
-    [walkAnimation[0], idleAnimation[0], danceAnimation[0]],
+    [walkAnimation[0], idleAnimation[0], danceAnimation[0], waveAnimation[0]],
     avatar
   );
   const [animation, setAnimation] = useState("M_Standing_Idle_001");
@@ -70,20 +80,17 @@ export function Avatar({
   useEffect(() => {
     const action = actions[animation];
     if (action) {
-      action.reset().fadeIn(0.1).play();
+      action.reset().fadeIn(0.32).play();
       return () => {
-        action.fadeOut(0.1);
+        action.fadeOut(0.32);
       };
     }
-  }, [animation, avatarUrl]);
+  }, [animation, avatarUrl, actions]);
 
   useEffect(() => {
-    function onPlayerAnimation(value: {
-      id: string | undefined;
-      animationName: SetStateAction<string>;
-    }) {
+    function onPlayerAnimation(value: { id: string | undefined; animationName: "wave" | "dive" }) {
       if (value.id === id) {
-        setAnimation(value.animationName);
+        setAnimation(animationData[value.animationName].name);
       }
     }
     function onPlayerMove(value: { id: string | undefined; path: [number, number, number][] }) {
@@ -123,33 +130,10 @@ export function Avatar({
     };
   }, [id]);
 
-  // useFrame((_state, delta) => {
-  //   if (!avatar.current || !group.current) return;
-  //   const hips = avatar.current.getObjectByName("Hips");
-  //   hips?.position.set(0, hips.position.y, 0);
-  //   if (path?.length && group.current.position.distanceTo(path[0]) > 0.1) {
-  //     const direction = group.current.position
-  //       .clone()
-  //       .sub(path[0])
-  //       .normalize()
-  //       .multiplyScalar(MOVEMENT_SPEED * delta);
-  //     group.current.position.sub(direction);
-  //     group.current.lookAt(path[0]);
-  //     setAnimation("M_Walk_001");
-  //     setIsDancing(false);
-  //   } else if (path?.length) {
-  //     path.shift();
-  //   } else {
-  //     if (isDancing) {
-  //       setAnimation("M_Dances_001");
-  //     } else {
-  //       setAnimation("M_Standing_Idle_001");
-  //     }
-  //   }
-  // });
   useFrame((_, delta) => {
-    if (!group.current) return;
-
+    if (!group.current || !avatar.current) return;
+    const hips = avatar.current.getObjectByName("Hips");
+    hips?.position.set(0, hips.position.y, 0);
     if (path?.length && group.current.position.distanceTo(path[0]) > 0.1) {
       // 🌟 Delta 적용하여 속도 일정화
       const direction = group.current.position
@@ -208,7 +192,7 @@ export function Avatar({
 }
 
 useGLTF.preload(
-  localStorage.getItem("avatarURL") ||
+  localStorage.getItem("avatarUrl") ||
     "https://models.readyplayer.me/64f0265b1db75f90dcfd9e2c.glb?meshlod=1&quality=medium"
 );
 useGLTF.preload("/animations/M_Walk_001.glb");

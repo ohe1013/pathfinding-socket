@@ -17,7 +17,7 @@ export const Lobby = () => {
   const backgroundTexture = useTexture("images/bg3.jpg"); // 경로를 적절히 변경
 
   useEffect(() => {
-    const url = localStorage.getItem("avatarURL");
+    const url = localStorage.getItem("avatarUrl");
     if (url) {
       setUrl(url);
     }
