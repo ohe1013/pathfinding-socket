@@ -1,5 +1,5 @@
 import useModalStore from "@/store/modal";
-import { Fragment, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 
 export const ConfirmModal = () => {
   const { isOpen, message, onConfirm, onCancel, closeModal } = useModalStore();
