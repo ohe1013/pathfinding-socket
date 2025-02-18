@@ -15,7 +15,6 @@ export const CharacterModeButton = ({
       name: "avatar",
       emoji: "/images/ready_player_me.webp",
       fn: () => {
-        if (url === "") return;
         openModal(`아바타를 꾸미러 갈까요?😁\n 계정없이 쓸 수 있어요!`, () => triggerAvatar(true));
         setIsOpen(false);
       },
@@ -24,6 +23,7 @@ export const CharacterModeButton = ({
       name: "fallguy",
       emoji: "/images/Emoticon_Happy.webp",
       fn: () => {
+        if (url === "") return;
         openModal(`아바타를 fallguy로 바꿀까요?😁`, () => {
           setUrl("");
           localStorage.setItem("avatarUrl", "");
