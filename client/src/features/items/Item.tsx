@@ -139,7 +139,7 @@ export const Item = ({ item }: { item: ItemProps }) => {
       <Html position-y={name === "man" || name === "woman" ? 3 : 2}>
         <div className="w-60 max-w-full">
           <p
-            className={`absolute max-w-full text-center break-words  p-2 px-4 -translate-x-1/2 rounded-lg bg-white bg-opacity-40 backdrop-blur-sm text-black transition-opacity duration-500 ${
+            className={`absolute max-w-full text-base text-center break-words  p-2 px-4 -translate-x-1/2 rounded-lg bg-white bg-opacity-40 backdrop-blur-sm text-black transition-opacity duration-500 whitespace-pre-line ${
               showChatBubble ? "" : "opacity-0"
             }`}
           >

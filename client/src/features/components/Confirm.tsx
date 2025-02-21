@@ -30,15 +30,7 @@ export const ConfirmModal = () => {
         ref={modalRef}
         className="bg-white p-6 w-10/12 rounded-lg shadow-lg max-w-md text-center"
       >
-        <p className="mb-4 text-lg whitespace-pre-line">
-          {message}
-          {/* {message.split("\n").map((line, index) => (
-            <Fragment key={index}>
-              {line}
-              <br />
-            </Fragment>
-          ))} */}
-        </p>
+        <p className="mb-4 text-lg whitespace-pre-line">{message}</p>
         <div className="flex justify-center gap-4">
           <button
             onClick={() => {

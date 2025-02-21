@@ -5,6 +5,7 @@ import { FrontalAvatar } from "../characters/FrontalAvatar";
 import { useAvatar } from "@/store/avatar";
 import { FrontalFallguy } from "../characters/FrontalFallguy";
 let firstLoad = true;
+
 export const Lobby = () => {
   const { useUrl, setUrl } = useAvatar();
   const isMobile = window.innerWidth < 1024;
@@ -47,8 +48,12 @@ export const Lobby = () => {
       ></motion.group>
 
       <Suspense>
+        <mesh position={[0, -0.15, -3.01]} scale={3.5}>
+          <planeGeometry args={[1, 1]} />
+          <meshBasicMaterial transparent={true} color={"#ff9900"} opacity={0.3} />
+        </mesh>
         <mesh
-          position={[0, -0.3, -3]} // 카메라 타겟과 동일하게 조정
+          position={[0, -0.15, -3]} // 카메라 타겟과 동일하게 조정
           scale={3} // 크기는 유지
         >
           <planeGeometry args={[1, 1]} />

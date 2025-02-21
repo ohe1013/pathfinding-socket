@@ -5,10 +5,8 @@ import { Suspense, useState } from "react";
 import { socket } from "../SocketManager";
 import useMapStore from "@/store/map";
 import { useGrid } from "@/hooks/useGrid";
-// import { Vector3 } from "three";
 import useUserStore from "@/store/user";
 import { Item } from "../items/Item";
-// import { Fallguy } from "../characters/Fallguy";
 import { Avatar } from "../characters/Avatar";
 import { Fallguy } from "../characters/Fallguy";
 
@@ -28,11 +26,6 @@ const Room = () => {
     if (!character) return;
     socket.emit("move", grid.vector3ToGrid(character.position), grid.vector3ToGrid(e.point));
   };
-  // const onCharacterMoveToItem = (position: Vector3) => {
-  //   const character = scene.getObjectByName(`character-${user}`);
-  //   if (!character) return;
-  //   socket.emit("move", grid.vector3ToGrid(character.position), grid.vector3ToGrid(position));
-  // };
   if (!map || !grid) return null;
 
   return (
