@@ -53,10 +53,10 @@ export const Lobby = () => {
           <meshBasicMaterial transparent={true} color={"#ff9900"} opacity={0.3} />
         </mesh>
         <mesh
-          position={[0, -0.15, -3]} // 카메라 타겟과 동일하게 조정
-          scale={3} // 크기는 유지
+          position={[-0.05, 0, -3]} // 카메라 타겟과 동일하게 조정
+          scale={2.5} // 크기는 유지
         >
-          <planeGeometry args={[1, 1]} />
+          <planeGeometry args={[1, 1.4]} />
           <meshBasicMaterial transparent={true} map={backgroundTexture} />
         </mesh>
       </Suspense>
